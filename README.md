@@ -119,16 +119,28 @@ hermes-production-patterns/
 # clone 项目
 git clone https://github.com/YOUR_USERNAME/hermes-production-patterns.git
 cd hermes-production-patterns
+```
 
-# 把 conventions 复制到 Hermes skill 目录
-cp conventions/* ~/AppData/Local/hermes/skills/conventions/
+**复制 conventions 到 Hermes skills 目录：**
+
+```bash
+# ── Linux / macOS ──
+mkdir -p ~/.hermes/skills/conventions
+cp conventions/* ~/.hermes/skills/conventions/
+
+# ── Windows (PowerShell) ──
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\AppData\Local\hermes\skills\conventions"
+Copy-Item -Path conventions\* -Destination "$env:USERPROFILE\AppData\Local\hermes\skills\conventions\"
 ```
 
 ### 2. 用模板创建你的第一个技能
 
 ```bash
-cp templates/SKILL.md.template ~/AppData/Local/hermes/skills/my-skill/SKILL.md
-# 编辑填充你的技能逻辑
+# Unix
+cp templates/SKILL.md.template ~/.hermes/skills/my-skill/SKILL.md
+
+# Windows (PowerShell)
+Copy-Item templates/SKILL.md.template "$env:USERPROFILE\AppData\Local\hermes\skills\my-skill\SKILL.md"
 ```
 
 ### 3. 为你的 Cron 任务添加 STATE.md
@@ -140,7 +152,7 @@ cp templates/STATE.md.template reports/my-cron-job/STATE.md
 ### 4. 参考 config.yaml.example 配置你的 Hermes
 
 ```bash
-cp config.yaml.example ~/AppData/Local/hermes/config.yaml
+cp config.yaml.example ~/.hermes/config.yaml
 # 替换 YOUR_xxx_HERE 为你的真实 API Key
 ```
 
