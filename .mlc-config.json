@@ -1,0 +1,14 @@
+{
+  "ignorePatterns": [
+    { "pattern": "^https://x\.com" },
+    { "pattern": "^https://github\.com/Komagon/hermes-production-patterns" },
+    { "pattern": "node_modules" }
+  ],
+  "replacementPatterns": [
+    { "pattern": "^http://", "replacement": "https://" }
+  ],
+  "timeout": "10s",
+  "retryOn429": true,
+  "retryCount": 2,
+  "aliveStatusCodes": [200, 206, 301, 302]
+}
