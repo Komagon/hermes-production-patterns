@@ -7,6 +7,41 @@
 
 ---
 
+## 📖 简介 · Introduction
+
+### 中文
+
+**Hermes Production Patterns** 是一套面向 [Hermes Agent](https://github.com/NousResearch/hermes-agent) 的生产级工程模式集。
+
+如果你已经装好了 Hermes，但发现：
+- 不知道怎么写一个「靠谱」的技能（Skill）？
+- Cron 任务跑着跑着就跑偏了，没人发现？
+- Agent 输出质量不稳定，全靠肉眼审查？
+- 多个任务的状态全靠脑子记，一重启就断片？
+- 错误一出来就把上下文炸了，Agent 直接失焦？
+
+这个项目就是为你准备的。
+
+它不是什么「最佳实践」大合集——每一条模式都在真实的 7×24 运行环境中验证过，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
+
+### English
+
+**Hermes Production Patterns** is a collection of production-grade engineering patterns for [Hermes Agent](https://github.com/NousResearch/hermes-agent).
+
+You've installed Hermes. Now what? If you're struggling with:
+
+- Writing reliable Skills that don't drift over time
+- Cron jobs that silently produce garbage
+- Agent output quality that requires constant human babysitting
+- Task state that evaporates the moment the session ends
+- Error traces that flood the context window and derail the agent
+
+This project is for you.
+
+These aren't armchair best practices — every pattern here has been battle-tested in real 7×24 production runs, broken, fixed, and hardened into reusable conventions.
+
+---
+
 ## 为什么需要这个项目
 
 Hermes Agent 本身是一个强大的 Agent 框架，但社区里最缺的不是「怎么装 Hermes」，而是：
