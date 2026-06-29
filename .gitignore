@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets — these should never be committed
+.env
+.env.*
+*.key
+*.pem
+**/secrets/**
+**/credentials/**
+
+# Hermes specific
+*.cookies.json
+hermes/config.yaml

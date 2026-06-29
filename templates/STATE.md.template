@@ -1,0 +1,20 @@
+# STATE: {job-name}
+
+## Current Run
+- **Last run**: {ISO timestamp}
+- **Status**: idle
+- **Current batch**: {batch_id}
+
+## Progress
+| Metric | Value |
+|--------|-------|
+| Total items processed | 0 |
+| Successes | 0 |
+| Failures | 0 |
+| Skipped (duplicates) | 0 |
+
+## Lessons Learned
+<!-- 每次运行后追加新经验，旧的保留 -->
+
+## Idempotency Keys
+<!-- 每次完成一个步骤后在此记录，防止重复 -->

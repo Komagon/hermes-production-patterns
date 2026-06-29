@@ -1,0 +1,44 @@
+---
+name: my-skill
+description: 一句话描述这个技能做什么
+version: 1.0.0
+triggers:
+  - "触发这个技能的用户话术"
+  - "另一个触发词"
+tools:
+  - terminal
+  - read_file
+  - write_file
+mutating: true
+---
+
+# My Skill
+
+> 简明扼要的技能说明
+
+## 核心逻辑
+
+### 第一步：输入处理
+
+描述需要什么输入，从哪里获取。
+
+### 第二步：执行
+
+具体执行步骤，按序编号。
+
+### 第三步：验证
+
+如何验证输出质量。
+
+## 输出格式
+
+```markdown
+# {output_title}
+- 关键结果 1
+- 关键结果 2
+```
+
+## 陷阱
+
+- ❌ 常见坑 1
+- ❌ 常见坑 2

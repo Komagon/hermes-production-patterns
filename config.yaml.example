@@ -1,0 +1,47 @@
+# ========================================================
+# Hermes Agent 配置模板
+# 使用前替换所有 YOUR_xxx_HERE 为真实值
+# ========================================================
+
+# ---- 模型提供商 ----
+providers:
+  openrouter:
+    api_key: "YOUR_OPENROUTER_API_KEY"
+    base_url: "https://openrouter.ai/api/v1"
+
+  deepseek:
+    api_key: "YOUR_DEEPSEEK_API_KEY"
+    base_url: "https://api.deepseek.com"
+
+# ---- 默认模型 ----
+model: "anthropic/claude-opus-4.8"
+provider: "openrouter"
+
+fallback:
+  - provider: "deepseek"
+    model: "deepseek/deepseek-v4-flash"
+
+# ---- MCP 服务器 ----
+mcp_servers:
+  playwright:
+    command: "npx"
+    args: ["-y", "@playwright/mcp@latest"]
+    timeout: 120
+    connect_timeout: 60
+
+# ---- Skills 目录 ----
+skills:
+  directories:
+    - "~/AppData/Local/hermes/skills"
+
+# ---- 记忆系统 ----
+memory:
+  hindsight:
+    bank: "hermes"
+    budget: "mid"
+
+# ---- 网关（可选） ----
+gateway:
+  enabled: false
+  # api_key: "YOUR_GATEWAY_API_KEY"
+  # port: 8642

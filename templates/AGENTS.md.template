@@ -1,0 +1,24 @@
+# {project-name}
+
+## 项目概述
+
+{一句话描述这个项目做什么}
+
+## AGENTS.md 对照
+
+将你的 AGENTS.md 文件放在此文件同级目录下，AI 会从此处读取项目上下文。
+
+## 目录结构
+
+```
+{project-name}/
+├── AGENTS.md          ← AI 读我
+├── README.md          ← 人类读我
+├── skills/            ← 技能文件（SKILL.md）
+├── reports/           ← 报告和状态文件
+└── config/            ← 配置文件
+```
+
+## 使用方式
+
+将你的 AGENTS.md 放在项目根目录，AI 工具（Claude Code / Codex / Hermes）会自动读取。
