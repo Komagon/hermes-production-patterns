@@ -160,6 +160,42 @@ cp config.yaml.example ~/AppData/Local/hermes/config.yaml
 
 ---
 
+## 引用与致谢
+
+### 核心框架
+
+| 项目 | 说明 |
+|:---|:---|
+| [Hermes Agent](https://github.com/NousResearch/hermes-agent) — Nous Research | 本项目所基于的自进化 AI Agent 框架 |
+| [12-Factor Agents](https://github.com/humanlayer/12-factor-agents) — HumanLayer | 12 条工程原则的原始定义，本项目的理论基石之一 |
+| [Loop Engineering](https://x.com/0xCodez/status/2064374643729773029) — @0xCodez (Lev Deviatkin, Anthropic) | 14 步 Loop 路线图的原始 X Article，6000+ likes |
+| [Harness Engineering](https://github.com/garrytan/harness-engineering) — garrytan | Agent 可靠执行方法论课程，本项目架构设计的指导思想 |
+
+### 延伸参考
+
+| 资源 | 说明 |
+|:---|:---|
+| [Addy Osmani — Loop Engineering](https://addyosmani.com/blog/loop-engineering/) | Loop Engineering 的体系化文章，与 14 步路线图互补 |
+| [AlphaSignal — 4-Condition Test](https://alphasignalai.substack.com/p/most-developers-do-not-need-agent) | 「大部分开发者还不该用 Agent Loop」—— 前置判断标准 |
+| [Anthropic — Recursive Self-Improvement](https://www.anthropic.com/institute/recursive-self-improvement) | Agent 自我改进的边界研究 |
+| [Geoffrey Huntley — Agentic Loop Failures](https://ghuntley.com/loop/) | 生产环境 Agent Loop 失败的案例研究 |
+| [CB Insights — AI Agent Bible](https://www.cbinsights.com/research/report/ai-agents-bible/) | AI Agent 产业全景报告（69页） |
+| [Google Cloud — AI Agent Trends 2026](https://cloud.google.com/resources/content/ai-agent-trends-2026) | 企业 Agent 部署趋势报告 |
+
+### 本项目中的关联文档
+
+| 文件 | 引用来源 |
+|:---|:---|
+| `conventions/maker-checker.md` | 12-Factor Agents Factor 7 + Loop Engineering Step 9 |
+| `conventions/state-file-pattern.md` | 12-Factor Agents Factor 5 + Loop Engineering Step 10 |
+| `conventions/control-flow-separation.md` | 12-Factor Agents Factor 8 |
+| `conventions/error-compact-pattern.md` | 12-Factor Agents Factor 9 |
+| `patterns/loop-engineering-14-steps.md` | @0xCodez Loop Engineering X Article |
+| `patterns/12-factor-agents-for-hermes.md` | HumanLayer 12-Factor Agents |
+| `patterns/maturity-staging-l1-l2-l3.md` | cron-scheduler + task-safety 实践经验 |
+
+---
+
 ## 先决条件
 
 - [Hermes Agent](https://github.com/NousResearch/hermes-agent) v0.6+
