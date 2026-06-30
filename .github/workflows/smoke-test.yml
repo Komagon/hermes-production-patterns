@@ -2,7 +2,7 @@ name: Smoke Test
 
 on:
   push:
-    branches: [main, feat/runnable-example]
+    branches: [main, feat/*]
     paths:
       - 'examples/**'
       - '.github/workflows/smoke-test.yml'
@@ -32,22 +32,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml
 
-      - name: Smoke test — ${{ matrix.example }}
-        run: |
-          python examples/${{ matrix.example }}/test_example.py
+      - name: Smoke test
+        run: python examples/${{ matrix.example }}/test_example.py
 
-      - name: Validate YAML frontmatter in SKILL.md
+      - name: Validate YAML frontmatter
+        shell: python
         run: |
-          python -c "
-import yaml, re, sys
-with open('examples/${{ matrix.example }}/SKILL.md') as f:
-    m = re.match(r'^---\n(.*?)\n---', f.read(), re.DOTALL)
-    if not m:
-        print('FAIL: No frontmatter')
-        sys.exit(1)
-    fm = yaml.safe_load(m.group(1))
-    assert 'name' in fm, 'Missing name'
-    assert 'version' in fm, 'Missing version'
-    assert 'triggers' in fm, 'Missing triggers'
-    print(f'PASS: {fm["name"]} v{fm["version"]}')
-"
+          import yaml, re, sys
+          with open(f'examples/${{ matrix.example }}/SKILL.md') as f:
+              m = re.match(r'^---\n(.*?)\n---', f.read(), re.DOTALL)
+              assert m, 'No frontmatter'
+              fm = yaml.safe_load(m.group(1))
+              assert 'name' in fm, 'Missing name'
+              assert 'version' in fm, 'Missing version'
+              assert 'triggers' in fm, 'Missing triggers'
+              print(f'PASS: {fm["name"]} v{fm["version"]}')
