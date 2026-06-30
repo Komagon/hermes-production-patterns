@@ -2,7 +2,7 @@ name: docs-ci
 
 on:
   push:
-    branches: [main, feat/*]
+    branches: [main, feat/*, codex/*]
   pull_request:
     branches: [main]
 
@@ -20,7 +20,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run markdownlint
         run: npx markdownlint-cli2 '**/*.md' '#node_modules' '#.git'
@@ -54,6 +54,7 @@ jobs:
 
       - name: Run example smoke tests
         run: |
+          shopt -s nullglob
           for dir in examples/*/; do
             if [ -f "$dir/test_example.py" ]; then
               echo "--- Testing: $dir ---"
