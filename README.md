@@ -13,6 +13,10 @@
   </a>
 </p>
 
+<p align="right">
+  <a href="README.en.md">🇬🇧 English</a>
+</p>
+
 > **Production-grade engineering patterns for Hermes Agent**  
 > Built on Harness Engineering methodology + Loop Engineering + 12-Factor Agents
 
