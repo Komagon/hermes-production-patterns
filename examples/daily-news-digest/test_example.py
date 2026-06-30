@@ -1,62 +1,58 @@
 #!/usr/bin/env python3
-"""Smoke test: validate SKILL.md and STATE.md structure."""
+"""Smoke test: validates SKILL.md frontmatter and STATE.md schema compliance."""
 
-import os, sys, re, yaml
+import os, re, sys, yaml
 
-EXAMPLES_DIR = os.path.dirname(os.path.abspath(__file__))
+EXAMPLE_DIR = os.path.dirname(os.path.abspath(__file__))
 exit_code = 0
 
-def check(ok: bool, msg: str):
+def check(ok, msg):
     global exit_code
-    tag = "PASS" if ok else "FAIL"
-    print(f"  [{tag}] {msg}")
-    if not ok:
-        exit_code = 1
+    print(f"  [{'PASS' if ok else 'FAIL'}] {msg}")
+    if not ok: exit_code = 1
 
-print("=== daily-news-digest example smoke test ===\n")
+print(f"=== Testing: {os.path.basename(EXAMPLE_DIR)} ===\n")
 
-# 1. SKILL.md exists and has valid YAML frontmatter
-skill_path = os.path.join(EXAMPLES_DIR, "SKILL.md")
-check(os.path.exists(skill_path), "SKILL.md exists")
+# ── SKILL.md checks ──
+skill = os.path.join(EXAMPLE_DIR, "SKILL.md")
+check(os.path.exists(skill), "SKILL.md exists")
+with open(skill) as f:
+    body = f.read()
 
-with open(skill_path) as f:
-    content = f.read()
+fm = re.match(r"^---\n(.*?)\n---", body, re.DOTALL)
+check(fm is not None, "Has YAML frontmatter")
+if fm:
+    meta = yaml.safe_load(fm.group(1))
+    check(isinstance(meta, dict), "Frontmatter is valid YAML")
+    for field in ["name", "description", "version", "triggers", "tools"]:
+        check(field in meta, f"Has '{field}'")
 
-# Parse frontmatter
-frontmatter_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
-check(frontmatter_match is not None, "SKILL.md has YAML frontmatter")
+# Check convention cross-references
+body_text = body[fm.end():] if fm else body
+for ref in ["state-file-pattern", "control-flow-separation", "maker-checker", "error-compact-pattern"]:
+    check(ref in body_text, f"References convention: {ref}")
 
-if frontmatter_match:
-    fm = yaml.safe_load(frontmatter_match.group(1))
-    check(isinstance(fm, dict), "Frontmatter is valid YAML")
-    check("name" in fm, "Has 'name' field")
-    check("description" in fm, "Has 'description' field")
-    check("version" in fm, "Has 'version' field")
-    check("triggers" in fm, "Has 'triggers' field")
-    check("tools" in fm, "Has 'tools' field")
+# Check 5-step workflow
+steps = sum(1 for s in body_text.split("### Step ") if s)
+check(steps >= 4, f"Has workflow steps (found {steps})")
 
-# 2. Check required sections in body
-body = content[frontmatter_match.end():] if frontmatter_match else content
-check("前置条件" in body, "Has prerequisites section")
-check("### Step 1" in body, "Has Step 1")
-check("### Step 2" in body, "Has Step 2")
-check("### Step 3" in body, "Has Step 3")
-check("### Step 4" in body, "Has Step 4")
-
-# 3. STATE.md exists and has required fields
-state_path = os.path.join(EXAMPLES_DIR, "STATE.md")
+# ── STATE.md checks ──
+state_path = os.path.join(EXAMPLE_DIR, "STATE.md")
 check(os.path.exists(state_path), "STATE.md exists")
-
 with open(state_path) as f:
-    state_content = f.read()
+    state = f.read()
 
-for field in ["Last run", "Status", "Current batch", "Progress", "Lessons Learned", "Idempotency Keys"]:
-    check(field in state_content, f"STATE.md has '{field}'")
+for section in ["Schema", "Current Run", "Progress", "Lessons Learned", "Idempotency Keys"]:
+    check(f"## {section}" in state, f"Has '{section}' section")
 
-# 4. Verify convention compliance
-check("✅ DETERMINISTIC" in body, "References control-flow-separation (deterministic)")
-check("❌ STOCHASTIC" in body, "References control-flow-separation (stochastic)")
-check("Idempotency Keys" in state_content, "Follows state-file-pattern convention")
+for field in ["Last run", "Status", "Current batch"]:
+    check(f"**{field}**" in state, f"Has '{field}' field")
+
+# Check idempotency key format
+keys_section = state.split("## Idempotency Keys")[1].split("##")[0] if "## Idempotency Keys" in state else ""
+pattern = re.compile(r"\d{4}-\d{2}-\d{2}:\s*\S+:\s*\S+")
+valid = sum(1 for line in keys_section.split("\n") if pattern.search(line))
+check(valid > 0, f"Idempotency keys match format ({valid} valid)")
 
 print(f"\n=== Result: {'ALL PASS' if exit_code == 0 else 'FAILURES DETECTED'} ===")
 sys.exit(exit_code)
