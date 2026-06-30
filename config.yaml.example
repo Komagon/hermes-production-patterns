@@ -32,7 +32,7 @@ mcp_servers:
 # ---- Skills 目录 ----
 skills:
   directories:
-    - "~/AppData/Local/hermes/skills"
+    - "~/.hermes/skills"
 
 # ---- 记忆系统 ----
 memory:
