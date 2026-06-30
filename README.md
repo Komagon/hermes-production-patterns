@@ -1,15 +1,15 @@
 # Hermes Production Patterns
 
-n[![CI](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg)](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml)
+[![CI](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg)](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml)
 
 > **Production-grade engineering patterns for Hermes Agent**  
 > Built on Harness Engineering methodology + Loop Engineering + 12-Factor Agents
 
-把 Hermes Agent 从「聊天玩具」变成「7×24 小时自主工作的生产系统」所需的全部工程模式、公约和模板。
+把 Hermes Agent 从「聊天玩具」变成「7x24 小时自主工作的生产系统」所需的全部工程模式、公约和模板。
 
 ---
 
-## 📖 简介 · Introduction
+## 简介 · Introduction
 
 ### 中文
 
@@ -24,7 +24,7 @@ n[![CI](https://github.com/Komagon/hermes-production-patterns/actions/workflows/
 
 这个项目就是为你准备的。
 
-它不是什么「最佳实践」大合集——每一条模式都在真实的 7×24 运行环境中验证过，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
+它不是什么「最佳实践」大合集，每一条模式都在真实的 7x24 运行环境中验证过，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
 
 ### English
 
@@ -40,7 +40,7 @@ You've installed Hermes. Now what? If you're struggling with:
 
 This project is for you.
 
-These aren't armchair best practices — every pattern here has been battle-tested in real 7×24 production runs, broken, fixed, and hardened into reusable conventions.
+These aren't armchair best practices. Every pattern here has been battle-tested in real 7x24 production runs, broken, fixed, and hardened into reusable conventions.
 
 ---
 
@@ -61,7 +61,7 @@ Hermes Agent 本身是一个强大的 Agent 框架，但社区里最缺的不是
 
 ## 项目结构
 
-```
+```text
 hermes-production-patterns/
 ├── AGENTS.md                    ← Harness 入口（AI 读我）
 ├── README.md
@@ -119,18 +119,20 @@ hermes-production-patterns/
 
 ```bash
 # clone 项目
-git clone https://github.com/YOUR_USERNAME/hermes-production-patterns.git
+git clone https://github.com/Komagon/hermes-production-patterns.git
 cd hermes-production-patterns
 ```
 
 **复制 conventions 到 Hermes skills 目录：**
 
 ```bash
-# ── Linux / macOS ──
+# Linux / macOS
 mkdir -p ~/.hermes/skills/conventions
 cp conventions/* ~/.hermes/skills/conventions/
+```
 
-# ── Windows (PowerShell) ──
+```powershell
+# Windows (PowerShell)
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\AppData\Local\hermes\skills\conventions"
 Copy-Item -Path conventions\* -Destination "$env:USERPROFILE\AppData\Local\hermes\skills\conventions\"
 ```
@@ -138,17 +140,27 @@ Copy-Item -Path conventions\* -Destination "$env:USERPROFILE\AppData\Local\herme
 ### 2. 用模板创建你的第一个技能
 
 ```bash
-# Unix
+# Linux / macOS
+mkdir -p ~/.hermes/skills/my-skill
 cp templates/SKILL.md.template ~/.hermes/skills/my-skill/SKILL.md
+```
 
+```powershell
 # Windows (PowerShell)
-Copy-Item templates/SKILL.md.template "$env:USERPROFILE\AppData\Local\hermes\skills\my-skill\SKILL.md"
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\AppData\Local\hermes\skills\my-skill"
+Copy-Item templates\SKILL.md.template "$env:USERPROFILE\AppData\Local\hermes\skills\my-skill\SKILL.md"
 ```
 
 ### 3. 为你的 Cron 任务添加 STATE.md
 
 ```bash
+mkdir -p reports/my-cron-job
 cp templates/STATE.md.template reports/my-cron-job/STATE.md
+```
+
+```powershell
+New-Item -ItemType Directory -Force -Path "reports\my-cron-job"
+Copy-Item templates\STATE.md.template "reports\my-cron-job\STATE.md"
 ```
 
 ### 4. 参考 config.yaml.example 配置你的 Hermes
