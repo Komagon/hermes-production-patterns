@@ -10,6 +10,7 @@
 - **Current batch**: 2026-06-29
 
 ## Progress
+
 | Metric | Value |
 |--------|-------|
 | Sources fetched | 12 |

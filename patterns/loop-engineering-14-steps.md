@@ -47,5 +47,5 @@
 
 ## 参考
 
-- 原始 X Article: https://x.com/0xCodez/status/2064374643729773029
-- Addy Osmani Loop Engineering: https://addyosmani.com/blog/loop-engineering/
+- 原始 X Article: <https://x.com/0xCodez/status/2064374643729773029>
+- Addy Osmani Loop Engineering: <https://addyosmani.com/blog/loop-engineering/>
