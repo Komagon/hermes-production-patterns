@@ -1,3 +1,17 @@
+---
+name: maker-checker
+description: "Maker/Checker 双角色分离 — 生成与验证不在同一个 Agent"
+version: 1.0.0
+author: Komagon / Hermes Production Patterns
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [production, pattern, convention, maker-checker, quality]
+    category: conventions
+    related_skills: [state-file-pattern, control-flow-separation, error-compact-pattern]
+---
+
 # Maker/Checker 双角色分离
 
 > **对应 12-Factor Agents Factor 7: Contact humans with tool calls**  

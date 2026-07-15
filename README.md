@@ -87,7 +87,11 @@ hermes-production-patterns/
 │   ├── maker-checker.md         — 生成/验证双角色分离
 │   ├── state-file-pattern.md    — STATE.md 跨运行状态管理
 │   ├── control-flow-separation.md — 确定性 vs LLM 控制流
-│   └── error-compact-pattern.md — 错误压缩与分类处理
+│   ├── error-compact-pattern.md — 错误压缩、分类与自愈
+│   ├── skill-evolution.md       — SKILL.md 自动迭代优化
+│   ├── anti-patterns.md         — 💡 反面模式与纠正方案
+│   ├── pattern-composition.md   — 🧩 场景→模式组合决策树
+│   └── state-schema.json        — 📐 STATE.md JSON Schema（程序校验用）
 │
 ├── templates/                   ← 可复用的文件模板
 │   ├── SKILL.md.template
@@ -132,24 +136,35 @@ hermes-production-patterns/
 
 ### 1. 把模式装进你的 Hermes
 
+所有 `conventions/` 文件已包含 Hermes Skill 标准的 YAML frontmatter，可直接安装：
+
 ```bash
 # clone 项目
 git clone https://github.com/Komagon/hermes-production-patterns.git
 cd hermes-production-patterns
+
+# 一键复制 conventions 到 Hermes skills 目录（保持各自独立子目录）
+mkdir -p ~/.hermes/skills/hermes-production-patterns
+cp -r conventions/* ~/.hermes/skills/hermes-production-patterns/
+cp -r templates/ ~/.hermes/skills/hermes-production-patterns/
+cp AGENTS.md ~/.hermes/skills/hermes-production-patterns/
 ```
 
-**复制 conventions 到 Hermes skills 目录：**
+安装后重新加载 Hermes（新会话自动生效，当前会话运行 `/reload-skills`），然后即可用 `/skill` 加载：
 
 ```bash
-# Linux / macOS
-mkdir -p ~/.hermes/skills/conventions
-cp conventions/* ~/.hermes/skills/conventions/
+# 在 Hermes 会话中
+/reload-skills
+/skill maker-checker    # 加载 Maker/Checker 公约
+/skill state-file-pattern  # 加载状态管理公约
 ```
 
 ```powershell
-# Windows (PowerShell)
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\AppData\Local\hermes\skills\conventions"
-Copy-Item -Path conventions\* -Destination "$env:USERPROFILE\AppData\Local\hermes\skills\conventions\"
+# Windows (PowerShell) 同样操作
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.hermes\skills\hermes-production-patterns"
+Copy-Item -Recurse -Path conventions\* -Destination "$env:USERPROFILE\.hermes\skills\hermes-production-patterns\"
+Copy-Item -Recurse -Path templates\* -Destination "$env:USERPROFILE\.hermes\skills\hermes-production-patterns\templates\"
+Copy-Item AGENTS.md -Destination "$env:USERPROFILE\.hermes\skills\hermes-production-patterns\"
 ```
 
 ### 2. 用模板创建你的第一个技能
@@ -194,7 +209,11 @@ cp config.yaml.example ~/.hermes/config.yaml
 | Maker/Checker | `conventions/maker-checker.md` | 写代码的 Agent 和验证的 Agent 不是同一个 |
 | STATE.md | `conventions/state-file-pattern.md` | 每次运行先读状态，每步执行后写状态 |
 | 控制流分离 | `conventions/control-flow-separation.md` | 能用代码的别用 LLM |
-| 错误压缩 | `conventions/error-compact-pattern.md` | 错误信息压成一行，不让 Agent 失焦 |
+| 错误压缩与自愈 | `conventions/error-compact-pattern.md` | 错误压成一行，分类后尝试自愈 |
+| 技能进化 | `conventions/skill-evolution.md` | 像训练模型一样迭代 SKILL.md |
+| 💡 反面模式 | `conventions/anti-patterns.md` | 8 种常见错误实践及纠正 |
+| 🧩 模式组合 | `conventions/pattern-composition.md` | 场景→模式决策树+成熟度映射 |
+| 📐 状态 Schema | `conventions/state-schema.json` | STATE.md 的 JSON Schema 程序校验 |
 | Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 |
 | 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 |
 | 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 |

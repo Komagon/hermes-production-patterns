@@ -1,3 +1,17 @@
+---
+name: control-flow-separation
+description: "控制流分离 — 确定性代码 vs LLM 路由矩阵，能用代码的别用 LLM"
+version: 1.0.0
+author: Komagon / Hermes Production Patterns
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [production, pattern, convention, control-flow, efficiency]
+    category: conventions
+    related_skills: [error-compact-pattern, maker-checker]
+---
+
 # 控制流分离
 
 > **对应 12-Factor Agents Factor 8: Own your control flow**

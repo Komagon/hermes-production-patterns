@@ -1,3 +1,17 @@
+---
+name: skill-evolution
+description: "Skill 自动进化 — 基于验证门控的迭代优化，让 SKILL.md 越用越好"
+version: 1.0.0
+author: Komagon / Hermes Production Patterns
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [production, pattern, convention, evolution, optimization]
+    category: conventions
+    related_skills: [maker-checker, state-file-pattern]
+---
+
 # Skill Evolution — 技能的自动进化
 
 > **受 [Microsoft SkillOpt](https://github.com/microsoft/SkillOpt) 启发**  

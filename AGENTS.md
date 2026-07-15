@@ -11,8 +11,11 @@
 | Maker/Checker 分离 | `conventions/maker-checker.md` |
 | 状态文件管理 | `conventions/state-file-pattern.md` |
 | 控制流分离 | `conventions/control-flow-separation.md` |
-| 错误压缩 | `conventions/error-compact-pattern.md` |
+| 错误压缩与自愈 | `conventions/error-compact-pattern.md` |
 | 技能进化 | `conventions/skill-evolution.md` |
+| 💡 反面模式 | `conventions/anti-patterns.md` |
+| 🧩 模式组合指南 | `conventions/pattern-composition.md` |
+| 📐 状态文件 Schema | `conventions/state-schema.json` |
 | 模板 | `templates/` |
 | 设计模式 | `patterns/` |
 | 实战示例 | `examples/` |

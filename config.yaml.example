@@ -1,47 +1,76 @@
 # ========================================================
-# Hermes Agent 配置模板
+# Hermes Agent 配置模板（hermes-production-patterns 版）
 # 使用前替换所有 YOUR_xxx_HERE 为真实值
+# 对应 Hermes 最新 config.yaml 格式
+# 完整参考: https://hermes-agent.nousresearch.com/docs/user-guide/configuration
 # ========================================================
 
-# ---- 模型提供商 ----
-providers:
-  openrouter:
-    api_key: "YOUR_OPENROUTER_API_KEY"
-    base_url: "https://openrouter.ai/api/v1"
-
-  deepseek:
-    api_key: "YOUR_DEEPSEEK_API_KEY"
-    base_url: "https://api.deepseek.com"
-
 # ---- 默认模型 ----
-model: "anthropic/claude-opus-4.8"
-provider: "openrouter"
+model:
+  default: "anthropic/claude-sonnet-4"   # 或你的首选模型
+  provider: "openrouter"                  # 主 provider
+  base_url: "https://openrouter.ai/api/v1"
+  api_key: "YOUR_OPENROUTER_API_KEY"      # 或写入 ~/.hermes/.env
+  max_tokens: 8192
+  context_length: 200000                  # 按模型实际上下文设
 
-fallback:
-  - provider: "deepseek"
-    model: "deepseek/deepseek-v4-flash"
+  # 降级链（主 provider 不可用时自动切换）
+  fallback:
+    - provider: "deepseek"
+      model: "deepseek/deepseek-v4-flash"
+      api_key: "YOUR_DEEPSEEK_API_KEY"
+
+# ---- 安全检查 ----
+security:
+  redact_secrets: true                    # 自动遮盖工具输出中的密钥
+  tirith_enabled: true                    # 危险命令智能审批
+
+approvals:
+  mode: smart                             # smart | manual | off
+
+# ---- 终端 ----
+terminal:
+  backend: local                          # local | docker | ssh | modal
+  timeout: 180
+
+# ---- 压缩策略 ----
+compression:
+  enabled: true
+  threshold: 0.50
+  target_ratio: 0.20
 
 # ---- MCP 服务器 ----
-mcp_servers:
-  playwright:
-    command: "npx"
-    args: ["-y", "@playwright/mcp@latest"]
-    timeout: 120
-    connect_timeout: 60
+mcp:
+  servers:
+    playwright:
+      command: "npx"
+      args: ["-y", "@playwright/mcp@latest"]
+      timeout: 120
+      connect_timeout: 60
 
-# ---- Skills 目录 ----
+# ---- Skills ----
 skills:
   directories:
     - "~/.hermes/skills"
+    - "./conventions"                      # 指向本项目的 conventions（可选）
 
 # ---- 记忆系统 ----
 memory:
-  hindsight:
-    bank: "hermes"
-    budget: "mid"
+  memory_enabled: true
+  user_profile_enabled: true
+  provider: builtin
 
-# ---- 网关（可选） ----
-gateway:
-  enabled: false
-  # api_key: "YOUR_GATEWAY_API_KEY"
-  # port: 8642
+# ---- 辅助模型（vision, compression 等） ----
+auxiliary:
+  vision:
+    provider: openrouter
+    model: "openai/gpt-4o-mini"
+
+# ---- Cron 调度 ----
+cron:
+  max_runtime: 180
+  notify_on_error: true
+
+# ---- 状态管理（本项目的 STATE.md 目录） ----
+# 建议：每个 Cron 任务的 STATE.md 都放在统一的 reports/ 目录下
+# reports/{job-name}/STATE.md

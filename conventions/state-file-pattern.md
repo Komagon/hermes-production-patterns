@@ -1,3 +1,17 @@
+---
+name: state-file-pattern
+description: "STATE.md 跨运行状态管理 — Read Before Run, Write After Every Step"
+version: 1.0.0
+author: Komagon / Hermes Production Patterns
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [production, pattern, convention, state, idempotency]
+    category: conventions
+    related_skills: [error-compact-pattern, maker-checker]
+---
+
 # STATE.md — 跨运行状态管理
 
 > **对应 12-Factor Agents Factor 5: Unify execution state and business state**  
