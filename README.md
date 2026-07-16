@@ -88,7 +88,10 @@ hermes-production-patterns/
 │   ├── state-file-pattern.md    — STATE.md 跨运行状态管理
 │   ├── control-flow-separation.md — 确定性 vs LLM 控制流
 │   ├── error-compact-pattern.md — 错误压缩、分类与自愈
-│   ├── skill-evolution.md       — SKILL.md 自动迭代优化
+│   ├── skill-evolution.md       — 技能版本化与生命周期管理
+│   ├── cron-job-pattern.md      — Cron 任务幂等、防静默失败
+│   ├── checkpoint-pattern.md    — 长任务检查点恢复
+│   ├── secret-management.md     — 密钥存放与轮换规范
 │   ├── anti-patterns.md         — 💡 反面模式与纠正方案
 │   ├── pattern-composition.md   — 🧩 场景→模式组合决策树
 │   └── state-schema.json        — 📐 STATE.md JSON Schema（程序校验用）
@@ -204,19 +207,22 @@ cp config.yaml.example ~/.hermes/config.yaml
 
 ## 核心概念速查
 
-| 概念 | 文件 | 一句话 |
-|:---|:---|:---|
-| Maker/Checker | `conventions/maker-checker.md` | 写代码的 Agent 和验证的 Agent 不是同一个 |
-| STATE.md | `conventions/state-file-pattern.md` | 每次运行先读状态，每步执行后写状态 |
-| 控制流分离 | `conventions/control-flow-separation.md` | 能用代码的别用 LLM |
-| 错误压缩与自愈 | `conventions/error-compact-pattern.md` | 错误压成一行，分类后尝试自愈 |
-| 技能进化 | `conventions/skill-evolution.md` | 像训练模型一样迭代 SKILL.md |
-| 💡 反面模式 | `conventions/anti-patterns.md` | 8 种常见错误实践及纠正 |
-| 🧩 模式组合 | `conventions/pattern-composition.md` | 场景→模式决策树+成熟度映射 |
-| 📐 状态 Schema | `conventions/state-schema.json` | STATE.md 的 JSON Schema 程序校验 |
-| Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 |
-| 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 |
-| 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 |
+|| 概念 | 文件 | 一句话 |
+||:---|:---|:---|
+|| Maker/Checker | `conventions/maker-checker.md` | 写代码的 Agent 和验证的 Agent 不是同一个 |
+|| STATE.md | `conventions/state-file-pattern.md` | 每次运行先读状态，每步执行后写状态 |
+|| 控制流分离 | `conventions/control-flow-separation.md` | 能用代码的别用 LLM |
+|| 错误压缩与自愈 | `conventions/error-compact-pattern.md` | 错误压成一行，分类后尝试自愈 |
+|| 技能进化 | `conventions/skill-evolution.md` | 技能有版本、有生命周期、有迁移路径 |
+|| Cron 任务设计 | `conventions/cron-job-pattern.md` | 幂等执行+防静默失败+自动暂停 |
+|| 检查点恢复 | `conventions/checkpoint-pattern.md` | 长任务挂了能从检查点续跑 |
+|| 密钥管理 | `conventions/secret-management.md` | 密钥不进 Git、不进上下文、不落日志 |
+|| 💡 反面模式 | `conventions/anti-patterns.md` | 8 种常见错误实践及纠正 |
+|| 🧩 模式组合 | `conventions/pattern-composition.md` | 场景→模式决策树+成熟度映射 |
+|| 📐 状态 Schema | `conventions/state-schema.json` | STATE.md 的 JSON Schema 程序校验 |
+|| Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 |
+|| 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 |
+|| 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 |
 
 ---
 
@@ -250,6 +256,10 @@ cp config.yaml.example ~/.hermes/config.yaml
 | `conventions/state-file-pattern.md` | 12-Factor Agents Factor 5 + Loop Engineering Step 10 |
 | `conventions/control-flow-separation.md` | 12-Factor Agents Factor 8 |
 | `conventions/error-compact-pattern.md` | 12-Factor Agents Factor 9 |
+| `conventions/cron-job-pattern.md` | 12-Factor Agents Factor 6 + cron-scheduler 实战 |
+| `conventions/checkpoint-pattern.md` | 12-Factor Agents Factor 12 + Hermes checkpoint 机制 |
+| `conventions/secret-management.md` | 12-Factor Agents Factor 4（配置分离）+ Hermes `.env` 实践 |
+| `conventions/skill-evolution.md` | skill-creator + Hermes curator 实践 |
 | `patterns/loop-engineering-14-steps.md` | @0xCodez Loop Engineering X Article |
 | `patterns/12-factor-agents-for-hermes.md` | HumanLayer 12-Factor Agents |
 | `patterns/maturity-staging-l1-l2-l3.md` | cron-scheduler + task-safety 实践经验 |

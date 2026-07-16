@@ -13,6 +13,9 @@
 | 控制流分离 | `conventions/control-flow-separation.md` |
 | 错误压缩与自愈 | `conventions/error-compact-pattern.md` |
 | 技能进化 | `conventions/skill-evolution.md` |
+| Cron 任务设计 | `conventions/cron-job-pattern.md` |
+| 检查点恢复 | `conventions/checkpoint-pattern.md` |
+| 密钥管理 | `conventions/secret-management.md` |
 | 💡 反面模式 | `conventions/anti-patterns.md` |
 | 🧩 模式组合指南 | `conventions/pattern-composition.md` |
 | 📐 状态文件 Schema | `conventions/state-schema.json` |
