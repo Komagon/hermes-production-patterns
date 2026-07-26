@@ -1,15 +1,15 @@
 ---
 name: control-flow-separation
 description: "控制流分离 — 确定性代码 vs LLM 路由矩阵，能用代码的别用 LLM"
-version: 1.0.0
+version: 1.1.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [production, pattern, convention, control-flow, efficiency]
+    tags: [production, pattern, convention, control-flow, efficiency, graph]
     category: conventions
-    related_skills: [error-compact-pattern, maker-checker]
+    related_skills: [error-compact-pattern, maker-checker, state-file-pattern, checkpoint-pattern]
 ---
 
 # 控制流分离
@@ -42,6 +42,35 @@ Task Input
     │
     └─ Result → Append to context → Loop
 ```
+
+### Graph 工作流的控制流
+
+在 Graph（多节点）工作流中，控制流分离在每个节点内独立执行：
+
+```
+Graph Entry
+    │
+    ├─ Node R1 (Researcher)
+    │   └─ Code path 优先 → 搜 API、读文件
+    │   └─ LLM path → 仅做信息筛选和排序
+    │
+    ├─ Node R2 (Analyzer)
+    │   └─ Code path → 数据聚合、统计
+    │   └─ LLM path → 趋势分析、归因
+    │
+    ├─ Node R3 (Drafter)
+    │   └─ LLM path 为主（生成内容）
+    │
+    ├─ Node R4 (Reviewer)
+    │   └─ Code path → 格式检查、规则匹配
+    │   └─ LLM path → 逻辑一致性、事实核查
+    │
+    └─ Node R5 (Decider)
+        └─ Code path → 阈值判断、路由决策
+```
+
+核心规则：**Graph 执行器本身必须用代码编排**（DAG 调度器），
+每个节点内部的 Code vs LLM 路由由 `control-flow-separation` 决定。
 
 ## 代码示例
 

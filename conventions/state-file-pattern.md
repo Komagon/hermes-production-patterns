@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, pattern, convention, state, idempotency]
     category: conventions
-    related_skills: [error-compact-pattern, maker-checker]
+    related_skills: [error-compact-pattern, maker-checker, checkpoint-pattern]
 ---
 
 # STATE.md — 跨运行状态管理
@@ -26,6 +26,15 @@ Agent 会话是无状态的。每次运行都需要知道：
 
 STATE.md 就是干这个的。
 
+## 关联文件
+
+| 文件 | 用途 |
+|:---|:---|
+| `scripts/validate_state.py` | 程序化校验 STATE.md 格式和必填字段 |
+| `scripts/atomic_state_write.py` | 原子化写入 STATE.md，防并发冲突 |
+| `conventions/state-schema.json` | STATE.md 的 JSON Schema |
+| `templates/STATE.md.template` | 可直接复制的 STATE.md 模板 |
+
 ## 文件约定
 
 ```
@@ -34,28 +43,7 @@ reports/{job-name}/STATE.md
 
 ## 模板
 
-```markdown
-# STATE: {job-name}
-
-## Current Run
-- Last run: 2026-06-29T10:00:00+08:00
-- Status: idle | running | paused | failed
-- Current batch: {batch_id or iteration}
-
-## Progress
-| Metric | Value |
-|--------|-------|
-| Total items processed | 0 |
-| Successes | 0 |
-| Failures | 0 |
-| Skipped (duplicates) | 0 |
-
-## Lessons Learned
-- {date}: {lesson learned from this run}
-
-## Idempotency Keys
-- {date}: {checkpoint_key} (✅ done)
-```
+参见 `templates/STATE.md.template`，或直接复制以下内嵌模板：
 
 ## 四条规则
 

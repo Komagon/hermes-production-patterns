@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, pattern, convention, maker-checker, quality]
     category: conventions
-    related_skills: [state-file-pattern, control-flow-separation, error-compact-pattern]
+    related_skills: [state-file-pattern, control-flow-separation, error-compact-pattern, opik-eval]
 ---
 
 # Maker/Checker 双角色分离
@@ -43,19 +43,48 @@ metadata:
                         Maker 修改
 ```
 
+## Checker 模式选择
+
+Checker 有两种实现模式，按成熟度选择：
+
+| 模式 | 方式 | 适用场景 | 成熟度 |
+|:---|:---|:---|:---:|
+| **手动 Checker** | 独立 Agent（不同模型）五维评分 | 高价值内容、首次上线 | L1→L2 |
+| **自动化 Checker** | Opik LLM-as-a-Judge 评分 | 批量任务、日常运行 | L2→L3 |
+
+### 自动化 Checker（Opik Judge）
+
+使用 Opik 的 LLM-as-a-Judge 替代人工 Agent 做初步验证：
+
+```python
+from judge import evaluate_answer
+
+result = evaluate_answer(
+    question="评估这篇文章质量",
+    answer=article_text,
+    criteria=["hook_strength", "data_support", "ai_tone", "mobile_friendly", "engagement"]
+)
+# result.score: 0-1 归一化分数
+# result.passed: True/False (threshold ≥ 0.7)
+```
+
+**优势：** 速度快、可重复、一致性高  
+**局限：** 对需要深度推理的验证项（如事实核查）不如人工 Checker 可靠  
+**推荐：** 自动化 Checker 做初筛 + 人工 Checker 抽检终审
+
 ## 五维验证评分
 
-Checker 对 Maker 的输出从 5 个维度评分（各 1-10 分）：
+Checker 对 Maker 的输出从 5 个维度评分（各 1-10 分，或 Opik 归一化 0-1）：
 
-| 维度 | 含义 |
-|:---|:---|
-| 🎣 钩子强度 | 开头能不能让人点进来？ |
-| 📊 数据支撑 | 数字、对比表、具体案例到位吗？ |
-| 🧹 AI味检测 | 有没有 AI 套话？ |
-| 📱 手机适配 | 段落长度、排版舒适吗？ |
-| 🎯 互动钩子 | 结尾有没有让人想评论？ |
+| 维度 | 含义 | 手动分 | Opik 指标 |
+|:---|:---|:---:|:---:|
+| 🎣 钩子强度 | 开头能不能让人点进来？ | 1-10 | AnswerRelevance |
+| 📊 数据支撑 | 数字、对比表、具体案例到位吗？ | 1-10 | ContextRelevance |
+| 🧹 AI味检测 | 有没有 AI 套话？ | 1-10 | Hallucination (逆) |
+| 📱 手机适配 | 段落长度、排版舒适吗？ | 1-10 | Custom |
+| 🎯 互动钩子 | 结尾有没有让人想评论？ | 1-10 | Custom |
 
-总分 ≥ 40/50 为 PASS，否则反馈修改建议。
+总分 ≥ 40/50（手动）或 ≥ 0.7（Opik 归一化）为 PASS，否则反馈修改建议。
 
 ## 实现要点
 

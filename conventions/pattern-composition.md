@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, pattern, guide, composition, decision-tree]
     category: conventions
-    related_skills: [maker-checker, state-file-pattern, control-flow-separation, error-compact-pattern, skill-evolution]
+    related_skills: [maker-checker, state-file-pattern, control-flow-separation, error-compact-pattern, skill-evolution, checkpoint-pattern, graph-executor]
 ---
 
 # 模式组合指南
@@ -34,12 +34,18 @@ metadata:
     │   ├─ + error-compact-pattern（各步骤错处理）
     │   └─ + skill-evolution（长周期优化）
     │
-    └─ 复杂多 Agent 协作
-        ├─ maker-checker（角色分离）
-        ├─ control-flow-separation（协调者用代码控制流）
-        ├─ state-file-pattern（全局状态）
-        ├─ + error-compact-pattern（错误隔离）
-        └─ + skill-evolution（持续优化）
+    ├─ 复杂多 Agent 协作
+    │   ├─ maker-checker（角色分离）
+    │   ├─ control-flow-separation（协调者用代码控制流）
+    │   ├─ state-file-pattern（全局状态）
+    │   ├─ + error-compact-pattern（错误隔离）
+    │   └─ + skill-evolution（持续优化）
+    │
+    └─ 🧩 Graph 工作流（节点编排）
+        ├─ control-flow-separation（决定节点内 Code vs LLM）
+        ├─ state-file-pattern（跨节点状态传递）
+        ├─ maker-checker（关键节点双重验证）
+        └─ + checkpoint-pattern（断点续跑）
 ```
 
 ## 快速速查表
@@ -52,6 +58,7 @@ metadata:
 | 🧪 CI 自动修复 | control-flow, state-file | maker-checker, error-compact | skill-evolution |
 | 🤖 多 Agent 流水线 | maker-checker, state-file | control-flow, error-compact | skill-evolution |
 | 🔧 系统运维自动化 | control-flow, error-compact | state-file | — |
+| 🧩 Graph 工作流 | control-flow, state-file, checkpoint | maker-checker | graph-executor, error-compact |
 
 ## 模式间的关系图
 
@@ -68,6 +75,15 @@ metadata:
     └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
            │                │                │
            └────────────────┼────────────────┘
+                            │
+                  ┌─────────▼──────────┐
+                  │ checkpoint-pattern │← Graph 节点断点续跑
+                  └────────────────────┘
+                            │
+                  ┌─────────▼──────────┐
+                  │   graph-executor   │← 多节点编排框架
+                  └────────────────────┘
+                            │
                             ▼
                    ┌────────────────┐
                    │ skill-evolution│← 长期迭代优化
@@ -82,6 +98,7 @@ metadata:
 | L1 🟢 | state-file-pattern | 只读、仅报告、人类决策 |
 | L2 🟡 | + maker-checker + error-compact | 草稿 + 人工批准、有错误处理 |
 | L3 🔴 | + control-flow-separation + skill-evolution | 自动执行、自愈、持续优化 |
+| 🧩 Graph | + checkpoint-pattern + graph-executor | 多节点编排、断点续跑、R1→R5 流水线 |
 
 ## 反组合（不要这样用）
 
