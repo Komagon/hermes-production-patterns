@@ -1,5 +1,4 @@
 ---
-title: {{文章标题}}
 date: {{YYYY-MM-DD}}
 tags:
   - 公众号
