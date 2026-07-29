@@ -14,6 +14,16 @@
 ### 🧹 v1.2.0 清理
 
 - 无破坏性变更。所有 v1.1.0 文件向后兼容。
+- 移除仓库根目录下的过期 ChatGPT 图片。
+
+### 📝 v1.2.0 项目健康检查
+
+- **README 项目结构树** — 新增 `data-driven-optimization.md`、`wechat-article-pipeline.md`、`maturity-checklist.md` 引用。中英文同步更新。
+- **AGENTS.md** — 新增 data-driven-optimization 和 wechat-article-pipeline 入口。
+- **CONTEXT.md** — 更新最后修改时间戳。
+- **ARCHITECTURE.md** — Maker 组件新增 draw.io CLI、data-driven-optimization 数据源引用。
+- **Smoke test** — 新增 `examples/wechat-article-pipeline/test_example.py`，覆盖 clean text 和 AI-tainted text 两种场景。
+- **CHANGELOG.md 重复标题** — MD024 修复。
 
 ---
 

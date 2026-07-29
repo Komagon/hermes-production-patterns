@@ -60,18 +60,19 @@ The Hermes community is full of "how to install" guides, but there's almost noth
 
 ```
 hermes-production-patterns/
-├── AGENTS.md                    ← Harness entry point (AI, read me)
-├── README.md                    ← Chinese documentation
-├── README.en.md                 ← English documentation (this file)
-├── LICENSE                      ← MIT
-├── config.yaml.example          ← Hermes config template (sanitized)
-│
-├── conventions/                 ← 5 engineering conventions
-│   ├── maker-checker.md         — Generate / verify role separation
+├── conventions/                 ← Engineering conventions (core)
+│   ├── maker-checker.md         — Generate / verify dual-role separation
 │   ├── state-file-pattern.md    — STATE.md cross-run state management
-│   ├── control-flow-separation.md — Deterministic vs. stochastic routing
-│   ├── error-compact-pattern.md — Compact errors, preserve context
-│   └── skill-evolution.md       — ADD / DELETE / REPLACE skill refinement
+│   ├── control-flow-separation.md — Deterministic vs LLM control flow
+│   ├── error-compact-pattern.md — Error compression, classification & self-heal
+│   ├── skill-evolution.md       — Skill versioning & lifecycle management
+│   ├── cron-job-pattern.md      — Cron idempotency & silent-failure prevention
+│   ├── checkpoint-pattern.md    — Long-running task checkpoint recovery
+│   ├── secret-management.md     — Secret storage & rotation
+│   ├── anti-patterns.md         — 💡 Anti-patterns & corrections
+│   ├── pattern-composition.md   — 🧩 Scenario→pattern decision tree
+│   ├── state-schema.json        — 📐 STATE.md JSON Schema (programmatic validation)
+│   └── data-driven-optimization.md — 📊 Data-driven skill iteration from real analytics
 │
 ├── templates/                   ← Reusable file templates
 │   ├── SKILL.md.template
@@ -81,12 +82,15 @@ hermes-production-patterns/
 ├── patterns/                    ← Design patterns & methodology
 │   ├── loop-engineering-14-steps.md       — From prompter to loop designer
 │   ├── 12-factor-agents-for-hermes.md     — 12 principles mapped to Hermes
-│   └── maturity-staging-l1-l2-l3.md       — L1→L2→L3 rollout protocol
+│   ├── maturity-staging-l1-l2-l3.md       — L1→L2→L3 rollout protocol
+│   └── maturity-checklist.md              — Readiness checklist
 │
 ├── examples/                    ← Runnable examples
 │   ├── daily-news-digest/       — SKILL.md + STATE.md + test_example.py
 │   ├── cron-safety/             — Cron + safety integration walkthrough
-│   └── maker-checker-pipeline/  — Article production pipeline demo
+│   ├── maker-checker-pipeline/  — Article production pipeline demo
+│   ├── wechat-article-pipeline.md   — WeChat writing + AI-detect + diagram pipeline
+│   └── wechat-article-pipeline/ — Scripts (ai_detect.py) + templates
 │
 ├── scripts/                     ← Validation & automation
 │   ├── validate_state.py        — STATE.md schema compliance checker

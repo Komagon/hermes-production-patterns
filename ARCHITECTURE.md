@@ -20,6 +20,9 @@
 │ 工具: terminal,      │     │ 评分: 五维验证        │
 │       web_extract,   │     │ 标准: ≥ 40/50 PASS   │
 │       read/write     │     │ 上限: 3 轮重试       │
+│       draw.io CLI    │     │                      │
+│ 来源: data-driven-   │     │ 可选: ai_detect.py   │
+│       optimization   │     │       de_ai.py       │
 └──────────────────────┘     └──────────┬───────────┘
                                         │ PASS / FAIL
                                         ▼

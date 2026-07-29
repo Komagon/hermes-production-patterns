@@ -1,6 +1,7 @@
 # Hermes Production Patterns - 项目上下文
 
 > 初次建立于：2026-07-05
+> 最后更新：2026-07-29
 > 基于 domain-glossary 技能
 
 ## 一句话描述

@@ -94,7 +94,8 @@ hermes-production-patterns/
 │   ├── secret-management.md     — 密钥存放与轮换规范
 │   ├── anti-patterns.md         — 💡 反面模式与纠正方案
 │   ├── pattern-composition.md   — 🧩 场景→模式组合决策树
-│   └── state-schema.json        — 📐 STATE.md JSON Schema（程序校验用）
+│   ├── state-schema.json        — 📐 STATE.md JSON Schema（程序校验用）
+│   └── data-driven-optimization.md — 📊 用真实运营数据驱动技能迭代
 │
 ├── templates/                   ← 可复用的文件模板
 │   ├── SKILL.md.template
@@ -104,12 +105,15 @@ hermes-production-patterns/
 ├── patterns/                    ← 设计模式与方法论
 │   ├── loop-engineering-14-steps.md
 │   ├── 12-factor-agents-for-hermes.md
-│   └── maturity-staging-l1-l2-l3.md
+│   ├── maturity-staging-l1-l2-l3.md
+│   └── maturity-checklist.md
 │
-└── examples/                    ← 完整实战示例
-    ├── daily-news-digest.md
-    ├── maker-checker-article-pipeline.md
-    └── cron-safety-integration.md
+├── examples/                    ← 完整实战示例
+│   ├── daily-news-digest.md
+│   ├── maker-checker-article-pipeline.md
+│   ├── cron-safety-integration.md
+│   └── wechat-article-pipeline.md   — 公众号写作+AI检测+配图流水线
+│
 ```
 
 ---
