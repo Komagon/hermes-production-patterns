@@ -1,22 +1,22 @@
 # Changelog
 
-## v1.1.3 (2026-07-29)
+## v1.01.03 (2026-07-29)
 
-### ✨ v1.1.3 新增
+### ✨ v1.01.03 新增
 
 - **数据驱动技能优化公约** — `conventions/data-driven-optimization.md` 新增将真实运营数据嵌入技能文件的方法论。包含正向约束（什么有效）、负向约束（什么无效）、战术约束（执行规则）三层结构，以及自动化反馈循环设计。
 - **公众号文章流水线示例** — `examples/wechat-article-pipeline.md` 新增完整的公众号写作+AI检测+去AI味+配图生成+数据优化闭环示例。内置8维度AI味评分引擎(`scripts/ai_detect.py`)、Obsidian模板(`references/article-template.md`)，以及账号运营前4周的真实数据反馈验证。
 
-### 📝 v1.1.3 改进
+### 📝 v1.01.03 改进
 
 - **pattern-composition 决策树** — 新增 data-driven-optimization 节点的关联引用。
 
-### 🧹 v1.1.3 清理
+### 🧹 v1.01.03 清理
 
 - 无破坏性变更。所有 v1.1.0 文件向后兼容。
 - 移除仓库根目录下的过期 ChatGPT 图片。
 
-### 📝 v1.1.3 项目健康检查
+### 📝 v1.01.03 项目健康检查
 
 - **README 项目结构树** — 新增 `data-driven-optimization.md`、`wechat-article-pipeline.md`、`maturity-checklist.md` 引用。中英文同步更新。
 - **AGENTS.md** — 新增 data-driven-optimization 和 wechat-article-pipeline 入口。
