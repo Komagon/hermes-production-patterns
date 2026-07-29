@@ -2,7 +2,7 @@
 date: {{YYYY-MM-DD}}
 tags:
   - 公众号
-  - shinelong的AI冒险记
+  - {{公众号名称}}
   - {{核心标签}}
 status: draft
 platform: 微信公众号
