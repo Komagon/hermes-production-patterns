@@ -59,6 +59,7 @@ metadata:
 | 🤖 多 Agent 流水线 | maker-checker, state-file | control-flow, error-compact | skill-evolution |
 | 🔧 系统运维自动化 | control-flow, error-compact | state-file | — |
 | 🧩 Graph 工作流 | control-flow, state-file, checkpoint | maker-checker | graph-executor, error-compact |
+| 📝 内容创作流水线 | maker-checker, data-driven-optimization | state-file, error-compact | skill-evolution |
 
 ## 模式间的关系图
 
