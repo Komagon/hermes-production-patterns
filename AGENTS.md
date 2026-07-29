@@ -16,15 +16,14 @@
 | Cron 任务设计 | `conventions/cron-job-pattern.md` |
 | 检查点恢复 | `conventions/checkpoint-pattern.md` |
 | 密钥管理 | `conventions/secret-management.md` |
-|| 数据驱动技能优化 | `conventions/data-driven-optimization.md` |
-|| 💡 反面模式 | `conventions/anti-patterns.md` |
-|| 🧩 模式组合指南 | `conventions/pattern-composition.md` |
-|| 📐 状态文件 Schema | `conventions/state-schema.json` |
-|| 模板 | `templates/` |
-|| 设计模式 | `patterns/` |
-|| 实战示例 | `examples/` |
-|| 公众号文章流水线 | `examples/wechat-article-pipeline.md` |
-
+| 数据驱动技能优化 | `conventions/data-driven-optimization.md` |
+| 💡 反面模式 | `conventions/anti-patterns.md` |
+| 🧩 模式组合指南 | `conventions/pattern-composition.md` |
+| 📐 状态文件 Schema | `conventions/state-schema.json` |
+| 模板 | `templates/` |
+| 设计模式 | `patterns/` |
+| 实战示例 | `examples/` |
+| 公众号文章流水线 | `examples/wechat-article-pipeline.md` |
 ## 你的角色
 
 - **阅读 `conventions/` 理解工程模式** — 这些是可执行的技能文件
