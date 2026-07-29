@@ -24,6 +24,7 @@
 | 设计模式 | `patterns/` |
 | 实战示例 | `examples/` |
 | 公众号文章流水线 | `examples/wechat-article-pipeline.md` |
+
 ## 你的角色
 
 - **阅读 `conventions/` 理解工程模式** — 这些是可执行的技能文件
