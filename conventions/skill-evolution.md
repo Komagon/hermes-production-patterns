@@ -1,7 +1,7 @@
 ---
 name: skill-evolution
 description: "技能进化管理 — 如何从 v1 升级到 v2，不破坏现有工作流"
-version: 1.0.0
+version: 1.1.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -97,3 +97,16 @@ version: 1.2.0
 3. 保留 30 天，期间只修 bug
 4. 30 天后移除文件，在 CHANGELOG 中记录
 ```
+
+## 落地工具：skill_manage（2026-08）
+
+Hermes 原生 `skill_manage` 是技能进化的执行工具：
+
+| 动作 | 对应生命周期阶段 |
+|:----|:----------------|
+| `patch`（old_string/new_string 精确替换） | Stable 小修（v1.0.x → v1.0.y）：加坑位、改措辞 |
+| `edit`（整文件重写） | Major 升级（v1 → v2） |
+| `delete` + `absorbed_into=<umbrella>` | Deprecated/Removed：声明内容并入哪个技能（无去向则传空串=纯废弃） |
+| `write_file` / `remove_file` | 管理技能的 references / templates / scripts 子文件（版本化引用资产） |
+
+**要点：** 技能升级用 `patch` 而不是整文件重写（保留 frontmatter 与历史上下文）；废弃技能必须带 `absorbed_into` 声明去向，让下游（引用该技能的 cron/文档）可追踪。

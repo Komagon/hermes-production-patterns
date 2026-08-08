@@ -72,7 +72,8 @@ hermes-production-patterns/
 │   ├── anti-patterns.md         — 💡 Anti-patterns & corrections
 │   ├── pattern-composition.md   — 🧩 Scenario→pattern decision tree
 │   ├── state-schema.json        — 📐 STATE.md JSON Schema (programmatic validation)
-│   └── data-driven-optimization.md — 📊 Data-driven skill iteration from real analytics
+│   ├── data-driven-optimization.md — 📊 Data-driven skill iteration from real analytics
+│   └── hermes-capability-map.md — 🗺️ Hermes capability × pattern mapping (2026-08)
 │
 ├── templates/                   ← Reusable file templates
 │   ├── SKILL.md.template
@@ -199,6 +200,7 @@ $env:HERMES_API_KEY = "your-key-here"
 | Loop Engineering | `patterns/loop-engineering-14-steps.md` | Check if it's worth building, then design it right |
 | Maturity Staging | `patterns/maturity-staging-l1-l2-l3.md` | L1 reports only → L2 assisted → L3 autonomous |
 | 12-Factor Map | `patterns/12-factor-agents-for-hermes.md` | 12 principles mapped to Hermes conventions |
+| 🗺️ Capability Map | `conventions/hermes-capability-map.md` | Map new Hermes capabilities onto existing patterns (2026-08) |
 
 ---
 

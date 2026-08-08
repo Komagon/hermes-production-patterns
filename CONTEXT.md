@@ -1,7 +1,7 @@
 # Hermes Production Patterns - 项目上下文
 
 > 初次建立于：2026-07-05
-> 最后更新：2026-07-29
+> 最后更新：2026-08-08
 > 基于 domain-glossary 技能
 
 ## 一句话描述
@@ -18,6 +18,7 @@
 | **State Store** | 持久化运行状态、进度、幂等键的存储 | 状态存储 | `STATE.md`, `conventions/state-file-pattern.md` |
 | **Notifier** | 输出结果分发：报告/告警/存档 | 通知器 | `ARCHITECTURE.md` 组件图 |
 | **Harness Engineering** | Agent 可靠执行的方法论体系 | — | `README.md` 设计原则 1 |
+| **Monitor** | 运行时变化检测：哈希抑制，变了才跑 agent | 监控器 | `conventions/cron-job-pattern.md` Monitor 模式 |
 | **Loop Engineering** | 设计自主循环而非手写每一条 Prompt 的方法论 | — | `patterns/loop-engineering-14-steps.md` |
 | **12-Factor Agents** | Agent 系统的 12 条工程原则 | — | `patterns/12-factor-agents-for-hermes.md` |
 | **Maturity Staging** | L1(仅报告) → L2(辅助) → L3(自动) 三级成熟度 | 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` |

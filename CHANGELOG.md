@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.02.00 (2026-08-08)
+
+### ✨ v1.02.00 新增
+
+- **Hermes 能力 × 模式映射** — `conventions/hermes-capability-map.md` 新增：把 2026-08 前后的 Hermes 工具能力（cronjob monitor 族、delegate_task、session_search、execute_code、skill_manage 等）对号入座到既有模式。原则：能力在变，模式不变。
+- **cron-job-pattern 升级 v1.1.0** — 新增「Hermes 原生 Monitor 模式」：`monitor_script`/`monitor_url`（哈希抑制，变了才烧 token）、`no_agent=True` Watchdog（零 token 告警）、`context_from` 链式、`enabled_toolsets`、`attach_to_session`、`workdir`，附场景选择矩阵。
+- **maker-checker 升级 v1.1.0** — 新增「委托 Checker」选项：`delegate_task` 独立子代理 + `output_schema` 契约校验 + `live transcripts` 审计，与 Opik Judge 并列，附选择建议。
+- **state-file-pattern 升级 v1.1.0** — 新增恢复手段：`session_search`（FTS5 跨会话检索）与 `memory`（batch operations 原子更新）作为 STATE.md 的补充。
+- **skill-evolution 升级 v1.1.0** — 新增落地工具：`skill_manage`（patch/edit/delete/absorbed_into/write_file）对应技能生命周期各阶段。
+- **secret-management 升级 v1.1.0** — 新增按需加载工具：`tool_search`/`tool_call` 延迟加载，工具面越窄凭据暴露面越小。
+
+### 📝 v1.02.00 改进
+
+- README / README.en 项目结构树与核心概念速查同步新增 hermes-capability-map 与 Monitor 模式引用。
+
+### 🧹 v1.02.00 兼容性
+
+- 无破坏性变更。所有 v1.0.x / v1.1.0 文件向后兼容；四个升级文件仅追加章节与 frontmatter version 变更。
+
+---
+# Changelog
+
 ## v1.01.03 (2026-07-29)
 
 ### ✨ v1.01.03 新增

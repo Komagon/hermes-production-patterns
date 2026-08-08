@@ -1,15 +1,15 @@
 ---
 name: cron-job-pattern
-description: "Cron 任务设计模式 — 幂等、防重复、防静默失败"
-version: 1.0.0
+description: "Cron 任务设计模式 — 幂等、防重复、防静默失败（含 Hermes 原生 Monitor 模式）"
+version: 1.1.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
   hermes:
-    tags: [production, pattern, convention, cron, idempotency]
+    tags: [production, pattern, convention, cron, idempotency, monitor]
     category: conventions
-    related_skills: [state-file-pattern, maturity-staging, error-compact-pattern]
+    related_skills: [state-file-pattern, maturity-staging, error-compact-pattern, control-flow-separation]
 ---
 
 # Cron 任务设计模式
@@ -85,6 +85,49 @@ def should_skip(key: str, state: dict) -> bool:
 | L2 | 失败率告警 | 单次运行失败率 > 20% |
 | L3 | 自动暂停 | 连续 3 次运行失败 |
 | L4 | 人类通知 | L3 触发后推送到 IM |
+
+## Hermes 原生 Monitor 模式（2026-08）
+
+> 上面的三段式是"agent 自查"；Hermes 现在提供**原生监控模式**，从运行时层面解决"跑偏没人发现"——不需要 agent 每 tick 自查，大部分 tick 根本不烧 token。
+
+### monitor_script / monitor_url（变化检测）
+
+```
+每个 tick:
+  1. 先运行 monitor 脚本（或抓取 URL），对输出做哈希
+  2. 哈希与上次相同 → 跳过 agent 运行（0 token，静默 tick）
+  3. 哈希变化 → 把 unified diff + 新输出注入 agent prompt，跑一轮 agent
+  4. 首个 tick 总是跑 agent（建立基线）
+```
+
+- **适用**：监控网页变化、文件变化、价格/行情变化、外部 API 状态、CI 状态
+- **与三段式的关系**：monitor 是 Pre-flight 的自动化升级（变化检测交给运行时），agent 只在变化时执行 Execute
+- **脚本要求**：输出必须稳定（无时间戳/随机顺序），否则每 tick 都"看起来变了"
+
+### no_agent=True（Watchdog 模式）
+
+脚本即任务：stdout 非空 → 原样投递；stdout 空 → 静默（什么都不发）。适合纯告警/看门狗（磁盘水位、进程存活、API 配额、日志关键词），**零 token**。
+
+### 链式与上下文（context_from / script / workdir）
+
+| 能力 | 用法 | 场景 |
+|:----|:-----|:-----|
+| `context_from=[jobB]` | job A 最新输出注入 job B 的 prompt | 数据流水线（A 采集 → B 处理） |
+| `script`（agent 模式） | 脚本 stdout 注入 prompt 当上下文 | 数据收集 |
+| `enabled_toolsets` | 限制 job 工具集 | 降 token：只读监控 job 只给 web 工具 |
+| `attach_to_session` | 用户可回复该 job 投递并续上下文 | 交互式任务 |
+| `workdir` | 指定目录运行 + 注入 AGENTS.md/CLAUDE.md | 项目内 job |
+
+### 选择矩阵
+
+| 场景 | 推荐 |
+|:-----|:-----|
+| 网页/文件/行情变化检测 | `monitor_script` / `monitor_url` |
+| 纯脚本告警/看门狗 | `no_agent=True` |
+| 数据流水线（A→B） | `context_from` 链式 |
+| 定期内容生成 | 三段式 + `enabled_toolsets` |
+| 交互式/可追问任务 | `attach_to_session` |
+| 项目内定时维护 | `workdir` + 三段式 |
 
 ## 与成熟度分级配合
 

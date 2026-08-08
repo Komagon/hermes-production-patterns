@@ -1,7 +1,7 @@
 ---
 name: secret-management
 description: "密钥管理 — API Key、Token、密码的存放和轮换规范"
-version: 1.0.0
+version: 1.1.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -83,3 +83,7 @@ Hermes 的 `security.redact_secrets` 功能默认开启，会在工具输出中�
 ```bash
 hermes config set security.redact_secrets true  # 保持开启
 ```
+
+## 按需加载工具（2026-08）
+
+Hermes 的 `tool_search` / `tool_describe` / `tool_call` 支持延迟加载工具（firecrawl、codegraph、flowix 等 MCP 工具非常驻）。对 secret-management 的意义：**工具面越窄，凭据暴露面越小**——不需要的工具不加载，MCP 工具的 API Key 不随会话常驻。

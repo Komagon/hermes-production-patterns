@@ -95,7 +95,8 @@ hermes-production-patterns/
 │   ├── anti-patterns.md         — 💡 反面模式与纠正方案
 │   ├── pattern-composition.md   — 🧩 场景→模式组合决策树
 │   ├── state-schema.json        — 📐 STATE.md JSON Schema（程序校验用）
-│   └── data-driven-optimization.md — 📊 用真实运营数据驱动技能迭代
+│   ├── data-driven-optimization.md — 📊 用真实运营数据驱动技能迭代
+│   └── hermes-capability-map.md — 🗺️ Hermes 能力 × 生产模式映射（2026-08，新能力落地到既有模式）
 │
 ├── templates/                   ← 可复用的文件模板
 │   ├── SKILL.md.template
@@ -218,7 +219,7 @@ cp config.yaml.example ~/.hermes/config.yaml
 || 控制流分离 | `conventions/control-flow-separation.md` | 能用代码的别用 LLM |
 || 错误压缩与自愈 | `conventions/error-compact-pattern.md` | 错误压成一行，分类后尝试自愈 |
 || 技能进化 | `conventions/skill-evolution.md` | 技能有版本、有生命周期、有迁移路径 |
-|| Cron 任务设计 | `conventions/cron-job-pattern.md` | 幂等执行+防静默失败+自动暂停 |
+|| Cron 任务设计 | `conventions/cron-job-pattern.md` | 幂等+防静默失败+原生 Monitor 模式（变了才烧 token） |
 || 检查点恢复 | `conventions/checkpoint-pattern.md` | 长任务挂了能从检查点续跑 |
 || 密钥管理 | `conventions/secret-management.md` | 密钥不进 Git、不进上下文、不落日志 |
 || 💡 反面模式 | `conventions/anti-patterns.md` | 8 种常见错误实践及纠正 |
@@ -227,6 +228,7 @@ cp config.yaml.example ~/.hermes/config.yaml
 || Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 |
 || 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 |
 || 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 |
+| 🗺️ 能力映射 | `conventions/hermes-capability-map.md` | Hermes 新能力对号入座到既有模式（2026-08） |
 
 ---
 

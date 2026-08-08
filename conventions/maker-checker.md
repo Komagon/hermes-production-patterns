@@ -1,7 +1,7 @@
 ---
 name: maker-checker
 description: "Maker/Checker 双角色分离 — 生成与验证不在同一个 Agent"
-version: 1.0.0
+version: 1.1.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -51,6 +51,7 @@ Checker 有两种实现模式，按成熟度选择：
 |:---|:---|:---|:---:|
 | **手动 Checker** | 独立 Agent（不同模型）五维评分 | 高价值内容、首次上线 | L1→L2 |
 | **自动化 Checker** | Opik LLM-as-a-Judge 评分 | 批量任务、日常运行 | L2→L3 |
+| **委托 Checker** | `delegate_task` 独立子代理 + `output_schema` 验证 | 需要真隔离/可审计的日常任务 | L2→L3 |
 
 ### 自动化 Checker（Opik Judge）
 
@@ -71,6 +72,25 @@ result = evaluate_answer(
 **优势：** 速度快、可重复、一致性高  
 **局限：** 对需要深度推理的验证项（如事实核查）不如人工 Checker 可靠  
 **推荐：** 自动化 Checker 做初筛 + 人工 Checker 抽检终审
+
+### 委托 Checker（delegate_task，2026-08）
+
+用 Hermes 原生 `delegate_task` 把 Checker 跑成**独立子代理**，与 Maker 完全隔离（独立上下文、独立终端会话）：
+
+```
+delegate_task(
+  goal="以 Checker 身份验证以下文章质量…",
+  context="五维评分标准 + Maker 输出全文",
+  output_schema={...评分 JSON Schema...}
+)
+```
+
+**关键能力：**
+- `output_schema` — 子代理最终答案必须符合 JSON Schema，否则打回重试一次 → 评分契约硬校验
+- 并行 batch — 最多 3 个 Checker 子代理并行（如三视角评审），各自独立上下文
+- `live transcripts` — 子代理操作全量落盘，事后可审计（谁评的、查了什么、怎么打的分）
+
+**选择建议：** Opik Judge 适合"快而稳"的批量初筛；delegate_task 适合"要真隔离 + 要审计轨迹 + 要 schema 强校验"的场景；两者可串联（Opik 初筛 → delegate 抽检）。
 
 ## 五维验证评分
 
