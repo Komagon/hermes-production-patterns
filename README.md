@@ -251,7 +251,7 @@ cp config.yaml.example ~/.hermes/config.yaml
 | [Hermes Agent](https://github.com/NousResearch/hermes-agent) — Nous Research | 本项目所基于的自进化 AI Agent 框架 |
 | [12-Factor Agents](https://github.com/humanlayer/12-factor-agents) — HumanLayer | 12 条工程原则的原始定义，本项目的理论基石之一 |
 | [Loop Engineering](https://x.com/0xCodez/status/2064374643729773029) — @0xCodez (Lev Deviatkin, Anthropic) | 14 步 Loop 路线图的原始 X Article，6000+ likes |
-| [Harness Engineering](https://github.com/garrytan/harness-engineering) — garrytan | Agent 可靠执行方法论课程，本项目架构设计的指导思想 |
+| [Harness Engineering](https://github.com/garrytan/gbrain/blob/master/docs/ethos/THIN_HARNESS_FAT_SKILLS.md) — garrytan | Agent 可靠执行方法论课程，本项目架构设计的指导思想 |
 
 ### 延伸参考
 

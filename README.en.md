@@ -219,7 +219,7 @@ $env:HERMES_API_KEY = "your-key-here"
 | [Hermes Agent](https://github.com/NousResearch/hermes-agent) — Nous Research | The self-evolving agent framework this project builds upon |
 | [12-Factor Agents](https://github.com/humanlayer/12-factor-agents) — HumanLayer | 12 engineering principles for reliable agents |
 | [Loop Engineering](https://x.com/0xCodez/status/2064374643729773029) — @0xCodez (Lev Deviatkin, Anthropic) | 14-step roadmap from prompter to loop designer |
-| [Harness Engineering](https://github.com/garrytan/harness-engineering) — garrytan | Methodology for reliable agent execution |
+| [Harness Engineering](https://github.com/garrytan/gbrain/blob/master/docs/ethos/THIN_HARNESS_FAT_SKILLS.md) — garrytan | Methodology for reliable agent execution |
 
 ### Extended Reading
 
