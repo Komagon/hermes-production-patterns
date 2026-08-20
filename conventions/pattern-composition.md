@@ -46,6 +46,13 @@ metadata:
         ├─ state-file-pattern（跨节点状态传递）
         ├─ maker-checker（关键节点双重验证）
         └─ + checkpoint-pattern（断点续跑）
+
+你的系统处于什么阶段？
+    │
+    ├─ 刚起步：核心四条（maker-checker / state-file / control-flow / error-compact）
+    ├─ 已有 cron 在跑：+ cron-job-pattern + self-update-pattern（升级安全）
+    ├─ 知识在积累：+ memory-os-pattern（五层记忆 + 检索 + 写侧纪律）
+    └─ 开始做优化：+ data-driven-optimization + evolution-gate（评估→回归闭环）
 ```
 
 ## 快速速查表
@@ -60,6 +67,9 @@ metadata:
 | 🔧 系统运维自动化 | control-flow, error-compact | state-file | — |
 | 🧩 Graph 工作流 | control-flow, state-file, checkpoint | maker-checker | graph-executor, error-compact |
 | 📝 内容创作流水线 | maker-checker, data-driven-optimization | state-file, error-compact | skill-evolution |
+| 🔄 系统升级/更新 | self-update-pattern | state-file（基线） | error-compact |
+| 🧠 知识沉淀与检索 | memory-os-pattern | state-file | evolution-gate |
+| 📈 技能/流程持续优化 | evolution-gate, data-driven-optimization | maker-checker, state-file | skill-evolution |
 
 ## 模式间的关系图
 

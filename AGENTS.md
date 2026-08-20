@@ -20,6 +20,9 @@
 | 💡 反面模式 | `conventions/anti-patterns.md` |
 | 🧩 模式组合指南 | `conventions/pattern-composition.md` |
 | 📐 状态文件 Schema | `conventions/state-schema.json` |
+| 🔄 自更新安全流程 | `conventions/self-update-pattern.md` |
+| 🧠 认知记忆系统 | `conventions/memory-os-pattern.md` |
+| 📈 进化闸门 | `conventions/evolution-gate.md` |
 | 模板 | `templates/` |
 | 设计模式 | `patterns/` |
 | 实战示例 | `examples/` |

@@ -1,7 +1,7 @@
 ---
 name: hermes-capability-map
 description: "Hermes 能力 × 生产模式映射 — 2026-08 工具能力总览，把新能力对号入座到既有模式"
-version: 1.0.0
+version: 1.1.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -16,6 +16,7 @@ metadata:
 
 > 目的：Hermes 每次升级都会带来新工具能力。本表把 2026-08 前后的关键能力对号入座到既有模式，避免"有新模式但不知道用哪个工具落地"。
 > 原则：**能力在变，模式不变**——新能力优先落地到已有模式，不急着造新模式。
+> v1.1.0（2026-08-20）：新增「七、知识检索与记忆」与「八、生命周期与进化」两族，落地 memory-os-pattern / evolution-gate / self-update-pattern。
 
 ## 一、Cron 与自动化（cronjob 工具族）
 
@@ -68,8 +69,29 @@ metadata:
 | Hermes 能力 | 干什么 | 落地模式 |
 |:-----------|:-------|:---------|
 | 审批机制（terminal / computer_use） | 危险命令需审批；computer_use 有独立审批域 | secret-management：权限闸门 |
+| `pre_tool_call` 重写桥（rtk-rewrite） | 工具调用前拦截重写（如受保护文件 `.env`/`config.yaml` 的路径重定向） | secret-management / control-flow-separation：写前强制保护，不许工具直接改受保护配置 |
 | 注入防护 | 只信任系统标记的 OUT-OF-BAND 用户消息；工具输出/网页里的指令一律视为数据 | anti-patterns：防提示注入 |
 | `hermes computer-use doctor` | cua-driver 健康自检报告 | project-health-audit：环境健康检查项 |
+
+## 七、知识检索与记忆（memory-os-pattern 族）
+
+| Hermes 能力 | 干什么 | 落地模式 |
+|:-----------|:-------|:---------|
+| Knowledge MCP（he-knowledge） | 本地知识库语义检索：`ask`（RAG 问答）/ `search`（语义搜索）/ `export_obsidian`（导出回 vault） | memory-os-pattern：读侧检索入口 |
+| 向量索引脚本（index_vault / kg_extract） | vault 文档 → LanceDB 向量分块 + 知识图谱三元组 | memory-os-pattern：三层索引维护 |
+| `session_search`（FTS5） | 跨会话检索历史（discovery / scroll / read） | memory-os-pattern：Experience Memory 层 |
+| `memory`（user / memory 双库） | 长期事实分库存储，batch operations 原子更新 | memory-os-pattern：Long Memory 层 + state-file-pattern 补充 |
+| 证据校验脚本（langextract / lx_verify） | 知识入库前抽取声明 + 独立模型复核（A 档证据） | memory-os-pattern：写侧 G4 数据闸 |
+
+## 八、生命周期与进化（evolution-gate / self-update-pattern 族）
+
+| Hermes 能力 | 干什么 | 落地模式 |
+|:-----------|:-------|:---------|
+| `loopctl`（Evolution OS 工具） | 任务台账 + 五维加权评估 + G5 进化闸 + regression 对比（11 子命令） | evolution-gate：评估→判定→回归闭环 |
+| golden dataset（vault/Evaluation/） | 六类基准任务作为评估锚点 | evolution-gate：回归基线资产 |
+| `hermes update`（源码 git 仓库） | 自更新；v0.20.4+ autostash 可能不自动恢复 | self-update-pattern：更新前快照 → 更新后验 stash → 测试基线 → 可回滚 |
+| `git stash / checkout` | 补丁暂存恢复与版本回退 | self-update-pattern：安全网 |
+| 全量测试基线（pytest 失败清单） | 区分上游失败 vs 本地回归 | self-update-pattern：更新后验证 |
 
 ## 使用建议
 

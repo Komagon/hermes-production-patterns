@@ -1,5 +1,25 @@
 # Changelog
 
+## v1.03.00 (2026-08-20)
+
+### ✨ v1.03.00 新增（3 个实战模式，来自 7x24 生产环境近期优化）
+
+- **自更新安全流程** — `conventions/self-update-pattern.md`：把 `hermes update` 从「安装动作」变成「变更管理」。含 v0.20.4+ autostash 可能不自动恢复的坑（更新后查 `git stash list` → 手动 `stash apply` → modify/delete 冲突 `git rm`）、更新后测试失败基线（30524 测试/106 失败全量归因 → 区分上游失败 vs 本地回归）、回滚路径（git checkout）、STATE.md 更新记录模板。
+- **Memory OS** — `conventions/memory-os-pattern.md`：五层记忆架构（Context/Working/Long/Experience/Evidence）、读侧三层检索 + RRF 融合（LanceDB 向量 + 知识图谱 + FTS5）、写侧 G4 数据闸（对账查重、证据校验、索引同步）、每日复盘循环（DailyReview cron）。明确 RAG ≠ Memory。
+- **进化闸门** — `conventions/evolution-gate.md`：G1-G5 五道闸门（输入/运行时/质量/数据/进化）、五维加权评估（准确性 30% / 证据 25% / 完整 20% / 可靠 15% / 成本 10%）、G5 分档（≥85 promote / 55-84 improve / <55 failures）、回归测试 Deploy or Rollback、技能可度量化（usage_count/success_rate/average_score/cost/confidence）、落地工具 loopctl（11 子命令）。
+
+### 📝 v1.03.00 改进
+
+- **skill-evolution 升级 v1.2.0** — 新增「技能瘦身（Skill Slimming）」章节：description 前 57 字符截断规则、瘦身三原则（只留会用的 / 触发条件前置 / 约束而非教程）、2026-08-16 实战案例（头条写作技能只留硬约束）。
+- **hermes-capability-map 升级 v1.1.0** — 新增「七、知识检索与记忆」族（he-knowledge MCP / index_vault / kg_extract / session_search / memory 双库 / 证据校验）与「八、生命周期与进化」族（loopctl / golden dataset / hermes update / git stash / 测试基线）。
+- **pattern-composition 升级** — 决策树新增「系统阶段」分支（起步→cron→知识→优化），速查表新增 3 行（系统升级 / 知识沉淀 / 持续优化）。
+- **README / README.en / AGENTS.md / CONTEXT.md** — 结构树、核心概念速查、能力表、术语表同步新增 3 个模式。
+
+### 🧹 v1.03.00 兼容性
+
+- 无破坏性变更。所有既有文件向后兼容；新增 3 个独立 convention，2 个升级文件仅追加章节与 frontmatter version 变更。
+
+---
 ## v1.02.00 (2026-08-08)
 
 ### ✨ v1.02.00 新增

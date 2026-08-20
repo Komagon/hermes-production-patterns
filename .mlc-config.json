@@ -1,7 +1,7 @@
 {
   "ignorePatterns": [
-    { "pattern": "^https://x\.com" },
-    { "pattern": "^https://github\.com/Komagon/hermes-production-patterns" },
+    { "pattern": "^https://x\\.com" },
+    { "pattern": "^https://github\\.com/Komagon/hermes-production-patterns" },
     { "pattern": "node_modules" }
   ],
   "replacementPatterns": [

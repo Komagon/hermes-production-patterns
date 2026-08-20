@@ -1,7 +1,7 @@
 # Hermes Production Patterns - 项目上下文
 
 > 初次建立于：2026-07-05
-> 最后更新：2026-08-08
+> 最后更新：2026-08-20
 > 基于 domain-glossary 技能
 
 ## 一句话描述
@@ -27,6 +27,9 @@
 | **Skill Evolution** | 技能从简单到复杂的演进方法论 | 技能进化 | `conventions/skill-evolution.md` |
 | **Idempotency** | 通过 STATE.md 中的幂等键防止重复处理 | 幂等性 | `ARCHITECTURE.md` 数据流 Step 2 |
 | **Maker/Checker Loop** | MAKER→CHECKER→PASS/FAIL→重试(最多3轮)的验证循环 | 双角色循环 | `conventions/maker-checker.md` |
+| **Self-Update Pattern** | 更新前快照→更新后验 stash→测试基线→可回滚的自更新安全流程 | 自更新安全 | `conventions/self-update-pattern.md` |
+| **Memory OS** | 五层记忆 + 三层检索（向量/图谱/RRF）+ 写侧纪律的认知记忆系统 | 认知记忆 | `conventions/memory-os-pattern.md` |
+| **Evolution Gate** | G1-G5 五闸门 + 五维加权评估 + 回归 Deploy/Rollback 的进化控制 | 进化闸门 | `conventions/evolution-gate.md` |
 
 ## 架构决策记录
 

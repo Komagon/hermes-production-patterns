@@ -23,6 +23,8 @@
 把 Hermes Agent 从「聊天玩具」变成「7x24 小时自主工作的生产系统」所需的全部工程模式、公约和模板。
 
 > 🆕 **2026-08 已同步 Hermes 最新能力**：Monitor 原生监控（哈希抑制，变了才烧 token）、delegate Checker（独立子代理 + schema 契约）、能力×模式映射表（`conventions/hermes-capability-map.md`）。详见 CHANGELOG v1.02.00。
+>
+> 🧠 **v1.03.00（2026-08-20）**：新增 3 个实战模式——自更新安全流程（`self-update-pattern`，autostash 坑 + 测试失败基线）、Memory OS（`memory-os-pattern`，五层记忆 + 向量/图谱/RRF + 写侧纪律）、进化闸门（`evolution-gate`，G1-G5 + 五维评估 + 回归闭环）。详见 CHANGELOG v1.03.00。
 
 ---
 
@@ -98,7 +100,10 @@ hermes-production-patterns/
 │   ├── pattern-composition.md   — 🧩 场景→模式组合决策树
 │   ├── state-schema.json        — 📐 STATE.md JSON Schema（程序校验用）
 │   ├── data-driven-optimization.md — 📊 用真实运营数据驱动技能迭代
-│   └── hermes-capability-map.md — 🗺️ Hermes 能力 × 生产模式映射（2026-08，新能力落地到既有模式）
+│   ├── hermes-capability-map.md — 🗺️ Hermes 能力 × 生产模式映射（2026-08，新能力落地到既有模式）
+│   ├── self-update-pattern.md — 🔄 自更新安全流程：autostash 恢复、测试失败基线、可回滚
+│   ├── memory-os-pattern.md — 🧠 认知记忆系统：五层记忆 + 向量/图谱/RRF 检索 + 写侧纪律
+│   └── evolution-gate.md — 📈 进化闸门：G1-G5 + 五维加权评估 + 回归对比 Deploy or Rollback
 │
 ├── templates/                   ← 可复用的文件模板
 │   ├── SKILL.md.template
@@ -230,7 +235,10 @@ cp config.yaml.example ~/.hermes/config.yaml
 || Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 |
 || 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 |
 || 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 |
-| 🗺️ 能力映射 | `conventions/hermes-capability-map.md` | Hermes 新能力对号入座到既有模式（2026-08） |
+|| 🗺️ 能力映射 | `conventions/hermes-capability-map.md` | Hermes 新能力对号入座到既有模式（2026-08） |
+|| 🔄 自更新安全 | `conventions/self-update-pattern.md` | 更新前快照 → 更新后验 stash → 测试基线 → 可回滚 |
+|| 🧠 Memory OS | `conventions/memory-os-pattern.md` | 五层记忆 + 三层检索（向量/图谱/RRF）+ 写侧纪律 |
+|| 📈 进化闸门 | `conventions/evolution-gate.md` | G1-G5 五闸门 + 五维加权评估 + 回归 Deploy/Rollback |
 
 ---
 

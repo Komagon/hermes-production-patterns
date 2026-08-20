@@ -73,7 +73,10 @@ hermes-production-patterns/
 │   ├── pattern-composition.md   — 🧩 Scenario→pattern decision tree
 │   ├── state-schema.json        — 📐 STATE.md JSON Schema (programmatic validation)
 │   ├── data-driven-optimization.md — 📊 Data-driven skill iteration from real analytics
-│   └── hermes-capability-map.md — 🗺️ Hermes capability × pattern mapping (2026-08)
+│   ├── hermes-capability-map.md — 🗺️ Hermes capability × pattern mapping (2026-08)
+│   ├── self-update-pattern.md — 🔄 Safe self-update: autostash recovery, test-failure baseline, rollback
+│   ├── memory-os-pattern.md — 🧠 Cognitive memory: 5-layer memory + vector/graph/RRF retrieval
+│   └── evolution-gate.md — 📈 Evolution gate: G1-G5 + weighted 5-dim scoring + regression Deploy/Rollback
 │
 ├── templates/                   ← Reusable file templates
 │   ├── SKILL.md.template
@@ -201,6 +204,9 @@ $env:HERMES_API_KEY = "your-key-here"
 | Maturity Staging | `patterns/maturity-staging-l1-l2-l3.md` | L1 reports only → L2 assisted → L3 autonomous |
 | 12-Factor Map | `patterns/12-factor-agents-for-hermes.md` | 12 principles mapped to Hermes conventions |
 | 🗺️ Capability Map | `conventions/hermes-capability-map.md` | Map new Hermes capabilities onto existing patterns (2026-08) |
+| 🔄 Safe Self-Update | `conventions/self-update-pattern.md` | Snapshot → verify stash → test-failure baseline → rollback |
+| 🧠 Memory OS | `conventions/memory-os-pattern.md` | 5-layer memory + 3-way retrieval (vector/graph/RRF) + write discipline |
+| 📈 Evolution Gate | `conventions/evolution-gate.md` | G1-G5 gates + weighted 5-dim scoring + regression Deploy/Rollback |
 
 ---
 
