@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.04.00 (2026-08-27)
+
+### ✨ v1.04.00 新增:回归反测集(借鉴 dao-skill)
+
+- **回归反测集** — `test-prompts.json`(仓库根,与 15 个技能平级):20 条回归提示词,每条含 `prompt / expected / assertions(应命中) / forbidden(禁止触犯)`,覆盖全部 15 个 production pattern 的核心行为契约(evolution-gate 走闸门、state-file Read Before Run、maker-checker 独立验证、secret-management 环境变量、cron 幂等防静默失败等)。反测集的定位 = 「技能升级的验收标准:旧失败不再出现、旧成功仍然成立」;结构检查 ≠ 行为反测,dry-run 不能当已验证(借鉴 dao-skill 的 E0-E4 证据分级思维)。
+- **skill-evolution 升级 v1.3.0** — `conventions/skill-evolution.md`:新增「回归反测集」章节,定义何时跑(技能升级后 / 用户反馈"不对"时 / evolution-gate G5 回归对比)、怎么跑(prompt 喂 Agent → 检查 assertions 命中 + forbidden 未触)、新增条目规则(一个真实失败模式 → 一条反测,同根同触发合并防膨胀),并附 15 技能 → 20 条目反测覆盖速查表。
+- **AGENTS.md 能力表** — 增加回归反测集入口。
+
 ## v1.03.00 (2026-08-20)
 
 ### ✨ v1.03.00 新增（3 个实战模式，来自 7x24 生产环境近期优化）

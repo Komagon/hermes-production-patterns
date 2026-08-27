@@ -25,6 +25,8 @@
 > 🆕 **2026-08 已同步 Hermes 最新能力**：Monitor 原生监控（哈希抑制，变了才烧 token）、delegate Checker（独立子代理 + schema 契约）、能力×模式映射表（`conventions/hermes-capability-map.md`）。详见 CHANGELOG v1.02.00。
 >
 > 🧠 **v1.03.00（2026-08-20）**：新增 3 个实战模式——自更新安全流程（`self-update-pattern`，autostash 坑 + 测试失败基线）、Memory OS（`memory-os-pattern`，五层记忆 + 向量/图谱/RRF + 写侧纪律）、进化闸门（`evolution-gate`，G1-G5 + 五维评估 + 回归闭环）。详见 CHANGELOG v1.03.00。
+>
+> 🧪 **v1.04.00（2026-08-27）**：新增回归反测集 `test-prompts.json`（20 条回归提示词，覆盖全部 15 个模式，每条含 assertions/forbidden）；`skill-evolution` 升级 v1.3.0 并内置反测用法（何时跑、怎么跑、新增条目规则）。技能升级验收标准 = 旧失败不再出现 + 旧成功仍然成立。详见 CHANGELOG v1.04.00。
 
 ---
 
