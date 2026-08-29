@@ -37,6 +37,8 @@ This project is for you.
 
 These aren't armchair best practices — every pattern here has been **battle-tested in real 7×24 production runs**, broken, fixed, and hardened into reusable conventions.
 
+> 🧪 **v1.04.00 (2026-08-27)**: Added the regression re-test suite `test-prompts.json` — 20 trap-style prompts covering all 14 behavioral-contract patterns (capability-map is a reference table, exempt), each with `assertions` (must hit) / `forbidden` (must not touch); `skill-evolution` bumped to v1.3.0 documenting when/how to run. Acceptance bar for any skill upgrade = old failures never return + old successes still hold. See CHANGELOG.
+>
 > 🇨🇳 [中文版](README.md) also available.
 
 ---

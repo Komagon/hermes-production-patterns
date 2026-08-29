@@ -1,3 +1,17 @@
+---
+name: data-driven-optimization
+description: "数据驱动技能优化 — 以真实运营数据驱动技能迭代,技能是活文档"
+version: 1.0.0
+author: Komagon / Hermes Production Patterns
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  hermes:
+    tags: [production, pattern, convention, skill, optimization, analytics]
+    category: conventions
+    related_skills: [evolution-gate, anti-patterns, skill-evolution]
+---
+
 # Data-Driven Skill Optimization Convention
 
 ## Problem

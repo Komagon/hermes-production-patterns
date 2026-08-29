@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.04.01 (2026-08-29)
+
+### 🔧 修正:全面体检发现的 6 处问题(修 bug 不改接口,按 skill-evolution 版本表升 patch)
+
+- **frontmatter 缺失** — `conventions/data-driven-optimization.md` 补齐全套 YAML frontmatter(15 个 conventions 中唯一漏网,违反仓库自身模板约定)。
+- **覆盖声明纠偏** — v1.04.00 的「覆盖全部 15 个模式」表述不准确:速查表实际覆盖 14 个行为契约技能,`hermes-capability-map` 是参考映射表、无行为契约可反测。README/skill-evolution 已改为「14 个行为契约模式 + capability-map 豁免」,速查表补注豁免行。
+- **反测运行范围成文** — `skill-evolution` v1.3.0 → v1.3.1:把「升级跑映射条目、发版/tag 前跑全量、横切技能(evolution-gate/pattern-composition)变更跑全量、失败重跑一次再回滚」的口径写进章节(此前仅口头约定,本次源于社区问答沉淀)。
+- **package.json 版本漂移** — 1.03.00 → 1.04.01(v1.04.00 发布时漏更)。
+- **死链修复** — `examples/daily-news-digest/SKILL.md` 中 5 处 `../conventions/` 相对链接层级错误(应为 `../../conventions/`),本地链接检查器抓到、CI markdown-link-check 因 max-depth 配置未覆盖而漏报。
+- **README.en.md 同步** — 补 v1.04.00/v1.04.01 发布说明与回归反测集介绍(中文版已有、英文版缺失)。
+
 ## v1.04.00 (2026-08-27)
 
 ### ✨ v1.04.00 新增:回归反测集(借鉴 dao-skill)

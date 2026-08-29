@@ -16,11 +16,11 @@ mutating: true
 
 # Daily News Digest
 
-> 实时演示 [conventions/](../conventions/) 中全部四条工程公约的完整集成：
-> - **[state-file-pattern](../conventions/state-file-pattern.md)** — STATE.md 跨运行状态
-> - **[control-flow-separation](../conventions/control-flow-separation.md)** — 抓取用代码 / 摘要用 LLM
-> - **[maker-checker](../conventions/maker-checker.md)** — Checker 五维验证摘要质量
-> - **[error-compact-pattern](../conventions/error-compact-pattern.md)** — 错误不炸上下文
+> 实时演示 [conventions/](../../conventions/) 中全部四条工程公约的完整集成：
+> - **[state-file-pattern](../../conventions/state-file-pattern.md)** — STATE.md 跨运行状态
+> - **[control-flow-separation](../../conventions/control-flow-separation.md)** — 抓取用代码 / 摘要用 LLM
+> - **[maker-checker](../../conventions/maker-checker.md)** — Checker 五维验证摘要质量
+> - **[error-compact-pattern](../../conventions/error-compact-pattern.md)** — 错误不炸上下文
 
 ## 工作流
 
