@@ -1,6 +1,6 @@
 # Hermes Production Patterns
 
-n[![CI](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg)](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml)
+[![CI](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg)](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml)
 
 > **Production-grade engineering patterns for Hermes Agent**  
 > Built on Harness Engineering methodology + Loop Engineering + 12-Factor Agents
