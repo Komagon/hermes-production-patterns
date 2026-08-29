@@ -1,70 +1,50 @@
-# 示例：每日 AI 新闻摘要 Cron 任务
+# Daily News Digest Example
 
-> 演示 STATE.md + 控制流分离 + 错误压缩的完整集成
+## Goal
 
-## 1. 创建状态文件
+Run a daily digest loop that collects candidate links, filters duplicates, drafts a concise summary, and publishes only after verification.
 
-```markdown
-# STATE: daily-ai-digest
+## Maturity Level
 
-## Current Run
-- Last run: —
-- Status: idle
-- Current batch: 2026-06-29
+Start at **L1** for one to two weeks. The loop reads sources and writes a report, but a human decides whether anything is published. Promote to **L2** only after the report format and duplicate checks are stable.
 
-## Progress
-| Metric | Value |
-|--------|-------|
-| Sources fetched | 0 |
-| Articles summarized | 0 |
-| Failures | 0 |
+## Files
 
-## Lessons Learned
-(empty)
-
-## Idempotency Keys
-(empty)
+```text
+reports/daily-news-digest/
+├── STATE.md
+├── candidates.json
+└── digest.md
 ```
 
-## 2. 控制流分离（伪代码）
+## Loop
 
-```python
-# 确定性路线：抓取 RSS
-for source in RSS_SOURCES:
-    try:
-        articles = fetch_rss(source)         # ✅ 确定性
-    except TimeoutError:
-        log_compact_error(source, "timeout") # 🔁 可重试
+1. Read `reports/daily-news-digest/STATE.md`.
+2. Fetch source feeds with deterministic code.
+3. Build an idempotency key from `{source}:{url}:{published_date}`.
+4. Skip candidates already listed in `STATE.md`.
+5. Ask the Maker agent to draft the digest from the remaining candidates.
+6. Ask the Checker agent to score the draft for factuality, usefulness, source coverage, mobile readability, and repetition.
+7. Publish or hold based on the maturity level and Checker result.
+8. Update `STATE.md` with counts, skipped items, and lessons learned.
 
-# LLM 路线：写摘要
-for article in articles:
-    summary = await llm.summarize(article)   # ❌ 概率性
-    # Checker 验证摘要质量
-    if not checker.validate(summary):
-        retry_count += 1
-        if retry_count > 3:
-            log_compact_error(article.id, "summary_failed")
-            continue
-```
+## Gates
 
-## 3. 每次运行后的状态更新
+| Gate | Pass Condition |
+|:---|:---|
+| Duplicate check | No repeated idempotency keys |
+| Source coverage | Every item has a source URL and date |
+| Checker score | At least 40 out of 50 |
+| Hard stop | Authentication, corrupted config, or empty source set |
 
-```
-# STATE: daily-ai-digest (运行后)
-## Current Run
-- Last run: 2026-06-29T08:30:00+08:00
-- Status: idle
+## Failure Handling
 
-## Progress
-| Metric | Value |
-|--------|-------|
-| Sources fetched | 12 |
-| Articles summarized | 8 |
-| Failures | 1 |
+Use the compact error pattern before adding failures to context:
 
-## Lessons Learned
-- 2026-06-28: Source-X rate-limits at 10 req/min; space requests 5s apart
-
-## Idempotency Keys
-- 2026-06-29: digest-2026-06-29 (✅ done)
+```text
+[STEP_FAILED] fetch_feeds@2026-06-30T10:00:00+08:00
+  Error: Timeout - source feed did not respond in 10s
+  Hint: retry with exponential backoff
+  Recoverable: YES
+  Impact: one source skipped, digest can continue
 ```

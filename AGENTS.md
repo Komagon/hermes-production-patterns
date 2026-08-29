@@ -11,10 +11,23 @@
 | Maker/Checker 分离 | `conventions/maker-checker.md` |
 | 状态文件管理 | `conventions/state-file-pattern.md` |
 | 控制流分离 | `conventions/control-flow-separation.md` |
-| 错误压缩 | `conventions/error-compact-pattern.md` |
+| 错误压缩与自愈 | `conventions/error-compact-pattern.md` |
+| 技能进化 | `conventions/skill-evolution.md` |
+| Cron 任务设计 | `conventions/cron-job-pattern.md` |
+| 检查点恢复 | `conventions/checkpoint-pattern.md` |
+| 密钥管理 | `conventions/secret-management.md` |
+| 数据驱动技能优化 | `conventions/data-driven-optimization.md` |
+| 💡 反面模式 | `conventions/anti-patterns.md` |
+| 🧩 模式组合指南 | `conventions/pattern-composition.md` |
+| 📐 状态文件 Schema | `conventions/state-schema.json` |
+| 🔄 自更新安全流程 | `conventions/self-update-pattern.md` |
+| 🧠 认知记忆系统 | `conventions/memory-os-pattern.md` |
+| 📈 进化闸门 | `conventions/evolution-gate.md` |
+| 🧪 回归反测集 | `test-prompts.json`(20 条,含 assertions/forbidden) |
 | 模板 | `templates/` |
 | 设计模式 | `patterns/` |
 | 实战示例 | `examples/` |
+| 公众号文章流水线 | `examples/wechat-article-pipeline.md` |
 
 ## 你的角色
 

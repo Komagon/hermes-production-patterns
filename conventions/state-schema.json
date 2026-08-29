@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "STATE.md Schema",
+  "description": "Hermes Production Patterns — STATE.md 跨运行状态文件的 JSON Schema",
+  "type": "object",
+  "required": ["current_run", "progress", "idempotency_keys"],
+  "properties": {
+    "current_run": {
+      "type": "object",
+      "description": "当前运行状态",
+      "required": ["last_run", "status"],
+      "properties": {
+        "last_run": {
+          "type": "string",
+          "format": "date-time",
+          "description": "上次运行时间（ISO 8601）",
+          "examples": ["2026-07-15T10:00:00+08:00"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["idle", "running", "paused", "failed"],
+          "description": "运行状态"
+        },
+        "current_batch": {
+          "type": "string",
+          "description": "当前批次或迭代标识"
+        }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "description": "进度统计",
+      "required": ["total_checks", "successes", "failures", "skipped"],
+      "properties": {
+        "total_checks": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "总运行次数"
+        },
+        "successes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "成功次数"
+        },
+        "failures": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "失败次数"
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "因 Idempotency 跳过的次数"
+        }
+      }
+    },
+    "thresholds": {
+      "type": "array",
+      "description": "监控阈值（可选，仅监控类任务需要）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "监控目标（如挂载点、服务名）"
+          },
+          "warning": {
+            "type": "number",
+            "description": "警告阈值"
+          },
+          "critical": {
+            "type": "number",
+            "description": "严重阈值"
+          }
+        }
+      }
+    },
+    "alert_history": {
+      "type": "array",
+      "description": "告警历史（可选）",
+      "items": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "level": {
+            "type": "string",
+            "enum": ["WARNING", "CRITICAL", "INFO"]
+          },
+          "value": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "lessons_learned": {
+      "type": "array",
+      "description": "跨运行踩坑记录",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "lesson": {
+            "type": "string",
+            "description": "踩坑经验和解决方案"
+          }
+        },
+        "required": ["date", "lesson"]
+      }
+    },
+    "idempotency_keys": {
+      "type": "array",
+      "description": "幂等键列表，用于防重复执行",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "幂等键，格式为 {操作}:{日期}-{序号}",
+            "examples": ["check:2026-07-15-10"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["done", "failed"],
+            "description": "执行状态"
+          },
+          "completed_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["key", "status"]
+      }
+    }
+  },
+  "examples": [
+    {
+      "current_run": {
+        "last_run": "2026-07-15T10:00:00+08:00",
+        "status": "idle",
+        "current_batch": "N/A"
+      },
+      "progress": {
+        "total_checks": 42,
+        "successes": 40,
+        "failures": 1,
+        "skipped": 1
+      },
+      "lessons_learned": [
+        {
+          "date": "2026-07-10",
+          "lesson": "df -h 输出格式在 macOS 和 Linux 有差异，需要用 awk '{print $5}' 统一解析"
+        }
+      ],
+      "idempotency_keys": [
+        {"key": "check:2026-07-15-10", "status": "done", "completed_at": "2026-07-15T10:00:05+08:00"}
+      ]
+    }
+  ]
+}

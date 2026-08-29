@@ -1,15 +1,36 @@
 # Hermes Production Patterns
 
-[![CI](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg)](https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml)
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo.png">
+    <img src="assets/logo.png" alt="Hermes Production Patterns" width="600">
+  </picture>
+</p>
+
+<p align="center">
+  <a href="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml">
+    <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+</p>
+
+<p align="right">
+  <a href="README.en.md">🇬🇧 English</a>
+</p>
 
 > **Production-grade engineering patterns for Hermes Agent**  
 > Built on Harness Engineering methodology + Loop Engineering + 12-Factor Agents
 
-把 Hermes Agent 从「聊天玩具」变成「7×24 小时自主工作的生产系统」所需的全部工程模式、公约和模板。
+把 Hermes Agent 从「聊天玩具」变成「7x24 小时自主工作的生产系统」所需的全部工程模式、公约和模板。
+
+> 🆕 **2026-08 已同步 Hermes 最新能力**：Monitor 原生监控（哈希抑制，变了才烧 token）、delegate Checker（独立子代理 + schema 契约）、能力×模式映射表（`conventions/hermes-capability-map.md`）。详见 CHANGELOG v1.02.00。
+>
+> 🧠 **v1.03.00（2026-08-20）**：新增 3 个实战模式——自更新安全流程（`self-update-pattern`，autostash 坑 + 测试失败基线）、Memory OS（`memory-os-pattern`，五层记忆 + 向量/图谱/RRF + 写侧纪律）、进化闸门（`evolution-gate`，G1-G5 + 五维评估 + 回归闭环）。详见 CHANGELOG v1.03.00。
+>
+> 🧪 **v1.04.00（2026-08-27）**：新增回归反测集 `test-prompts.json`（20 条回归提示词，覆盖 14 个行为契约模式——`hermes-capability-map` 为参考映射表不设反测；每条含 assertions/forbidden）；`skill-evolution` 升级 v1.3.0 并内置反测用法（何时跑、怎么跑、新增条目规则）。技能升级验收标准 = 旧失败不再出现 + 旧成功仍然成立。详见 CHANGELOG v1.04.00。
 
 ---
 
-## 📖 简介 · Introduction
+## 简介 · Introduction
 
 ### 中文
 
@@ -24,7 +45,7 @@
 
 这个项目就是为你准备的。
 
-它不是什么「最佳实践」大合集——每一条模式都在真实的 7×24 运行环境中验证过，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
+它不是什么「最佳实践」大合集，每一条模式都在真实的 7x24 运行环境中验证过，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
 
 ### English
 
@@ -40,7 +61,7 @@ You've installed Hermes. Now what? If you're struggling with:
 
 This project is for you.
 
-These aren't armchair best practices — every pattern here has been battle-tested in real 7×24 production runs, broken, fixed, and hardened into reusable conventions.
+These aren't armchair best practices. Every pattern here has been battle-tested in real 7x24 production runs, broken, fixed, and hardened into reusable conventions.
 
 ---
 
@@ -61,7 +82,7 @@ Hermes Agent 本身是一个强大的 Agent 框架，但社区里最缺的不是
 
 ## 项目结构
 
-```
+```text
 hermes-production-patterns/
 ├── AGENTS.md                    ← Harness 入口（AI 读我）
 ├── README.md
@@ -72,7 +93,19 @@ hermes-production-patterns/
 │   ├── maker-checker.md         — 生成/验证双角色分离
 │   ├── state-file-pattern.md    — STATE.md 跨运行状态管理
 │   ├── control-flow-separation.md — 确定性 vs LLM 控制流
-│   └── error-compact-pattern.md — 错误压缩与分类处理
+│   ├── error-compact-pattern.md — 错误压缩、分类与自愈
+│   ├── skill-evolution.md       — 技能版本化与生命周期管理
+│   ├── cron-job-pattern.md      — Cron 任务幂等、防静默失败
+│   ├── checkpoint-pattern.md    — 长任务检查点恢复
+│   ├── secret-management.md     — 密钥存放与轮换规范
+│   ├── anti-patterns.md         — 💡 反面模式与纠正方案
+│   ├── pattern-composition.md   — 🧩 场景→模式组合决策树
+│   ├── state-schema.json        — 📐 STATE.md JSON Schema（程序校验用）
+│   ├── data-driven-optimization.md — 📊 用真实运营数据驱动技能迭代
+│   ├── hermes-capability-map.md — 🗺️ Hermes 能力 × 生产模式映射（2026-08，新能力落地到既有模式）
+│   ├── self-update-pattern.md — 🔄 自更新安全流程：autostash 恢复、测试失败基线、可回滚
+│   ├── memory-os-pattern.md — 🧠 认知记忆系统：五层记忆 + 向量/图谱/RRF 检索 + 写侧纪律
+│   └── evolution-gate.md — 📈 进化闸门：G1-G5 + 五维加权评估 + 回归对比 Deploy or Rollback
 │
 ├── templates/                   ← 可复用的文件模板
 │   ├── SKILL.md.template
@@ -82,12 +115,15 @@ hermes-production-patterns/
 ├── patterns/                    ← 设计模式与方法论
 │   ├── loop-engineering-14-steps.md
 │   ├── 12-factor-agents-for-hermes.md
-│   └── maturity-staging-l1-l2-l3.md
+│   ├── maturity-staging-l1-l2-l3.md
+│   └── maturity-checklist.md
 │
-└── examples/                    ← 完整实战示例
-    ├── daily-news-digest.md
-    ├── maker-checker-article-pipeline.md
-    └── cron-safety-integration.md
+├── examples/                    ← 完整实战示例
+│   ├── daily-news-digest.md
+│   ├── maker-checker-article-pipeline.md
+│   ├── cron-safety-integration.md
+│   └── wechat-article-pipeline.md   — 公众号写作+AI检测+配图流水线
+│
 ```
 
 ---
@@ -117,32 +153,67 @@ hermes-production-patterns/
 
 ### 1. 把模式装进你的 Hermes
 
+所有 `conventions/` 文件已包含 Hermes Skill 标准的 YAML frontmatter，可直接安装：
+
 ```bash
 # clone 项目
-git clone https://github.com/YOUR_USERNAME/hermes-production-patterns.git
+git clone https://github.com/Komagon/hermes-production-patterns.git
 cd hermes-production-patterns
 
-# 把 conventions 复制到 Hermes skill 目录
-cp conventions/* ~/AppData/Local/hermes/skills/conventions/
+# 一键复制 conventions 到 Hermes skills 目录（保持各自独立子目录）
+mkdir -p ~/.hermes/skills/hermes-production-patterns
+cp -r conventions/* ~/.hermes/skills/hermes-production-patterns/
+cp -r templates/ ~/.hermes/skills/hermes-production-patterns/
+cp AGENTS.md ~/.hermes/skills/hermes-production-patterns/
+```
+
+安装后重新加载 Hermes（新会话自动生效，当前会话运行 `/reload-skills`），然后即可用 `/skill` 加载：
+
+```bash
+# 在 Hermes 会话中
+/reload-skills
+/skill maker-checker    # 加载 Maker/Checker 公约
+/skill state-file-pattern  # 加载状态管理公约
+```
+
+```powershell
+# Windows (PowerShell) 同样操作
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.hermes\skills\hermes-production-patterns"
+Copy-Item -Recurse -Path conventions\* -Destination "$env:USERPROFILE\.hermes\skills\hermes-production-patterns\"
+Copy-Item -Recurse -Path templates\* -Destination "$env:USERPROFILE\.hermes\skills\hermes-production-patterns\templates\"
+Copy-Item AGENTS.md -Destination "$env:USERPROFILE\.hermes\skills\hermes-production-patterns\"
 ```
 
 ### 2. 用模板创建你的第一个技能
 
 ```bash
-cp templates/SKILL.md.template ~/AppData/Local/hermes/skills/my-skill/SKILL.md
-# 编辑填充你的技能逻辑
+# Linux / macOS
+mkdir -p ~/.hermes/skills/my-skill
+cp templates/SKILL.md.template ~/.hermes/skills/my-skill/SKILL.md
+```
+
+```powershell
+# Windows (PowerShell)
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\AppData\Local\hermes\skills\my-skill"
+Copy-Item templates\SKILL.md.template "$env:USERPROFILE\AppData\Local\hermes\skills\my-skill\SKILL.md"
 ```
 
 ### 3. 为你的 Cron 任务添加 STATE.md
 
 ```bash
+mkdir -p reports/my-cron-job
 cp templates/STATE.md.template reports/my-cron-job/STATE.md
+```
+
+```powershell
+New-Item -ItemType Directory -Force -Path "reports\my-cron-job"
+Copy-Item templates\STATE.md.template "reports\my-cron-job\STATE.md"
 ```
 
 ### 4. 参考 config.yaml.example 配置你的 Hermes
 
 ```bash
-cp config.yaml.example ~/AppData/Local/hermes/config.yaml
+cp config.yaml.example ~/.hermes/config.yaml
 # 替换 YOUR_xxx_HERE 为你的真实 API Key
 ```
 
@@ -150,15 +221,26 @@ cp config.yaml.example ~/AppData/Local/hermes/config.yaml
 
 ## 核心概念速查
 
-| 概念 | 文件 | 一句话 |
-|:---|:---|:---|
-| Maker/Checker | `conventions/maker-checker.md` | 写代码的 Agent 和验证的 Agent 不是同一个 |
-| STATE.md | `conventions/state-file-pattern.md` | 每次运行先读状态，每步执行后写状态 |
-| 控制流分离 | `conventions/control-flow-separation.md` | 能用代码的别用 LLM |
-| 错误压缩 | `conventions/error-compact-pattern.md` | 错误信息压成一行，不让 Agent 失焦 |
-| Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 |
-| 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 |
-| 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 |
+|| 概念 | 文件 | 一句话 |
+||:---|:---|:---|
+|| Maker/Checker | `conventions/maker-checker.md` | 写代码的 Agent 和验证的 Agent 不是同一个 |
+|| STATE.md | `conventions/state-file-pattern.md` | 每次运行先读状态，每步执行后写状态 |
+|| 控制流分离 | `conventions/control-flow-separation.md` | 能用代码的别用 LLM |
+|| 错误压缩与自愈 | `conventions/error-compact-pattern.md` | 错误压成一行，分类后尝试自愈 |
+|| 技能进化 | `conventions/skill-evolution.md` | 技能有版本、有生命周期、有迁移路径 |
+|| Cron 任务设计 | `conventions/cron-job-pattern.md` | 幂等+防静默失败+原生 Monitor 模式（变了才烧 token） |
+|| 检查点恢复 | `conventions/checkpoint-pattern.md` | 长任务挂了能从检查点续跑 |
+|| 密钥管理 | `conventions/secret-management.md` | 密钥不进 Git、不进上下文、不落日志 |
+|| 💡 反面模式 | `conventions/anti-patterns.md` | 8 种常见错误实践及纠正 |
+|| 🧩 模式组合 | `conventions/pattern-composition.md` | 场景→模式决策树+成熟度映射 |
+|| 📐 状态 Schema | `conventions/state-schema.json` | STATE.md 的 JSON Schema 程序校验 |
+|| Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 |
+|| 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 |
+|| 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 |
+|| 🗺️ 能力映射 | `conventions/hermes-capability-map.md` | Hermes 新能力对号入座到既有模式（2026-08） |
+|| 🔄 自更新安全 | `conventions/self-update-pattern.md` | 更新前快照 → 更新后验 stash → 测试基线 → 可回滚 |
+|| 🧠 Memory OS | `conventions/memory-os-pattern.md` | 五层记忆 + 三层检索（向量/图谱/RRF）+ 写侧纪律 |
+|| 📈 进化闸门 | `conventions/evolution-gate.md` | G1-G5 五闸门 + 五维加权评估 + 回归 Deploy/Rollback |
 
 ---
 
@@ -171,7 +253,7 @@ cp config.yaml.example ~/AppData/Local/hermes/config.yaml
 | [Hermes Agent](https://github.com/NousResearch/hermes-agent) — Nous Research | 本项目所基于的自进化 AI Agent 框架 |
 | [12-Factor Agents](https://github.com/humanlayer/12-factor-agents) — HumanLayer | 12 条工程原则的原始定义，本项目的理论基石之一 |
 | [Loop Engineering](https://x.com/0xCodez/status/2064374643729773029) — @0xCodez (Lev Deviatkin, Anthropic) | 14 步 Loop 路线图的原始 X Article，6000+ likes |
-| [Harness Engineering](https://github.com/garrytan/harness-engineering) — garrytan | Agent 可靠执行方法论课程，本项目架构设计的指导思想 |
+| [Harness Engineering](https://github.com/garrytan/gbrain/blob/master/docs/ethos/THIN_HARNESS_FAT_SKILLS.md) — garrytan | Agent 可靠执行方法论课程，本项目架构设计的指导思想 |
 
 ### 延伸参考
 
@@ -192,6 +274,10 @@ cp config.yaml.example ~/AppData/Local/hermes/config.yaml
 | `conventions/state-file-pattern.md` | 12-Factor Agents Factor 5 + Loop Engineering Step 10 |
 | `conventions/control-flow-separation.md` | 12-Factor Agents Factor 8 |
 | `conventions/error-compact-pattern.md` | 12-Factor Agents Factor 9 |
+| `conventions/cron-job-pattern.md` | 12-Factor Agents Factor 6 + cron-scheduler 实战 |
+| `conventions/checkpoint-pattern.md` | 12-Factor Agents Factor 12 + Hermes checkpoint 机制 |
+| `conventions/secret-management.md` | 12-Factor Agents Factor 4（配置分离）+ Hermes `.env` 实践 |
+| `conventions/skill-evolution.md` | skill-creator + Hermes curator 实践 |
 | `patterns/loop-engineering-14-steps.md` | @0xCodez Loop Engineering X Article |
 | `patterns/12-factor-agents-for-hermes.md` | HumanLayer 12-Factor Agents |
 | `patterns/maturity-staging-l1-l2-l3.md` | cron-scheduler + task-safety 实践经验 |

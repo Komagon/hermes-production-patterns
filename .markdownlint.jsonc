@@ -1,13 +1,15 @@
 {
   "$schema": "node_modules/markdownlint-cli2/schema/markdownlint-config-schema.json",
-
   "default": true,
-
   "MD013": false,
-  "MD033": false,
-  "MD041": false,
+  "MD022": false,
   "MD024": { "allow_different_nesting": true },
   "MD029": { "style": "ordered" },
-  "MD007": { "indent": 4 },
-  "MD046": { "style": "fenced" }
+  "MD031": false,
+  "MD032": false,
+  "MD033": false,
+  "MD040": false,
+  "MD041": false,
+  "MD046": { "style": "fenced" },
+  "MD060": false
 }
