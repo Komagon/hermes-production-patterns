@@ -1,59 +1,61 @@
-# 示例：Cron + Safety 集成
+# Cron Safety Integration Example
 
-> 演示 cron-scheduler + task-safety 的完整配合
+## Goal
 
-## 新任务创建流程
+Wrap a scheduled Hermes task with maturity staging, state tracking, idempotency, compact errors, and hard stops.
 
-```bash
-# 1. 创建 Cron 任务（默认 L1）
-cronjob action=create \
-  name="weekly-report" \
-  schedule="0 9 * * 1" \
-  prompt="生成上周工作总结" \
-  maturity=L1
+## Recommended Layout
 
-# 2. 先跑 Preflight Checklist
-#    [ ] Denylist 合规
-#    [ ] 范围约束
-#    [ ] Kill switch
-#    [ ] Token 预算
-#    [ ] Idempotency
-
-# 3. 手动审查第一次输出
-#    确认格式正确、数据准确、无意外副作用
-
-# 4. 稳定后升级到 L2
-cronjob action=update job_id=<id> maturity=L2
-
-# 5. L2 稳定 2 周后升级到 L3
-cronjob action=update job_id=<id> maturity=L3
+```text
+reports/my-cron-job/
+├── STATE.md
+├── run.log
+└── output/
 ```
 
-## STATE.md + Safety 状态
+## Before the Cron Runs
 
-```markdown
-# STATE: weekly-report
+1. Confirm the task has passed the 4-condition test.
+2. Start at L1 and define the promotion criteria before automation begins.
+3. Create `STATE.md` from `templates/STATE.md.template`.
+4. Define idempotency keys for every side effect.
+5. Define the hard stops that force downgrade to L1.
 
-## Current Run
-- Status: running (L2)
-- Batch: 2026-W26
+## Runtime Flow
 
-## Safety
-- Maturity: L2
-- Last preflight: 2026-06-01 (PASS)
-- Denylist hits: 0
-- Human approvals pending: 1
-
-## Idempotency
-- 2026-W25: weekly-report-W25 (✅ issued)
-- 2026-W26: (in progress)
+```text
+cron trigger
+  -> read STATE.md
+  -> check maturity level
+  -> check idempotency keys
+  -> run deterministic collection steps
+  -> call LLM only for judgment or synthesis
+  -> run Maker/Checker gate when output quality matters
+  -> write STATE.md after each side effect
+  -> compact and classify errors
 ```
 
-## 降级触发条件
+## Promotion Rules
 
-| 事件 | 动作 |
-|:---|:---|
-| 输出格式错误 | 自动重试 1 次 → 仍错则降 L1 |
-| 触碰 Denylist | 立即降 L1 + 通知人类 |
-| 连续 2 次失败 | 降 L1 + 暂停任务 |
-| Token 超预算 2x | 降 L1 + 报告用量 |
+| From | To | Requirement |
+|:---|:---|:---|
+| L1 | L2 | Reports are useful for at least one week |
+| L2 | L3 | Human approvals are boring and consistently safe |
+| L3 | L1 | Any hard stop, unsafe write, or repeated quality failure |
+
+## Example Hard Stops
+
+- Output path is outside the approved report directory.
+- The source returns malformed data for more than half of items.
+- The Checker score falls below the pass threshold twice in a row.
+- `STATE.md` cannot be read or written.
+
+## Compact Error Example
+
+```text
+[STEP_FAILED] write_state@2026-06-30T10:00:00+08:00
+  Error: PermissionDenied - STATE.md could not be updated
+  Hint: stop the loop and fix filesystem permissions
+  Recoverable: NO
+  Impact: idempotency cannot be guaranteed
+```
