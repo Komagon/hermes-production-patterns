@@ -159,7 +159,6 @@ hermes-production-patterns/
 # clone 项目
 git clone https://github.com/Komagon/hermes-production-patterns.git
 cd hermes-production-patterns
-```
 
 # 一键复制 conventions 到 Hermes skills 目录（保持各自独立子目录）
 mkdir -p ~/.hermes/skills/hermes-production-patterns
