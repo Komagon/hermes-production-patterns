@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, state, idempotency]
     category: conventions
     related_skills: [error-compact-pattern, maker-checker, checkpoint-pattern]
+hpp_category: state
+hpp_en: "Cross-run memory: read before run, write after every step."
+hpp_maturity: L2
+hpp_complexity: low
+hpp_reliability: high
+hpp_capability: files
+hpp_when_to_use: ["Any task that survives sessions", "Cron jobs with incremental progress", "Multi-step pipelines"]
+hpp_when_not_to_use: ["Truly one-shot stateless queries"]
 ---
 
 # STATE.md — 跨运行状态管理

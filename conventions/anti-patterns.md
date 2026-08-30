@@ -10,6 +10,12 @@ metadata:
     tags: [production, pattern, convention, anti-pattern, pitfalls]
     category: conventions
     related_skills: [maker-checker, state-file-pattern, control-flow-separation, error-compact-pattern]
+hpp_category: guide
+hpp_en: "A catalogue of production anti-patterns and their fixes."
+hpp_maturity: L1
+hpp_complexity: low
+hpp_reliability: medium
+hpp_capability: docs
 ---
 
 # 反面模式（Anti-Patterns）

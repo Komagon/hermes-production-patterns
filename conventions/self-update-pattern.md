@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, self-update, upgrade, rollback, testing]
     category: conventions
     related_skills: [state-file-pattern, error-compact-pattern, checkpoint-pattern, anti-patterns]
+hpp_category: evolution
+hpp_en: "Safe agent self-update: backup, verify, roll back."
+hpp_maturity: L3
+hpp_complexity: high
+hpp_reliability: medium
+hpp_capability: skills
+hpp_when_to_use: ["Agents that patch their own config/skills", "Versioned infrastructure changes"]
+hpp_when_not_to_use: ["Frozen production systems"]
 ---
 
 # Hermes 自更新安全流程（Self-Update Pattern）

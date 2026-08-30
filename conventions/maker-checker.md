@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, maker-checker, quality]
     category: conventions
     related_skills: [state-file-pattern, control-flow-separation, error-compact-pattern, opik-eval]
+hpp_category: quality
+hpp_en: "Separate generation from validation."
+hpp_maturity: L2
+hpp_complexity: medium
+hpp_reliability: high
+hpp_capability: delegate
+hpp_when_to_use: ["Long-running Agent", "High-value task", "Autonomous workflow", "Output needs validation"]
+hpp_when_not_to_use: ["Simple one-shot task", "Low-value operation", "Validation cost exceeds task value"]
 ---
 
 # Maker/Checker 双角色分离

@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, control-flow, efficiency, graph]
     category: conventions
     related_skills: [error-compact-pattern, maker-checker, state-file-pattern, checkpoint-pattern]
+hpp_category: automation
+hpp_en: "Deterministic steps belong in code, not in prompts."
+hpp_maturity: L2
+hpp_complexity: low
+hpp_reliability: high
+hpp_capability: terminal
+hpp_when_to_use: ["Loops with fixed logic", "Retry / counting / branching", "Cost-sensitive repeated runs"]
+hpp_when_not_to_use: ["Genuinely open-ended exploration"]
 ---
 
 # 控制流分离

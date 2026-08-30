@@ -10,6 +10,12 @@ metadata:
     tags: [production, hermes, capability, mapping]
     category: conventions
     related_skills: [cron-job-pattern, maker-checker, state-file-pattern, control-flow-separation, skill-evolution, secret-management]
+hpp_category: guide
+hpp_en: "Map every Hermes capability to the right pattern."
+hpp_maturity: L1
+hpp_complexity: low
+hpp_reliability: medium
+hpp_capability: docs
 ---
 
 # Hermes 能力 × 生产模式映射（2026-08）

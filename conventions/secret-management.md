@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, secret, security, env]
     category: conventions
     related_skills: [control-flow-separation, error-compact-pattern]
+hpp_category: security
+hpp_en: "API keys, tokens and passwords: where to store, how to rotate."
+hpp_maturity: L1
+hpp_complexity: low
+hpp_reliability: high
+hpp_capability: config
+hpp_when_to_use: ["Any agent holding credentials", "Shared or CI-run configurations"]
+hpp_when_not_to_use: ["Fully offline demos"]
 ---
 
 # 密钥管理

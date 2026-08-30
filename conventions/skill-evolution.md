@@ -11,6 +11,14 @@ metadata:
     category: conventions
     related_skills: [maker-checker, state-file-pattern, maturity-staging]
 migration: "v1.2.0 → v1.3.0:新增「回归反测集」章节(借鉴 dao-skill test-prompts.json);v1.3.0 → v1.3.1:澄清反测覆盖范围(14 个行为契约技能,capability-map 豁免)与运行范围(升级跑映射条目/发版跑全量/失败处置)"
+hpp_category: evolution
+hpp_en: "Evolve skills v1 to v2 without breaking current users."
+hpp_maturity: L2
+hpp_complexity: medium
+hpp_reliability: medium
+hpp_capability: skills
+hpp_when_to_use: ["Iterating production skills"]
+hpp_when_not_to_use: ["Scratch skills with no dependents"]
 ---
 
 # 技能进化管理

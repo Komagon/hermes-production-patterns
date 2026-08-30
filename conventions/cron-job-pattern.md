@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, cron, idempotency, monitor]
     category: conventions
     related_skills: [state-file-pattern, maturity-staging, error-compact-pattern, control-flow-separation]
+hpp_category: automation
+hpp_en: "Idempotent, dedup-safe, silent-failure-proof scheduling."
+hpp_maturity: L2
+hpp_complexity: medium
+hpp_reliability: high
+hpp_capability: cron
+hpp_when_to_use: ["Recurring autonomous jobs", "Jobs that must never double-fire", "Jobs needing delivery guarantees"]
+hpp_when_not_to_use: ["One-off tasks", "Jobs needing interactive input"]
 ---
 
 # Cron 任务设计模式

@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, evolution, evaluation, gate, regression, loopctl]
     category: conventions
     related_skills: [maker-checker, data-driven-optimization, skill-evolution, memory-os-pattern, state-file-pattern]
+hpp_category: quality
+hpp_en: "G1-G5 weighted gate before any skill evolution ships."
+hpp_maturity: L3
+hpp_complexity: high
+hpp_reliability: high
+hpp_capability: skills
+hpp_when_to_use: ["Skill/prompt changes on live agents", "Model or config swaps"]
+hpp_when_not_to_use: ["Throwaway experiments"]
 ---
 
 # 进化闸门（Evolution Gate）

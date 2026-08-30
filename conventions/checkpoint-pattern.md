@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, checkpoint, recovery, resilience]
     category: conventions
     related_skills: [state-file-pattern, cron-job-pattern, error-compact-pattern]
+hpp_category: state
+hpp_en: "Mid-task crash recovery: resume from where it died."
+hpp_maturity: L2
+hpp_complexity: medium
+hpp_reliability: high
+hpp_capability: files
+hpp_when_to_use: ["Long batch processing", "Multi-hour pipelines", "Anything too expensive to redo"]
+hpp_when_not_to_use: ["Short tasks under one session"]
 ---
 
 # 检查点模式

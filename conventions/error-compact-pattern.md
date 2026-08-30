@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, error, resilience]
     category: conventions
     related_skills: [state-file-pattern, control-flow-separation]
+hpp_category: reliability
+hpp_en: "Compress failures so context never explodes."
+hpp_maturity: L3
+hpp_complexity: low
+hpp_reliability: high
+hpp_capability: context
+hpp_when_to_use: ["Agents with retry loops", "Long-running error collection", "Noisy external integrations"]
+hpp_when_not_to_use: ["Single-attempt workflows"]
 ---
 
 # 错误压缩模式

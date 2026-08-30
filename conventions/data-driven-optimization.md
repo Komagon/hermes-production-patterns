@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, skill, optimization, analytics]
     category: conventions
     related_skills: [evolution-gate, anti-patterns, skill-evolution]
+hpp_category: evolution
+hpp_en: "Let real operational data drive skill iterations."
+hpp_maturity: L3
+hpp_complexity: medium
+hpp_reliability: medium
+hpp_capability: analytics
+hpp_when_to_use: ["Mature agents with usage logs"]
+hpp_when_not_to_use: ["Pre-launch intuition phase"]
 ---
 
 # Data-Driven Skill Optimization Convention

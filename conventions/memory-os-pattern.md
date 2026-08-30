@@ -10,6 +10,14 @@ metadata:
     tags: [production, pattern, convention, memory, vector, graph, rrf, retrieval]
     category: conventions
     related_skills: [state-file-pattern, evidence-memory, self-update-pattern, data-driven-optimization]
+hpp_category: memory
+hpp_en: "Five-layer memory architecture with vector/graph retrieval."
+hpp_maturity: L3
+hpp_complexity: high
+hpp_reliability: medium
+hpp_capability: memory
+hpp_when_to_use: ["Long-lived personal agents", "Agents needing cross-session facts"]
+hpp_when_not_to_use: ["Stateless request/response bots"]
 ---
 
 # Memory OS（认知记忆系统）

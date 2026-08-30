@@ -1,5 +1,23 @@
 # Changelog
 
+## v1.06.00 (2026-08-30)
+
+### ✨ 网站 V2:从文档站升级为 Agent Production Engineering 知识系统
+
+按 V2 UI/UX 改版任务书执行(设计文档见 `.hermes/reports/website-v2/`):
+
+- **首页 Landing 化**(§6-§8)— Hero「BUILD AGENTS THAT SURVIVE PRODUCTION.」+ 三 CTA + 可点击生产架构 SVG + 终端元素;Why Agents Fail 六问题卡;Problem→Pattern→Result 六链;成熟度时间线 L1-L3;Choose Your Path 三角色;案例 Case-Study 卡。构建期由 `build_docs.py` 从 frontmatter/正文派生,零硬编码内容(§36)。
+- **统一深色工程终端风**(§14/§29)— 配色令牌 #080A0D/#78FFB7/#62D9FF 全套落地并桥接 Material 变量;取消浅色主题;分类 accent 走卡片左边框+kicker,禁高饱和整卡背景。
+- **Pattern Explorer**(§25)— 新页 `/patterns-library/`:分类过滤 pills + 关键词搜索 + SHOWN 计数,4.2KB 无依赖 JS。
+- **生产架构页**(§19-20)— 新页 `/architecture-page/`:Normal/Error 双流 + 组件职责表;retry→maker 回边正交布线。
+- **Engineering Decision Layout**(§15-18)— 全部 15 个公约页注入分类 kicker、MATURITY/COMPLEXITY/RELIABILITY/HERMES/VERSION 信息栏、When(Not) ✓/✕ 双栏卡;数据源为新增 `hpp_*` frontmatter 键(可选,缺省安全,正文零改动)。
+- **关系图谱升级**(§11)— 分类环排 + 弦式曲边 + 双环标签错位 + 中心品牌遮罩 + hover 高亮/关联弱高亮/键盘可达。
+- **搜索**(§24)— ⌘K + placeholder「搜索 Patterns、问题、架构… (⌘K)」(zh locale 覆写)。
+- **SEO**(§38)— `overrides/main.html` 补每页 OpenGraph/Twitter card;独立 title/description。
+- **响应式**(§34)— 390px 实测零横向溢出;图在窄屏保持可读尺寸 + 横向滚动。
+- **渐进增强红线** — 滚动淡入 1.5s 兜底强制可见,JS 失效不空洞;prefers-reduced-motion 全关。
+- 旧首页(README)完整保留为 `/readme/`,零页面删除(§37);check-nav 43 页全挂 nav;markdownlint / strict build / 视觉五轮复检全 PASS。
+
 ## v1.05.01 (2026-08-30)
 
 ### ✨ 文档站吸收 Skill OS 理念:决策入口 + 模式图谱 + 契约卡 + nav 回归闸门
