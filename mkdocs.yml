@@ -64,6 +64,9 @@ extra:
 
 nav:
   - 首页: index.md
+  - 决策入口:
+      - 路由入口 Router: router.md
+      - 模式图谱 Skill Graph: skill-graph.md
   - 总览:
       - 架构总览: ARCHITECTURE.md
       - 上下文: CONTEXT.md

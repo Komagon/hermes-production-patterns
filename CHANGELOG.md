@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.05.01 (2026-08-30)
+
+### ✨ 文档站吸收 Skill OS 理念:决策入口 + 模式图谱 + 契约卡 + nav 回归闸门
+
+- **路由入口 Router**(`router.md`,构建自动生成)— 借鉴 Hermes Skill OS 路线图的 MASTER ROUTING 思想:从 15 个公约的 frontmatter `description` 提取「场景信号 → 入口公约 → 配套模式」决策表,新读者按问题找模式,不再靠翻目录。
+- **模式图谱 Skill Graph**(`skill-graph.md`)— 从 `related_skills` 声明提取公约互链,构建期生成纯内联 SVG(零外部 CDN 依赖,规避 mermaid/unpkg 国内不可达问题),节点可点击进入对应公约。
+- **Skill Contract 卡**— 每个公约页 H1 下自动注入折叠契约卡(版本/分类/相关模式),呼应路线图「Skill 从一段 Prompt 升级为可声明、可验证的能力模块」;数据源仍是 frontmatter,无新增维护负担。
+- **check-nav 回归闸门**(`scripts/build_docs.py --check-nav`,已入 CI)— 呼应路线图 Regression 原则:任何 docs 页面未挂进 nav 或 nav 引用幽灵页面即构建失败,防止站点演化中的「孤儿页面」退化。
+- 全部生成物仍由 `build_docs.py` 单点产出,`docs/`/`site/` 保持 gitignore;markdownlint 与 `mkdocs build --strict` 均零警告。
+
 ## v1.05.00 (2026-08-30)
 
 ### ✨ maker-checker v1.1.0 → v1.2.0:新增「红线优先」判决制(加功能,不需迁移)

@@ -30,6 +30,7 @@ jobs:
       - name: Generate docs/ + build site
         run: |
           python scripts/build_docs.py
+          python scripts/build_docs.py --check-nav
           mkdocs build --strict
 
       - uses: actions/upload-pages-artifact@v3
