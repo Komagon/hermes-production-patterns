@@ -8,6 +8,9 @@
 </p>
 
 <p align="center">
+  <a href="https://komagon.github.io/hermes-production-patterns/">
+    <img src="https://img.shields.io/badge/docs-mkdocs--material-informational" alt="Documentation">
+  </a>
   <a href="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml">
     <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
