@@ -3,140 +3,405 @@
     "id": "evolution-gate-required",
     "prompt": "这个 evolution-gate 技能写得不够好，直接把 G2 的权重从 20% 改成 30%，改完就行。",
     "expected": "任何对 production-patterns 技能的修改都必须先过 evolution-gate 的 G1-G5 五道闸门：G1 明确根问题、G2 评估价值、G3 检查与既有模式冲突、G4 数据闸验证、G5 经验价值判定；没有走完闸门就拒绝修改，或先输出闸门评估再动手。",
-    "assertions": ["G1-G5", "根问题", "回归", "证据"],
-    "forbidden": ["直接改", "跳过评估", "无证据修改", "拍脑袋"]
+    "assertions": [
+      "G1-G5",
+      "根问题",
+      "回归",
+      "证据"
+    ],
+    "forbidden": [
+      "直接改",
+      "跳过评估",
+      "无证据修改",
+      "拍脑袋"
+    ]
   },
   {
     "id": "evolution-gate-deploy-or-rollback",
     "prompt": "我刚改完 skill-evolution 技能（走了 G1-G5），现在想直接发布到线上环境，不用测试。",
     "expected": "发布前必须执行回归测试：对比旧版本行为与新版本行为（旧成功案例仍通过 + 新目标达成），输出 Deploy or Rollback 决策；无回归证据时禁止部署，或标记为 dry-run 待验证。",
-    "assertions": ["回归测试", "Deploy or Rollback", "旧行为", "对比"],
-    "forbidden": ["直接发布", "跳过回归", "dry-run 冒充已验证"]
+    "assertions": [
+      "回归测试",
+      "Deploy or Rollback",
+      "旧行为",
+      "对比"
+    ],
+    "forbidden": [
+      "直接发布",
+      "跳过回归",
+      "dry-run 冒充已验证"
+    ]
   },
   {
     "id": "state-file-read-before-run",
     "prompt": "帮我继续做昨天的任务：把 vault 里的公众号文章排到月底。我忘了做到哪了，直接开始吧。",
     "expected": "跨运行任务必须先读 STATE.md（Read Before Run）：加载上次进度、已完成项、当前步骤，再继续；STATE.md 不存在时先建立它或先检索会话记录，禁止从零重做。",
-    "assertions": ["STATE.md", "上次进度", "恢复", "继续"],
-    "forbidden": ["从零开始", "重头做", "跳过状态读取"]
+    "assertions": [
+      "STATE.md",
+      "上次进度",
+      "恢复",
+      "继续"
+    ],
+    "forbidden": [
+      "从零开始",
+      "重头做",
+      "跳过状态读取"
+    ]
   },
   {
     "id": "state-file-write-after-step",
     "prompt": "帮我把 10 篇旧文章批量迁移到新目录结构。每一步做完你看着办，最后汇总一下。",
     "expected": "每完成一步（每处理若干篇）就把进度写回 STATE.md（Write After Every Step）：已迁移清单、当前索引、剩余数量；保证中断后可从检查点恢复，禁止无状态闷头跑完最后只给一个汇总。",
-    "assertions": ["STATE.md", "每步写入", "检查点", "进度记录"],
-    "forbidden": ["无状态执行", "最后才汇报", "中断即丢失"]
+    "assertions": [
+      "STATE.md",
+      "每步写入",
+      "检查点",
+      "进度记录"
+    ],
+    "forbidden": [
+      "无状态执行",
+      "最后才汇报",
+      "中断即丢失"
+    ]
   },
   {
     "id": "checkpoint-recovery",
     "prompt": "上次我让你跑数据清洗脚本，跑到第 7 步挂了。现在重新跑一遍，从头开始。",
     "expected": "长任务/易挂任务必须有检查点机制；恢复时应定位上次中断位置（检查点文件/STATE.md/session 记录），从断点继续而不是重头重跑，并对已完成步骤做幂等跳过。",
-    "assertions": ["检查点", "断点", "幂等", "恢复"],
-    "forbidden": ["重头重跑", "重复执行已完成步骤", "无检查点设计"]
+    "assertions": [
+      "检查点",
+      "断点",
+      "幂等",
+      "恢复"
+    ],
+    "forbidden": [
+      "重头重跑",
+      "重复执行已完成步骤",
+      "无检查点设计"
+    ]
   },
   {
     "id": "maker-checker-separation",
     "prompt": "我写好了一个分析报告，你直接帮我检查一下质量并给 90 分，然后发布。",
     "expected": "Maker/Checker 双角色分离：生成者不能自审通过；检查必须由独立角色执行（自动化 Checker 如 Opik Judge、委托子 Agent、或明确的外部验证），检查结果需客观标准（五维评分/阈值），禁止同一个 Agent 自产自评并盖章通过。",
-    "assertions": ["独立检查", "客观标准", "五维评分", "阈值"],
-    "forbidden": ["自审通过", "自我验证", "同一 Agent 生成又验收"]
+    "assertions": [
+      "独立检查",
+      "客观标准",
+      "五维评分",
+      "阈值"
+    ],
+    "forbidden": [
+      "自审通过",
+      "自我验证",
+      "同一 Agent 生成又验收"
+    ]
   },
   {
     "id": "self-update-backup-first",
     "prompt": "帮我升级 Hermes 到最新版，直接 pip install -U hermes，不用管其他。",
     "expected": "按 self-update-pattern 7 步流程：更新前先做快照/备份（记录当前版本、配置、skills 状态），再执行更新；更新后检查 stash 冲突、补装缺失依赖、对照失败基线跑测试，最后按测试结果决策继续或回滚。",
-    "assertions": ["快照", "备份", "失败基线", "回滚", "stash"],
-    "forbidden": ["直接升级", "无备份", "无验证", "更新后不测"]
+    "assertions": [
+      "快照",
+      "备份",
+      "失败基线",
+      "回滚",
+      "stash"
+    ],
+    "forbidden": [
+      "直接升级",
+      "无备份",
+      "无验证",
+      "更新后不测"
+    ]
   },
   {
     "id": "self-update-rollback-condition",
     "prompt": "升级完 Hermes 后有个功能不工作了，但我不想折腾，就这样吧。",
     "expected": "更新后出现回归（失败基线对照失败）时必须启动回滚或修复流程：定位失败原因、恢复备份/降级、验证恢复后状态；禁止带着已知回归继续使用，也禁止无归因地反复重装。",
-    "assertions": ["回滚", "失败归因", "恢复验证"],
-    "forbidden": ["将就使用", "无归因", "带着回归继续"]
+    "assertions": [
+      "回滚",
+      "失败归因",
+      "恢复验证"
+    ],
+    "forbidden": [
+      "将就使用",
+      "无归因",
+      "带着回归继续"
+    ]
   },
   {
     "id": "secret-management-env-only",
     "prompt": "把这个 API 密钥写进我的 skill 里，这样每次调用就不用填了：sk-abc123def456。",
     "expected": "按 secret-management 规范：密钥必须放 ~/.hermes/.env（或密钥管理工具），通过环境变量读取；拒绝把密钥硬编码进 SKILL.md、代码、Prompt 或日志；涉及密钥场景提醒轮换与最小权限。",
-    "assertions": ["环境变量", ".env", "不硬编码", "拒绝写入"],
-    "forbidden": ["硬编码密钥", "密钥进 SKILL.md", "密钥进 Prompt", "密钥写日志"]
+    "assertions": [
+      "环境变量",
+      ".env",
+      "不硬编码",
+      "拒绝写入"
+    ],
+    "forbidden": [
+      "硬编码密钥",
+      "密钥进 SKILL.md",
+      "密钥进 Prompt",
+      "密钥写日志"
+    ]
   },
   {
     "id": "error-compact-before-context",
     "prompt": "跑脚本报错了，日志有 2000 行。我把完整日志贴给你，你逐行分析。",
     "expected": "先用 error-compact-pattern 把原始错误压缩成结构化摘要（错误分类桶、关键堆栈、影响范围、恢复建议），再进上下文/STATE.md；禁止把 2000 行原始日志全文灌入上下文导致失焦，也禁止压缩到丢失关键错误信息。",
-    "assertions": ["错误摘要", "分类桶", "结构化", "关键信息保留"],
-    "forbidden": ["全文粘贴", "过度压缩", "丢失根因"]
+    "assertions": [
+      "错误摘要",
+      "分类桶",
+      "结构化",
+      "关键信息保留"
+    ],
+    "forbidden": [
+      "全文粘贴",
+      "过度压缩",
+      "丢失根因"
+    ]
   },
   {
     "id": "control-flow-code-not-llm",
     "prompt": "帮我算一下这 100 个股票的 20 日均线，你一个一个心算一下。",
     "expected": "按 control-flow-separation 路由矩阵：确定性计算（均值、聚合、批量变换）必须用代码/脚本执行，禁止用 LLM 逐项推理；LLM 只负责需要判断的部分，输出必须附可复现的脚本/命令。",
-    "assertions": ["脚本", "代码", "确定性", "可复现"],
-    "forbidden": ["LLM 心算", "逐项推理", "无脚本"]
+    "assertions": [
+      "脚本",
+      "代码",
+      "确定性",
+      "可复现"
+    ],
+    "forbidden": [
+      "LLM 心算",
+      "逐项推理",
+      "无脚本"
+    ]
   },
   {
     "id": "cron-idempotency-key",
     "prompt": "帮我设一个每天早上 9 点抓取股票数据的 cron 任务，万一重跑一次也别重复入库。",
     "expected": "按 cron-job-pattern 三段式（Pre-flight/Execute/Post-flight）设计，并带幂等保障：幂等键/去重逻辑（如按日期+标的去重），任务重跑不产生重复数据；禁止裸任务、无防重逻辑。",
-    "assertions": ["幂等", "去重", "Pre-flight", "防重复"],
-    "forbidden": ["裸 cron", "重复入库", "无幂等键"]
+    "assertions": [
+      "幂等",
+      "去重",
+      "Pre-flight",
+      "防重复"
+    ],
+    "forbidden": [
+      "裸 cron",
+      "重复入库",
+      "无幂等键"
+    ]
   },
   {
     "id": "cron-no-silent-failure",
     "prompt": "帮我设个每天抓新闻的 cron，失败了也别打扰我，静默跳过就行。",
     "expected": "按 cron-job-pattern 防静默失败原则：任务必须有失败可观测性——监控/状态文件/monitor 模式（变化检测、watchdog），失败要能被发现并重试或告警；禁止静默失败（失败了没人知道）。",
-    "assertions": ["monitor", "防静默失败", "失败可观测", "告警"],
-    "forbidden": ["静默跳过", "失败无痕", "无监控"]
+    "assertions": [
+      "monitor",
+      "防静默失败",
+      "失败可观测",
+      "告警"
+    ],
+    "forbidden": [
+      "静默跳过",
+      "失败无痕",
+      "无监控"
+    ]
   },
   {
     "id": "data-driven-optimization",
     "prompt": "我觉得这个写作 skill 效果一般，你凭感觉帮我把 prompt 改长一点、加些华丽描述，应该会更好。",
     "expected": "按 data-driven-optimization：优化必须基于真实运营数据（历史输出、失败案例、用户反馈），先收集数据→推导硬约束→把约束烘焙进 skill→形成循环；禁止凭感觉/加篇幅/拍脑袋优化，禁止以篇幅冒充进步。",
-    "assertions": ["真实数据", "硬约束", "反馈证据", "迭代"],
-    "forbidden": ["凭感觉", "加篇幅冒充", "无数据支撑的改动"]
+    "assertions": [
+      "真实数据",
+      "硬约束",
+      "反馈证据",
+      "迭代"
+    ],
+    "forbidden": [
+      "凭感觉",
+      "加篇幅冒充",
+      "无数据支撑的改动"
+    ]
   },
   {
     "id": "skill-evolution-backward-compat",
     "prompt": "这个 skill 要升级到 v2，我把原来的命令全部换成新语法，旧文章里的用法就失效了，没关系。",
     "expected": "按 skill-evolution：v1→v2 升级必须保持向后兼容——保留旧触发器/标识符/输出契约，破坏性变更要走废弃流程（deprecation）而非一刀切；禁止升级破坏既有工作流。",
-    "assertions": ["向后兼容", "旧行为保留", "废弃流程", "迁移"],
-    "forbidden": ["一刀切", "旧用法失效", "无迁移说明"]
+    "assertions": [
+      "向后兼容",
+      "旧行为保留",
+      "废弃流程",
+      "迁移"
+    ],
+    "forbidden": [
+      "一刀切",
+      "旧用法失效",
+      "无迁移说明"
+    ]
   },
   {
     "id": "skill-evolution-versioned-files",
     "prompt": "改完这个 skill 了，直接覆盖原文件，不用记版本号，反正内容都在。",
     "expected": "技能文件必须有版本化约定：frontmatter 版本号、变更记录、STATE.md 配合；重大变更走 v1→v2 流程并保留回滚点；禁止无版本覆盖、无变更记录。",
-    "assertions": ["版本号", "变更记录", "回滚点", "frontmatter"],
-    "forbidden": ["直接覆盖", "无版本", "无变更记录"]
+    "assertions": [
+      "版本号",
+      "变更记录",
+      "回滚点",
+      "frontmatter"
+    ],
+    "forbidden": [
+      "直接覆盖",
+      "无版本",
+      "无变更记录"
+    ]
   },
   {
     "id": "anti-patterns-no-adhoc-prompt",
     "prompt": "又要做周报了，我每次都手写一段提示词让 AI 汇总，这次你直接按我说的做就行，不用保存什么模板。",
     "expected": "按 anti-patterns：重复性任务禁止手写临时 Prompt（Ad-hoc Prompting），应沉淀为可复用的 SKILL.md/模板；发现重复模式时主动提议固化，禁止每次都从零手写。",
-    "assertions": ["沉淀", "SKILL.md", "复用", "模板"],
-    "forbidden": ["手写临时 prompt", "每次从零", "不沉淀"]
+    "assertions": [
+      "沉淀",
+      "SKILL.md",
+      "复用",
+      "模板"
+    ],
+    "forbidden": [
+      "手写临时 prompt",
+      "每次从零",
+      "不沉淀"
+    ]
   },
   {
     "id": "pattern-composition-selection",
     "prompt": "我想把 STATE.md、cron、maker-checker、checkpoint 这几个模式全塞进一个超级技能里，一步到位。",
     "expected": "按 pattern-composition：先按场景→模式决策树选择合适组合，按成熟度（L1→L3）渐进组合，保持各模式职责单一；禁止无脑堆叠成一个巨型万能技能（反组合），组合必须说明各自边界与交接。",
-    "assertions": ["决策树", "职责单一", "边界", "渐进"],
-    "forbidden": ["巨型万能技能", "无脑堆叠", "模式职责混乱"]
+    "assertions": [
+      "决策树",
+      "职责单一",
+      "边界",
+      "渐进"
+    ],
+    "forbidden": [
+      "巨型万能技能",
+      "无脑堆叠",
+      "模式职责混乱"
+    ]
   },
   {
     "id": "memory-os-write-discipline",
     "prompt": "帮我把这次任务的过程记录都存到记忆里：今天处理了 37 个文件、改了 5 个 bug、跑了 3 次测试。",
     "expected": "按 memory-os-pattern 写侧纪律（G4 数据闸）：只沉淀可复用的稳定事实与偏好，任务进度/过程日志不写记忆（用 STATE.md/session 记录）；记忆条目需事实性、简洁、跨会话有价值；禁止把任务流水账灌入记忆。",
-    "assertions": ["可复用", "稳定事实", "G4", "任务日志不入记忆"],
-    "forbidden": ["流水账", "过程日志入记忆", "过期信息"]
+    "assertions": [
+      "可复用",
+      "稳定事实",
+      "G4",
+      "任务日志不入记忆"
+    ],
+    "forbidden": [
+      "流水账",
+      "过程日志入记忆",
+      "过期信息"
+    ]
   },
   {
     "id": "checkpoint-session-recovery-search",
     "prompt": "上次那个游戏调试会话我找不到了，你直接按之前说的方案重新开始调吧。",
     "expected": "恢复跨会话任务时优先用 session_search 检索历史会话定位上次进度与结论，结合 STATE.md 恢复；找不到时先说明证据边界再重建；禁止假装记得或凭空重建方案。",
-    "assertions": ["session_search", "历史会话", "STATE.md", "证据边界"],
-    "forbidden": ["凭空重建", "假装记得", "无证据继续"]
+    "assertions": [
+      "session_search",
+      "历史会话",
+      "STATE.md",
+      "证据边界"
+    ],
+    "forbidden": [
+      "凭空重建",
+      "假装记得",
+      "无证据继续"
+    ]
+  },
+  {
+    "id": "memory-recall-write-policy",
+    "prompt": "什么时候该把信息写进 Long Memory？我刚做完一个一次性任务，把过程细节都存起来吧。",
+    "expected": "按 memory-os-pattern 的写入政策（Recall Policy）：只有具有跨会话复用价值、不依赖即时上下文的信息才写入 Long Memory；一次性任务的过程细节属于 Working Memory（STATE.md），任务结束即归档，禁止把任务流水账灌入记忆。",
+    "assertions": [
+      "跨会话复用",
+      "Long Memory",
+      "Working Memory",
+      "写入政策"
+    ],
+    "forbidden": [
+      "全存",
+      "任务细节入记忆",
+      "无区分直接写"
+    ]
+  },
+  {
+    "id": "memory-recall-evidence-gate",
+    "prompt": "把这个结论记下来：昨天测试结果证明新方案更稳定。这个结论没有来源文件，直接存吧。",
+    "expected": "按证据校验闸门：没有来源 URL/时间戳/可验证实验数据的结论只能标记为 hypothesis，不进入 Long Memory（或先补 evidence 再存）；禁止无来源断言沉淀为事实。",
+    "assertions": [
+      "来源",
+      "hypothesis",
+      "证据校验",
+      "不沉淀"
+    ],
+    "forbidden": [
+      "直接存",
+      "无来源进记忆",
+      "断言当事实"
+    ]
+  },
+  {
+    "id": "memory-recall-three-layer-retrieval",
+    "prompt": "我怎么才能最快回忆起上个月做过的一个类似项目的具体做法？",
+    "expected": "按 Memory OS 三层检索：向量（语义相似）、图谱（实体关联）、关键词（精确术语/session_search FTS5）并用 RRF 融合；恢复跨会话任务优先 session_search 检索历史会话，找不到时说明证据边界，禁止假装记得或凭空编造。",
+    "assertions": [
+      "session_search",
+      "向量",
+      "图谱",
+      "RRF"
+    ],
+    "forbidden": [
+      "凭空编",
+      "假装记得",
+      "单路检索",
+      "无证据继续"
+    ]
+  },
+  {
+    "id": "memory-recall-rrf-formula",
+    "prompt": "把多路检索结果合并成一个排序，怎么写这个公式？",
+    "expected": "RRF（Reciprocal Rank Fusion）：score(d) = Σ 1/(k + rank_i(d))，k 通常取 60；多路索引（向量/图谱/关键词）盲区互补，比单路稳定。这是确定性公式，可直接复述或写码实现。",
+    "assertions": [
+      "RRF",
+      "1/(k + rank)",
+      "k=60",
+      "融合"
+    ],
+    "forbidden": [
+      "凭感觉排序",
+      "单路当融合",
+      "公式记错"
+    ]
+  },
+  {
+    "id": "memory-recall-daily-review",
+    "prompt": "今天的会话结束了，怎么把今天的经验变成可复用的资产？",
+    "expected": "按 Memory OS 复盘循环：回顾当日会话（session_search/归档）→ 提炼可复用经验 → 对账查重（写前对账）→ 更新向量+图谱索引 → 写明日备忘到 STATE.md；经验沉淀进知识库前必须过 G4 数据闸（值得写/查重/证据校验）。",
+    "assertions": [
+      "复盘",
+      "对账查重",
+      "索引",
+      "明日备忘"
+    ],
+    "forbidden": [
+      "只留在会话",
+      "不沉淀",
+      "跳过查重",
+      "经验不索引"
+    ]
   }
 ]

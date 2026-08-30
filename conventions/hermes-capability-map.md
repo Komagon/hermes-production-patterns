@@ -1,7 +1,7 @@
 ---
 name: hermes-capability-map
 description: "Hermes 能力 × 生产模式映射 — 2026-08 工具能力总览，把新能力对号入座到既有模式"
-version: 1.1.0
+version: 1.2.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -98,6 +98,20 @@ hpp_capability: docs
 | `hermes update`（源码 git 仓库） | 自更新；v0.20.4+ autostash 可能不自动恢复 | self-update-pattern：更新前快照 → 更新后验 stash → 测试基线 → 可回滚 |
 | `git stash / checkout` | 补丁暂存恢复与版本回退 | self-update-pattern：安全网 |
 | 全量测试基线（pytest 失败清单） | 区分上游失败 vs 本地回归 | self-update-pattern：更新后验证 |
+
+## 九、Skill OS 基础设施（2026-08-30 新增，入口技能 hermes-skill-os）
+
+| 组件 | 干什么 | 位置 |
+|:-----|:-------|:-----|
+| routing.json | 意图→PRIMARY/SHADOW 路由表（19 规则），signals 来自真实使用数据 | `~/.hermes/routing/` |
+| routing-benchmark.json | 21 个路由回归用例，行为回归用无上下文子代理盲测 | `~/.hermes/routing/` |
+| capability-registry.json | 15 项能力的机器可读注册表（本表是人读层），status 由脚本探测 | `~/.hermes/routing/` |
+| MASTER-ROUTING.md | 任务决策六步入口 ROUTING→RESOLVE→CASE→EXECUTE→VERIFY→PERSIST | `~/.hermes/routing/` |
+| routing_check.py / capability_probe.py | 确定性校验与探测，改路由/技能后必跑，exit 0 才算完成 | `~/.hermes/scripts/` |
+| cases/_template + field-journal | Case 状态容器与经验回流（retrospective→journal→SKILL.md/memory） | `~/.hermes/` |
+
+维护规则：本表或 capability-registry 任一处工具状态变化 → 同步另一处；
+routing.json 结构性改动视同技能改动，过 evolution-gate。
 
 ## 使用建议
 

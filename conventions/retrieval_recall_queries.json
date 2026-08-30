@@ -1,0 +1,27 @@
+[
+  {
+    "id": "q1",
+    "description": "Recall the policy for when to write into Long Memory versus Working Memory.",
+    "query": "Memory OS 写侧纪律 何时写入 Long Memory" 
+  },
+  {
+    "id": "q2",
+    "description": "Find the recall policy steps for evidence verification before persisting.",
+    "query": "Memory OS 证据校验 写入 前置检查" 
+  },
+  {
+    "id": "q3",
+    "description": "Retrieve the three-layer retrieval architecture (vector, graph, keyword) description.",
+    "query": "Memory OS 三层检索 向量 图谱 关键词" 
+  },
+  {
+    "id": "q4",
+    "description": "Get the RRF fusion formula used in Memory OS.",
+    "query": "Memory OS RRF 融合 公式" 
+  },
+  {
+    "id": "q5",
+    "description": "List the daily review cron job steps for Memory OS.",
+    "query": "Memory OS 每日复盘 cron 步骤" 
+  }
+]

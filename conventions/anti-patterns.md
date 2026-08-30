@@ -34,6 +34,7 @@ hpp_capability: docs
 | 6 | 无状态循环 | state-file-pattern | 每次运行先读 STATE.md |
 | 7 | Maker/Checker 无标准 | maker-checker | 预定义五维评分维度 |
 | 8 | 无限重试 | error-compact-pattern | 设硬上限，记录到 STATE.md |
+| 9 | 摘要当证据 | memory-os-pattern | 精确断言必须下钻原 DAG/原文验证 |
 
 ---
 
@@ -183,3 +184,18 @@ while retry_count < MAX_RETRIES:
         await asyncio.sleep(BACKOFF[retry_count])  # 1, 3, 9 秒
 raise PermanentError(f"重试 {MAX_RETRIES} 次均失败")
 ```
+
+---
+
+## 9. 摘要当证据（Summary-As-Evidence）
+
+**表现：** Agent 把压缩后的摘要、复盘结论或反测输出当事实直接用——"摘要里写了 X"，不再下钻原 DAG / 原文 / 原始日志验证。长会话或跨压缩恢复时最危险：摘要天然丢细节，且摘要本身可能是模型单次生成的（有幻觉率）。
+
+**为什么有害：**
+- 一条被压缩的断言被当作"证据"二次引用，错误会沿摘要链扩散，比不记还糟
+- 违反 memory-os-pattern 的证据校验闸门：摘要只是召回线索（Recall Cue），不是证据（Evidence）
+
+**纠正：**
+- 精确断言（路径、版本号、数据值、用户拍板）必须下钻验证：`lcm_recall` / `session_search` 取原文，或重跑命令/读原始文件
+- 摘要里出现的具体事实，引用时标注"待验证"，验证后补来源
+- 只有 `claim + evidence + source` 齐全才允许进入结论/记忆（对应 memory-os-pattern 的 G4 数据闸）

@@ -73,6 +73,16 @@ score(d) = Σ 1 / (k + rank_i(d))      # k 通常取 60
 
 ## 写侧：沉淀纪律（G4 Data Gate）
 
+### 写入政策（Recall Policy）
+- **何时写入 Long Memory**：当信息具有跨会话复用价值，且不依赖即时上下文时写入 Long Memory；否则保留在 Working Memory（STATE.md）直到任务结束。
+- **对账查重**：写入前在 Long Memory 通过 `session_search` 检查是否已有相似条目；若已有冲突，先更新旧条目而非新增。
+- **证据校验**：必须附带来源 URL、时间戳或可验证的实验数据；缺失来源的条目只能标记为 `hypothesis`，不进入 Long Memory。
+- **格式与索引**：遵循 SKILL.md 中定义的 JSON schema（`type`, `content`, `source`, `timestamp`），写入后立即运行 `index_vault.py` 更新向量索引并跑 `kg_extract.py` 同步图谱。
+- **审计记录**：每次写入写入动作记录在 `audit.log`，包括操作者（agent id）、时间、条目摘要、是否通过闸门。
+
+### Recall Policy Queries
+已在 `retrieval_recall_queries.json` 中定义了五个常用查询，用于在经验记忆层快速定位相关策略和实例。
+
 进 Memory OS 的知识必须过闸门，否则沉淀=堆噪声：
 
 | 闸门 | 检查 | 不过怎么办 |
@@ -103,6 +113,29 @@ Memory OS 不是被动存储，需要主动复盘把「经验」沉淀为「资�
 
 > **实战**：DailyReview cron（22:30）每日自动执行——回顾当日会话 → 写入 `areas/DailyReview/YYYY-MM-DD.md` → `index_vault.py` 向量索引（增量秒级）→ `kg_extract.py` 图谱索引（三元组/实体/文档计数）→ 明日备忘写入 STATE.md。运行 20+ 天零失败，图谱累计数万三元组。
 
+## 记忆考核：Memory Exam（读侧的回归测试）
+
+写侧有 G4 闸门，读侧也要有考卷。**`conventions/memory-exam.json` 是 31 题的 Hermes 记忆 mini 考核卷**，考纲提炼自 FP-AMB（MIT），语料换成本库真实记忆体系（memory 双库 / session_search / vault / skills）：
+
+| 类别 | 考什么 | 失败信号 |
+|:---|:---|:---|
+| CAT1 单跳召回 | 凭据位置、项目路径等原子事实 | memory 条目缺失/检索不到 |
+| CAT2 跨会话多跳 | 串联扒项目→借鉴→落地两跳以上 | session_search 覆盖不足 |
+| CAT3 时间推理 | 日期差值、用户记错日期的纠正 | 条目没带时间戳 |
+| CAT4 事实覆盖 | 旧规矩被新约定覆盖后是否还用旧的 | 新旧条目并存未清理 |
+| CAT5 程序性规则 | 流程环节、前置检查动作 | 规则只说过一次没沉淀 |
+| CAT6 对抗抗性 | 「你上次明明说…」型假引用、假前提 | 迎合用户转述而非以记忆为准 |
+| CAT7 说话人归属 | 用户拍板 vs agent 决定不混淆 | agent 决定升格成用户约定 |
+| CAT8 无中生有拒答 | 没存过的事说「没存过」，不编 | 顺嘴假装记得 |
+| CAT9 来源裁决 | memory/vault/现场冲突时谁优先 | 静默选边不给理由 |
+| CAT10 记忆驱动行为 | 记忆改变工具调用方式（deferred 流程、venv、全路径） | 记住了但行为不变 |
+
+**判分三档**（继承 FP-AMB grading_mode）：exact=必须命中具体事实词；judgment=是非/拒答即答案；list=多子项全中 1.0、部分中 0.5。
+**归因二分**（FP-AMB 最有价值的设计）：得 0 分先判是 RETRIEVAL_FAILURE（事实根本没被检索到→修写侧覆盖）还是 GENERATION_FAILURE（检索到了但没照做→修技能规则表述）。禁止用「答错」一个标签混过两种病。
+**及格线**：≥25/31 且 CAT6/CAT8 各 ≥2/3——对抗抗性与拒答是信任底线，比召回错误更伤。
+
+**何时跑**：① 大改 memory 内容或整理 vault 后；② 换主模型/改 fallback 链后（对照 self-update-pattern 失败基线）；③ 每月复盘时抽 CAT6/CAT8 各 1 题做哨兵。开新会话贴 prompt，对照 assertions/forbidden 判分。
+
 ## 与既有模式的关系
 
 | 模式 | 关系 |
@@ -119,8 +152,14 @@ Memory OS 不是被动存储，需要主动复盘把「经验」沉淀为「资�
 - [ ] 写入后索引同步了吗？
 - [ ] 有定期复盘循环吗？（日 / 周，把会话变成可复用资产）
 - [ ] 证据层有校验机制吗？（AI 生成结论必须有来源 + 置信度，禁绝对化）
+- [ ] 读过 Memory Exam 的归因二分吗？（检索失败修写侧，生成失败修规则，别混）
 
-## 反模式
+## References
+
+- `conventions/memory-exam.json` – 31 题记忆考核卷（FP-AMB 考纲），判分细则见「记忆考核」节。
+- `conventions/recall_schema.json` – 记忆条目 JSON schema（type/content/source/timestamp）。
+- `conventions/retrieval_recall_queries.json` – 5 条经验记忆层召回基准查询（配套 test-prompts.json 的记忆反测条目）。
+
 
 | ❌ 错误做法 | 后果 |
 |:---|:---|

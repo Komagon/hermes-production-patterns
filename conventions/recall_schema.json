@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "type": {"type": "string"},
+    "content": {"type": "string"},
+    "source": {"type": "string"},
+    "timestamp": {"type": "string", "format": "date-time"}
+  },
+  "required": ["type", "content", "source", "timestamp"]
+}
