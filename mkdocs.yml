@@ -1,0 +1,112 @@
+site_name: Hermes Production Patterns
+site_description: 面向 Hermes Agent 的生产级工程模式集 — 每条模式都在真实 7x24 环境验证过
+site_url: https://komagon.github.io/hermes-production-patterns/
+repo_url: https://github.com/Komagon/hermes-production-patterns
+repo_name: Komagon/hermes-production-patterns
+edit_uri: edit/main/
+
+theme:
+  name: material
+  language: zh
+  logo: logo.png
+  features:
+    - navigation.sections        # 分组平铺，不用折叠
+    - navigation.top             # 返回顶部
+    - navigation.indexes         # 目录页可用
+    - toc.follow
+    - search.suggest
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search:
+      # 中文搜索(官方方案):构建期 search 插件检测到 jieba 即自动分词,词间插
+      # 零宽空格;separator 必须含 \u200b。lang 不加 zh——社区版 lunr.zh 依赖
+      # 浏览器端分词器,加载失败会让整个查询管线静默返回空(实测)。
+      # CI 与本地都必须装 jieba,否则中文整词查询静默 0 结果。
+      lang:
+        - en
+      separator: '[\s\u200b\-、，。！？；：（）()\/]+'
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Komagon/hermes-production-patterns
+  generator: false
+
+nav:
+  - 首页: index.md
+  - 总览:
+      - 架构总览: ARCHITECTURE.md
+      - 上下文: CONTEXT.md
+      - 变更日志: CHANGELOG.md
+  - 方法论 Patterns:
+      - patterns/index.md
+      - 12-Factor Agents 落地映射: patterns/12-factor-agents-for-hermes.md
+      - Loop Engineering 14 步: patterns/loop-engineering-14-steps.md
+      - 成熟度检查清单: patterns/maturity-checklist.md
+      - 成熟度分级 L1→L3: patterns/maturity-staging-l1-l2-l3.md
+  - 工程公约 Conventions:
+      - conventions/index.md
+      - Maker/Checker 双角色分离: conventions/maker-checker.md
+      - Cron 任务设计模式: conventions/cron-job-pattern.md
+      - STATE.md 跨运行状态: conventions/state-file-pattern.md
+      - 检查点模式: conventions/checkpoint-pattern.md
+      - 控制流分离: conventions/control-flow-separation.md
+      - 错误压缩模式: conventions/error-compact-pattern.md
+      - 反面模式 Anti-Patterns: conventions/anti-patterns.md
+      - 密钥管理: conventions/secret-management.md
+      - 自更新安全流程: conventions/self-update-pattern.md
+      - Memory OS 五层记忆: conventions/memory-os-pattern.md
+      - 进化闸门 G1-G5: conventions/evolution-gate.md
+      - 技能进化管理: conventions/skill-evolution.md
+      - 数据驱动优化: conventions/data-driven-optimization.md
+      - 模式组合指南: conventions/pattern-composition.md
+      - 能力 × 模式映射: conventions/hermes-capability-map.md
+  - 实战案例 Examples:
+      - examples/index.md
+      - 公众号文章流水线:
+          - examples/wechat-article-pipeline.md
+          - 范文模板: examples/wechat-article-pipeline/references/article-template.md
+      - Maker/Checker 文章流水线:
+          - examples/maker-checker-article-pipeline.md
+          - 流水线案例: examples/maker-checker-pipeline/README.md
+      - 每日新闻摘要:
+          - examples/daily-news-digest.md
+          - 技能实例: examples/daily-news-digest/SKILL.md
+          - 状态实例: examples/daily-news-digest/STATE.md
+      - Cron 安全集成:
+          - examples/cron-safety-integration.md
+          - Cron Safety 案例: examples/cron-safety/README.md
+  - 模板 Templates: templates.md
+  - 参与贡献:
+      - 贡献指南: CONTRIBUTING.md
+      - English README: readme-en.md

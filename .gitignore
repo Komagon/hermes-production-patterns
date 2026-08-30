@@ -26,3 +26,7 @@ Thumbs.db
 # Hermes specific
 *.cookies.json
 hermes/config.yaml
+
+# mkdocs generated artifacts
+site/
+docs/
