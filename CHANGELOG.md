@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.05.00 (2026-08-30)
+
+### ✨ maker-checker v1.1.0 → v1.2.0:新增「红线优先」判决制(加功能,不需迁移)
+
+- **实现要点第 6 条** — 借鉴 JIT-Agent(bingreeky/JIT, arXiv 2608.25593)评审团的 Architecture/Red-flag charter 思路:评分制之外允许预定义「命中即 FAIL」的 red flags,Checker 报告须写明检查了哪几条、是否命中;红线只从真实失败案例蒸馏,禁止凭想象堆砌。向后兼容:旧触发方式与五维评分流程不变。
+- 评估过程:JIT 五专家 charter 对照自家体系做必要性/可行性评估(evolution-gate 的 G3/G4、routing_check、反测集已有对位物),仅 Architecture-Proportionality 一项是真缺口但落在 hermes-skill-os 侧;评审团/全套蒸馏方案因架构与任务不成比例被否。
+
 ## v1.04.01 (2026-08-29)
 
 ### 🔧 修正:全面体检发现的 6 处问题(修 bug 不改接口,按 skill-evolution 版本表升 patch)

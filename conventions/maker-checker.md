@@ -1,7 +1,7 @@
 ---
 name: maker-checker
 description: "Maker/Checker 双角色分离 — 生成与验证不在同一个 Agent"
-version: 1.1.0
+version: 1.2.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -113,6 +113,7 @@ Checker 对 Maker 的输出从 5 个维度评分（各 1-10 分，或 Opik 归�
 3. **可量化** — 每个维度必须能打分数级判断
 4. **可迭代** — FAIL 后 Maker 根据具体建议修改，最多 3 轮
 5. **硬上限** — 3 轮仍 FAIL 则上报人类，不无限循环
+6. **红线优先（判决制，2026-08-30 借鉴 JIT-Agent 评审 charter）** — 评分制（"6/10 感觉还行"）之外，允许在评分维度旁预定义若干「命中即 FAIL」的具体 red flags（如：终答路径不可达、循环只能靠步数上限兜底、模板渲染必崩写法）。Checker 报告须写明检查了哪几条红线、是否命中——红线是硬闸，分数是软评，任一命中直接 FAIL 不进修改轮次。红线只从真实失败案例蒸馏，禁止凭想象堆砌（防评分器变许愿池）。
 
 ## 陷阱
 
