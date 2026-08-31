@@ -119,10 +119,40 @@
     }, 1500);
   }
 
+  function initConsole(root) {
+    var console = (root || document).querySelector('.hpp-console');
+    if (!console || console.dataset.hppReady) return;
+    console.dataset.hppReady = '1';
+    var states = [
+      { el: '#hpc-scheduler', texts: ['INITIALIZING', 'ACTIVE'], delay: 0 },
+      { el: '#hpc-maker', texts: ['QUEUED', 'EXECUTING', 'COMPLETE'], delay: 400 },
+      { el: '#hpc-checker', texts: ['WAITING', 'VALIDATING', 'PASSED'], delay: 800 },
+      { el: '#hpc-state', texts: ['PENDING', 'WRITING', 'SYNCHRONIZED'], delay: 1200 }
+    ];
+    states.forEach(function(s) {
+      var el = console.querySelector(s.el);
+      if (!el) return;
+      el.textContent = s.texts[0];
+      el.style.opacity = '0.5';
+      s.texts.forEach(function(text, i) {
+        if (i === 0) return;
+        setTimeout(function() {
+          el.textContent = text;
+          el.style.opacity = i === s.texts.length - 1 ? '1' : '0.7';
+          if (i === s.texts.length - 1) {
+            el.style.color = 'var(--hpp-accent-primary)';
+          }
+        }, s.delay + i * 600);
+      });
+    });
+  }
+
+
   function boot(root) {
     initGraphs(root);
     initExplorer(root);
     initReveal();
+    initConsole(root);
   }
 
   if (document.readyState === "loading") {

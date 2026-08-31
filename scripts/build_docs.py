@@ -737,8 +737,52 @@ hide:
     </div>
   </div>
   <div class="hpp-hero__visual">
-    <div class="hpp-graph-wrap">{arch_svg_link(read_site_url())}</div>
-    {term}
+    <div class="hpp-console hpp-reveal">
+      <div class="hpp-console__header">
+        <span class="hpp-console__dot hpp-console__dot--active"></span>
+        <span class="hpp-console__title">HERMES PRODUCTION CONSOLE</span>
+      </div>
+      <div class="hpp-console__row">
+        <span class="hpp-console__label">● Scheduler</span>
+        <span class="hpp-console__value" id="hpc-scheduler">ACTIVE</span>
+      </div>
+      <div class="hpp-console__row">
+        <span class="hpp-console__label">● Maker</span>
+        <span class="hpp-console__value" id="hpc-maker">EXECUTING</span>
+      </div>
+      <div class="hpp-console__row">
+        <span class="hpp-console__label">● Checker</span>
+        <span class="hpp-console__value" id="hpc-checker">VALIDATING</span>
+      </div>
+      <div class="hpp-console__row">
+        <span class="hpp-console__label">● State</span>
+        <span class="hpp-console__value" id="hpc-state">SYNCHRONIZED</span>
+      </div>
+      <div class="hpp-console__sep"></div>
+      <div>
+        <span class="hpp-console__label">QUALITY SCORE</span>
+        <div class="hpp-console__bar">
+          <div class="hpp-console__fill hpp-console__fill--high" style="width:92%"></div>
+        </div>
+        <span class="hpp-console__value">92%</span>
+      </div>
+      <div style="margin-top:8px">
+        <span class="hpp-console__label">SYSTEM HEALTH</span>
+        <div class="hpp-console__bar">
+          <div class="hpp-console__fill hpp-console__fill--high" style="width:98%"></div>
+        </div>
+        <span class="hpp-console__value">98%</span>
+      </div>
+      <div class="hpp-console__sep"></div>
+      <div class="hpp-console__row">
+        <span class="hpp-console__label">LAST CHECKPOINT</span>
+        <span class="hpp-console__value">2m ago</span>
+      </div>
+      <div class="hpp-console__row">
+        <span class="hpp-console__label">SYSTEM</span>
+        <span class="hpp-console__value" style="color:var(--hpp-accent-primary)">● ONLINE</span>
+      </div>
+    </div>
   </div>
 </section>
 
