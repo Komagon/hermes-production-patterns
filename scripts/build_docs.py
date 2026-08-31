@@ -1016,7 +1016,7 @@ def copy_tree(sub: str) -> None:
 
 def copy_v2_assets() -> None:
     (DOCS / "assets").mkdir(exist_ok=True)
-    for name in ("hpp.css", "hpp.js"):
+    for name in ("hpp.css", "hpp.js", "hero-bg.png", "hero-bg.webp"):
         shutil.copy2(ROOT / "assets" / name, DOCS / "assets" / name)
 
 
