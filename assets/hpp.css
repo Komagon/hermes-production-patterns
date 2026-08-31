@@ -696,6 +696,24 @@ html.hpp-js .hpp-reveal.hpp-in { opacity: 1; transform: none; }
   .hpp-card, .hpp-btn { transition: none; }
 }
 
+/* ---- Landing 内联样式提取 (减少 index.md 中的 style= 属性) ---- */
+.hpp-link-clean { text-decoration: none; }
+.hpp-chain-row { grid-template-columns: minmax(110px, auto) 1fr; }
+.hpp-chain-label { font-size: 12.5px; letter-spacing: .02em; }
+.hpp-chain-cat { text-align: left; }
+.hpp-card-body-sm { font-size: 0.78rem; }
+.hpp-card-body-md { font-size: 0.95rem; }
+.hpp-sec-sub-sm { font-size: 22px; margin: 3rem 0 1.2rem; }
+.hpp-mt-12 { margin-top: 1.2rem; }
+.hpp-mt-16 { margin-top: 1.6rem; }
+.hpp-svg-responsive { max-width: 100%; height: auto; }
+.hpp-graph-wide { max-width: 1460px; height: auto; }
+.hpp-center { text-align: center; }
+.hpp-m0 { margin: 0; }
+.hpp-mb04 { margin: 0 0 .4rem; }
+.hpp-text-primary { color: var(--hpp-text-primary); }
+.hpp-align-center { align-items: center; }
+
 /* 打印 */
 @media print {
   .hpp-sec { padding: 2rem 0; }

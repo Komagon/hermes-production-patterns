@@ -468,7 +468,7 @@ NODE_POS = {k: (x, y, w, h) for k, x, y, w, h, _, _ in ARCH_NODES}
 def arch_svg(flow: bool = True) -> str:
     parts = [
         '<svg viewBox="0 0 586 532" width="586" height="532" xmlns="http://www.w3.org/2000/svg" '
-        'class="hpp-graph hpp-arch-svg" style="max-width:100%;height:auto" role="img" '
+        'class="hpp-graph hpp-arch-svg" class="hpp-svg-responsive" role="img" '
         'aria-label="生产架构：Scheduler 触发 Maker 生成，Checker 独立验证，PASS 写入 State 并通知，FAIL 压缩错误后重试，超限升级人工">',
         '<defs><marker id="hpp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
         '<path d="M0 0L10 5L0 10z" fill="#33404d"/></marker>'
@@ -558,7 +558,7 @@ def pattern_card(stem: str, meta: dict, base: str, featured: bool = False) -> st
         f'<p class="hpp-kicker cat-{cat}"><span class="hpp-kicker__dot"></span>{esc(CAT_LABEL.get(cat, cat.upper()))}</p>'
         f'<h3 class="hpp-card__title"><a href="{href}">{esc(title_of(stem, meta))}</a></h3>'
         f'<p class="hpp-card__body">{esc(one)}</p>'
-        f'<p class="hpp-card__body" style="font-size:0.78rem">{esc(signal_of(meta, stem))}</p>'
+        f'<p class="hpp-card__body" class="hpp-card-body-sm">{esc(signal_of(meta, stem))}</p>'
         f"<div>{mat}{cap}</div>"
         f'<div class="hpp-pcard__dots"><span>RELIABILITY {dots(rel, "r")}</span><span>COMPLEXITY {dots(cmpx, "c")}</span></div>'
         f'<a class="hpp-card__link cat-{cat}" href="{href}">→ VIEW PATTERN</a>'
@@ -610,7 +610,7 @@ def maturity_html(base: str) -> str:
     lvl_cards = []
     for lv, name, desc, pats in MATURITY_LEVELS:
         chips = " ".join(
-            f'<a class="hpp-chip" href="{base}/conventions/{s}/" style="text-decoration:none">{esc(t)}</a>'
+            f'<a class="hpp-chip" href="{base}/conventions/{s}/" class="hpp-link-clean">{esc(t)}</a>'
             for t, s in pats
         )
         lvl_cards.append(
@@ -618,7 +618,7 @@ def maturity_html(base: str) -> str:
             f'<span class="hpp-card__num">{esc(lv)}</span>'
             f'<h3 class="hpp-card__title">{esc(name.upper())}</h3>'
             f'<p class="hpp-card__body">{esc(desc)}</p>'
-            f'<p style="margin:0"><span class="hpp-kicker" style="margin:0 0 .4rem">REQUIRED PATTERNS</span><br>{chips}</p></div>'
+            f'<p class="hpp-m0"><span class="hpp-kicker" class="hpp-mb04">REQUIRED PATTERNS</span><br>{chips}</p></div>'
         )
     return (
         f'<div class="hpp-maturity">{steps}</div>'
@@ -633,7 +633,7 @@ def paths_html(base: str) -> str:
         for i, (t, stem) in enumerate(stack):
             if i:
                 chips.append('<span class="hpp-plus">+</span>')
-            chips.append(f'<a class="hpp-chip" href="{base}/conventions/{stem}/" style="text-decoration:none">{esc(t)}</a>')
+            chips.append(f'<a class="hpp-chip" href="{base}/conventions/{stem}/" class="hpp-link-clean">{esc(t)}</a>')
         out.append(
             f'<div class="hpp-card hpp-pcard hpp-reveal" style="--hpp-cat:var(--hpp-accent-secondary)">'
             f'<span class="hpp-card__num">{esc(tag)}</span>'
@@ -692,13 +692,13 @@ def make_home(base: str, conv_metas: dict, ex_metas: dict) -> None:
         if not stems:
             continue
         chips = " · ".join(
-            f'<a href="{base}/conventions/{s}/" style="text-decoration:none">{esc(title_of(s, conv_metas[s]))}</a>'
+            f'<a href="{base}/conventions/{s}/" class="hpp-link-clean">{esc(title_of(s, conv_metas[s]))}</a>'
             for s in stems
         )
         secondary.append(
-            f'<div class="hpp-chain__row hpp-reveal" style="grid-template-columns:minmax(110px,auto) 1fr">'
+            f'<div class="hpp-chain__row hpp-reveal" class="hpp-chain-row">'
             f'<span class="hpp-chain__pattern" style="text-align:left;color:var(--hpp-cat-{cat})">{esc(CAT_LABEL.get(cat, cat.upper()))}</span>'
-            f'<span style="font-size:12.5px;letter-spacing:.02em">{chips}</span></div>'
+            f'<span class="hpp-chain-label">{chips}</span></div>'
         )
     term = (
         '<div class="hpp-terminal hpp-reveal"><div class="hpp-terminal__bar">'
@@ -769,11 +769,11 @@ hide:
     <h2 class="hpp-sec__title">ONE PRODUCTION-READY LOOP</h2>
     <p class="hpp-sec__sub">调度触发 → 生成 → 独立验证 → 持久化 → 通知；失败则压缩错误重试，超限升级人工。节点可点击进入对应 Pattern。</p>
   </div>
-  <div class="hpp-grid hpp-grid--2" style="align-items:center">
+  <div class="hpp-grid hpp-grid--2" class="hpp-align-center">
     <div class="hpp-graph-wrap hpp-reveal">{arch_svg_link(read_site_url())}</div>
     <div>
-      <p class="hpp-card__body" style="font-size:0.95rem">这条流水线本身就是 Pattern 的组合：<b style="color:var(--hpp-text-primary)">Cron Job</b> 负责可靠触发，<b style="color:var(--hpp-text-primary)">Maker / Checker</b> 负责输出质量，<b style="color:var(--hpp-text-primary)">State File + Checkpoint</b> 负责断电恢复，<b style="color:var(--hpp-text-primary)">Error Compact</b> 负责失败不污染上下文。完整拆解见 Architecture 页。</p>
-      <div class="hpp-ctas" style="margin-top:1.2rem">
+      <p class="hpp-card__body" class="hpp-card-body-md">这条流水线本身就是 Pattern 的组合：<b class="hpp-text-primary">Cron Job</b> 负责可靠触发，<b class="hpp-text-primary">Maker / Checker</b> 负责输出质量，<b class="hpp-text-primary">State File + Checkpoint</b> 负责断电恢复，<b class="hpp-text-primary">Error Compact</b> 负责失败不污染上下文。完整拆解见 Architecture 页。</p>
+      <div class="hpp-ctas" class="hpp-mt-12">
         <a class="hpp-btn" href="{base}/architecture-page/">OPEN ARCHITECTURE →</a>
       </div>
     </div>
@@ -788,7 +788,7 @@ hide:
     <p class="hpp-sec__sub">Production agents are built from systems of patterns, not isolated techniques. 悬停高亮关联，点击进入公约。</p>
   </div>
   <div class="hpp-graph-wrap hpp-reveal">{graph_svg(read_site_url(), conv_metas)}</div>
-  <div class="hpp-ctas" style="margin-top:1.2rem">
+  <div class="hpp-ctas" class="hpp-mt-12">
     <a class="hpp-btn" href="{base}/skill-graph/">FULL GRAPH →</a>
   </div>
 </section>
@@ -803,7 +803,7 @@ hide:
   <div class="hpp-grid hpp-grid--3">{feat}</div>
   <h3 class="hpp-sec__title" style="font-size:22px;margin:3rem 0 1.2rem">SECONDARY PATTERNS</h3>
   <div class="hpp-chain">{"".join(secondary)}</div>
-  <div class="hpp-ctas" style="margin-top:1.6rem">
+  <div class="hpp-ctas" class="hpp-mt-16">
     <a class="hpp-btn hpp-btn--primary" href="{base}/patterns-library/">OPEN FULL LIBRARY →</a>
   </div>
 </section>
@@ -840,7 +840,7 @@ hide:
 
 <!-- 10 FINAL CTA -->
 <section class="hpp-sec hpp-finale">
-  <p class="hpp-kicker" style="text-align:center">START TODAY</p>
+  <p class="hpp-kicker" class="hpp-center">START TODAY</p>
   <h2 class="hpp-sec__title">BUILD AGENTS THAT SURVIVE PRODUCTION.</h2>
   <p class="hpp-sec__sub" style="margin:0 auto 2rem">clone 仓库即可把全部 15 条公约装进你的 Hermes。</p>
   <div class="hpp-ctas">
