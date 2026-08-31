@@ -471,7 +471,7 @@ def arch_svg(flow: bool = True) -> str:
         'class="hpp-graph hpp-arch-svg" class="hpp-svg-responsive" role="img" '
         'aria-label="生产架构：Scheduler 触发 Maker 生成，Checker 独立验证，PASS 写入 State 并通知，FAIL 压缩错误后重试，超限升级人工">',
         '<defs><marker id="hpp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
-        '<path d="M0 0L10 5L0 10z" fill="#33404d"/></marker>'
+        '<path d="M0 0L10 5L0 10z" fill="#3f3f46"/></marker>'
         '<marker id="hpp-arrow-err" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
         '<path d="M0 0L10 5L0 10z" fill="#ff6b6b"/></marker></defs>',
     ]
@@ -575,11 +575,13 @@ def problem_cards(base: str, metas: dict) -> str:
     for no, t_en, stmt, zh, stem, fix in PROBLEMS:
         cat = metas[stem].get("hpp_category") if stem in metas else "meta"
         out.append(
-            f'<div class="hpp-card hpp-reveal" style="--hpp-cat:var(--hpp-cat-{cat})">'
+            f'<div class="hpp-card hpp-reveal hpp-failure-card" style="--hpp-cat:var(--hpp-cat-{cat})">'
             f'<span class="hpp-card__num">PROBLEM {no}</span>'
             f'<h3 class="hpp-card__title">{esc(t_en.upper())}</h3>'
             f'<p class="hpp-card__stmt">{esc(stmt)}</p>'
             f'<p class="hpp-card__body">{esc(zh)}</p>'
+            f'<div class="hpp-card__sep"></div>'
+            f'<span class="hpp-card__answer-label">ENGINEERING ANSWER</span>'
             f'<a class="hpp-fix cat-{cat}" href="{base}/conventions/{stem}/" '
             f'style="--hpp-cat:var(--hpp-cat-{cat})">→ {esc(fix.upper())}</a>'
             "</div>"
@@ -883,6 +885,65 @@ hide:
 </section>
 
 <!-- 10 FINAL CTA -->
+
+<!-- 10 PRODUCTION READINESS CHECK -->
+<section class="hpp-sec">
+  <div class="hpp-sec__head">
+    <p class="hpp-kicker">HOW READY IS YOUR AGENT?</p>
+    <h2 class="hpp-sec__title">PRODUCTION READINESS CHECK</h2>
+    <p class="hpp-sec__sub">回答四个问题，评估你的 Agent 的生产就绪程度。</p>
+  </div>
+  <div class="hpp-readiness" id="hpp-readiness">
+    <div class="hpp-readiness__q" data-q="1">
+      <span class="hpp-readiness__num">01</span>
+      <p class="hpp-readiness__text">Does your agent persist state across sessions?</p>
+      <div class="hpp-readiness__btns">
+        <button class="hpp-readiness__btn" data-val="yes" onclick="hppReadinessAnswer(1,25)">YES</button>
+        <button class="hpp-readiness__btn" data-val="no" onclick="hppReadinessAnswer(1,0)">NO</button>
+      </div>
+    </div>
+    <div class="hpp-readiness__q" data-q="2" style="display:none">
+      <span class="hpp-readiness__num">02</span>
+      <p class="hpp-readiness__text">Does your agent have independent validation (not self-check)?</p>
+      <div class="hpp-readiness__btns">
+        <button class="hpp-readiness__btn" data-val="yes" onclick="hppReadinessAnswer(2,25)">YES</button>
+        <button class="hpp-readiness__btn" data-val="no" onclick="hppReadinessAnswer(2,0)">NO</button>
+      </div>
+    </div>
+    <div class="hpp-readiness__q" data-q="3" style="display:none">
+      <span class="hpp-readiness__num">03</span>
+      <p class="hpp-readiness__text">Does it detect and handle silent failures?</p>
+      <div class="hpp-readiness__btns">
+        <button class="hpp-readiness__btn" data-val="yes" onclick="hppReadinessAnswer(3,25)">YES</button>
+        <button class="hpp-readiness__btn" data-val="no" onclick="hppReadinessAnswer(3,0)">NO</button>
+      </div>
+    </div>
+    <div class="hpp-readiness__q" data-q="4" style="display:none">
+      <span class="hpp-readiness__num">04</span>
+      <p class="hpp-readiness__text">Does it support recovery and checkpointing?</p>
+      <div class="hpp-readiness__btns">
+        <button class="hpp-readiness__btn" data-val="yes" onclick="hppReadinessAnswer(4,25)">YES</button>
+        <button class="hpp-readiness__btn" data-val="no" onclick="hppReadinessAnswer(4,0)">NO</button>
+      </div>
+    </div>
+    <div class="hpp-readiness__result" id="hpp-readiness-result" style="display:none">
+      <div class="hpp-readiness__score">
+        <span class="hpp-readiness__score-label">PRODUCTION READINESS</span>
+        <span class="hpp-readiness__score-num" id="hpp-score-num">0</span>
+        <span class="hpp-readiness__score-denom">/100</span>
+      </div>
+      <div class="hpp-readiness__bar">
+        <div class="hpp-readiness__fill" id="hpp-score-fill"></div>
+      </div>
+      <div class="hpp-readiness__level" id="hpp-score-level"></div>
+      <div class="hpp-readiness__next">
+        <span class="hpp-readiness__next-label">NEXT PATTERNS</span>
+        <ol class="hpp-readiness__next-list" id="hpp-next-list"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="hpp-sec hpp-finale">
   <p class="hpp-kicker" class="hpp-center">START TODAY</p>
   <h2 class="hpp-sec__title">BUILD AGENTS THAT SURVIVE PRODUCTION.</h2>

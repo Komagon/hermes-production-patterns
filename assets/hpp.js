@@ -148,6 +148,47 @@
   }
 
 
+
+  // Production Readiness Check (§19)
+  var hppScore = 0;
+  function hppReadinessAnswer(q, points) {
+    hppScore += points;
+    var current = document.querySelector('.hpp-readiness__q[data-q="' + q + '"]');
+    var next = document.querySelector('.hpp-readiness__q[data-q="' + (q + 1) + '"]');
+    if (current) current.style.display = 'none';
+    if (next) {
+      next.style.display = 'block';
+    } else {
+      showReadinessResult();
+    }
+  }
+  function showReadinessResult() {
+    var result = document.getElementById('hpp-readiness-result');
+    var scoreNum = document.getElementById('hpp-score-num');
+    var scoreFill = document.getElementById('hpp-score-fill');
+    var scoreLevel = document.getElementById('hpp-score-level');
+    var nextList = document.getElementById('hpp-next-list');
+    if (!result) return;
+    result.style.display = 'block';
+    scoreNum.textContent = hppScore;
+    scoreFill.style.width = hppScore + '%';
+    var levels = [
+      { min: 0, level: 'PROMPT', next: ['State File', 'Basic Skill'] },
+      { min: 25, level: 'SKILL', next: ['Cron Job', 'Checkpoint'] },
+      { min: 50, level: 'LOOP', next: ['Maker/Checker', 'Error Compact'] },
+      { min: 75, level: 'VERIFIED AGENT', next: ['Evolution Gate', 'Memory OS'] },
+      { min: 100, level: 'AUTONOMOUS AGENT', next: ['All patterns implemented!'] }
+    ];
+    var matched = levels[0];
+    for (var i = levels.length - 1; i >= 0; i--) {
+      if (hppScore >= levels[i].min) { matched = levels[i]; break; }
+    }
+    scoreLevel.textContent = 'LEVEL: ' + matched.level;
+    nextList.innerHTML = matched.next.map(function(n, i) {
+      return '<li>' + (i + 1) + '. ' + n + '</li>';
+    }).join('');
+  }
+
   function boot(root) {
     initGraphs(root);
     initExplorer(root);

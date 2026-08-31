@@ -485,6 +485,26 @@ pre {
   margin: 0;
   flex-grow: 1;
 }
+/* ---- Failure Diagnosis Card (§10) ---- */
+.hpp-failure-card {
+  position: relative;
+}
+.hpp-card__sep {
+  height: 1px;
+  background: var(--hpp-line);
+  margin: 12px 0;
+}
+.hpp-card__answer-label {
+  display: block;
+  font-family: var(--hpp-font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hpp-text-muted);
+  margin-bottom: 8px;
+}
+
 .hpp-card__stmt {
   font-family: var(--hpp-font-mono);
   font-size: 12.5px;
@@ -582,9 +602,44 @@ pre {
   color: var(--hpp-text-primary);
   font-size: 12.5px;
 }
-.hpp-chain__row .hpp-chain__problem { color: var(--hpp-error); text-align: right; }
-.hpp-chain__row .hpp-chain__pattern { color: var(--hpp-accent-secondary); text-align: center; }
-.hpp-chain__row .hpp-chain__result { color: var(--hpp-accent-primary); }
+.hpp-chain__row /* ---- Causal Chain Upgrade (§11) ---- */
+.hpp-chain__row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+.hpp-chain__problem,
+.hpp-chain__pattern,
+.hpp-chain__result {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.hpp-chain__problem {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: var(--hpp-cat-evolution);
+}
+.hpp-chain__pattern {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: var(--hpp-accent-primary);
+}
+.hpp-chain__result {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: var(--hpp-cat-state);
+}
+.hpp-chain__arrow {
+  color: var(--hpp-text-muted);
+  font-size: 18px;
+}
+
 .hpp-chain__arrow { color: var(--hpp-text-secondary); }
 
 /* ---- SVG 架构/关系图 ---- */
@@ -867,4 +922,286 @@ html.hpp-js .hpp-reveal.hpp-in { opacity: 1; transform: none; }
 /* 打印 */
 @media print {
   .hpp-sec { padding: 2rem 0; }
+}
+
+
+/* ---- Featured Pattern Cards Upgrade (§14) ---- */
+.hpp-pcard--featured {
+  position: relative;
+  overflow: hidden;
+}
+.hpp-pcard--featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--hpp-cat, var(--hpp-accent-primary));
+}
+.hpp-pcard__dots {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 12px 0;
+}
+.hpp-pcard__meter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--hpp-text-secondary);
+}
+.hpp-pcard__meter i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hpp-line);
+}
+.hpp-pcard__meter i.on {
+  background: var(--hpp-cat, var(--hpp-accent-primary));
+}
+
+/* ---- Maturity Model Upgrade (§16) ---- */
+.hpp-maturity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  position: relative;
+}
+.hpp-maturity::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--hpp-line);
+  transform: translateY(-50%);
+}
+.hpp-maturity__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+.hpp-maturity__dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--hpp-bg-card);
+  border: 2px solid var(--hpp-line);
+  transition: all 0.3s ease;
+}
+.hpp-maturity__step:hover .hpp-maturity__dot {
+  border-color: var(--hpp-accent-primary);
+  background: var(--hpp-accent-primary);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+}
+.hpp-maturity__label {
+  font-family: var(--hpp-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--hpp-text-secondary);
+  text-align: center;
+}
+
+/* ---- Case Study Cards (§17) ---- */
+.hpp-case-card {
+  border-left: 3px solid var(--hpp-cat-evolution);
+}
+.hpp-case-card__patterns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+.hpp-case-card__pattern {
+  font-family: var(--hpp-font-mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  color: var(--hpp-accent-primary);
+}
+
+/* ---- Learning Path Cards (§18) ---- */
+.hpp-path-card {
+  position: relative;
+}
+.hpp-path-card__number {
+  font-family: var(--hpp-font-display);
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--hpp-line);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.hpp-path-card__steps {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0;
+}
+.hpp-path-card__step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.hpp-path-card__step::before {
+  content: '↓';
+  color: var(--hpp-text-muted);
+  font-size: 12px;
+}
+
+/* ---- System Status UI (§23) ---- */
+.hpp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--hpp-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  color: var(--hpp-accent-primary);
+}
+.hpp-status__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hpp-accent-primary);
+  animation: hpp-pulse 2s ease-in-out infinite;
+}
+
+
+/* ---- Production Readiness Check (§19) ---- */
+.hpp-readiness {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.hpp-readiness__q {
+  padding: 24px;
+  background: var(--hpp-bg-card);
+  border: 1px solid var(--hpp-line);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.hpp-readiness__num {
+  font-family: var(--hpp-font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hpp-text-muted);
+  letter-spacing: 0.1em;
+}
+.hpp-readiness__text {
+  font-size: 16px;
+  color: var(--hpp-text-primary);
+  margin: 12px 0 16px;
+  line-height: 1.5;
+}
+.hpp-readiness__btns {
+  display: flex;
+  gap: 12px;
+}
+.hpp-readiness__btn {
+  font-family: var(--hpp-font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 10px 24px;
+  border: 1px solid var(--hpp-line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--hpp-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hpp-readiness__btn:hover {
+  border-color: var(--hpp-accent-primary);
+  color: var(--hpp-accent-primary);
+  background: rgba(34, 197, 94, 0.1);
+}
+.hpp-readiness__result {
+  text-align: center;
+  padding: 32px;
+  background: var(--hpp-bg-card);
+  border: 1px solid var(--hpp-line);
+  border-radius: 8px;
+}
+.hpp-readiness__score {
+  margin-bottom: 16px;
+}
+.hpp-readiness__score-label {
+  display: block;
+  font-family: var(--hpp-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--hpp-text-muted);
+  margin-bottom: 8px;
+}
+.hpp-readiness__score-num {
+  font-family: var(--hpp-font-display);
+  font-size: 64px;
+  font-weight: 800;
+  color: var(--hpp-accent-primary);
+}
+.hpp-readiness__score-denom {
+  font-family: var(--hpp-font-mono);
+  font-size: 24px;
+  color: var(--hpp-text-muted);
+}
+.hpp-readiness__bar {
+  height: 8px;
+  background: var(--hpp-line);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 16px 0;
+}
+.hpp-readiness__fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--hpp-accent-primary);
+  transition: width 1s ease;
+}
+.hpp-readiness__level {
+  font-family: var(--hpp-font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--hpp-text-primary);
+  margin: 12px 0;
+}
+.hpp-readiness__next {
+  text-align: left;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--hpp-line);
+}
+.hpp-readiness__next-label {
+  display: block;
+  font-family: var(--hpp-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--hpp-text-muted);
+  margin-bottom: 8px;
+}
+.hpp-readiness__next-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.hpp-readiness__next-list li {
+  font-size: 14px;
+  color: var(--hpp-text-secondary);
+  padding: 4px 0;
 }
