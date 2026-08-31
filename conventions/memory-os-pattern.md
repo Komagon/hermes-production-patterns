@@ -160,7 +160,6 @@ Memory OS 不是被动存储，需要主动复盘把「经验」沉淀为「资�
 - `conventions/recall_schema.json` – 记忆条目 JSON schema（type/content/source/timestamp）。
 - `conventions/retrieval_recall_queries.json` – 5 条经验记忆层召回基准查询（配套 test-prompts.json 的记忆反测条目）。
 
-
 | ❌ 错误做法 | 后果 |
 |:---|:---|
 | 只加向量检索，没有写侧纪律 | 库里全是未经校验的噪声，检索越准伤害越大 |

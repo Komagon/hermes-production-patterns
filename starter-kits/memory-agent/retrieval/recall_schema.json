@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Memory Recall Contract",
+  "description": "召回结果条目契约:每条召回必须带来源与层信息,供 Agent 判断可信度与淘汰。",
+  "type": "object",
+  "required": ["id", "layer", "summary", "evidence_ref"],
+  "properties": {
+    "id": { "type": "string" },
+    "layer": { "type": "string", "enum": ["context", "working", "long-term", "experience", "evidence"] },
+    "summary": { "type": "string", "description": "条目一句话摘要" },
+    "evidence_ref": { "type": "string", "description": "evidence/ 目录下的来源条目;临时层允许为空字符串" },
+    "score": { "type": "number", "description": "相关性得分,超限截断依据" },
+    "stale": { "type": "boolean", "description": "来源是否已失效" }
+  }
+}

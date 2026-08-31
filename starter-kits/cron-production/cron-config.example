@@ -1,0 +1,18 @@
+# 复制为 my-cron.yaml 并接入你的调度器(Hermes cron / crontab)
+# 幂等:每轮生成 idempotency_key = {job}-{date}-{batch},写 STATE.md 去重
+
+job:
+  name: {job-name}
+  schedule: "0 9 * * *"        # 每天 09:00
+  prompt: "按 SKILL.md 执行 {job-name},完成每步写回 STATE.md"
+  skills:
+    - {my-skill}
+  state_file: STATE.md
+  monitor:
+    log_dir: monitor/
+    alert_on_failure: true     # 失败必须能被发现
+    alert_channel: {telegram|local}
+  recovery:
+    max_retries: 3
+    backoff_seconds: [1, 3, 9]
+    compact_error: true        # 错误压缩后进上下文

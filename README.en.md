@@ -19,14 +19,17 @@
   </a>
 </p>
 
-> **Production-grade engineering patterns for [Hermes Agent](https://github.com/NousResearch/hermes-agent)**  
+> **A production engineering system for building reliable [Hermes Agents](https://github.com/NousResearch/hermes-agent).**  
+> Reliable. Observable. Recoverable. Evolvable.  
 > Built on Harness Engineering methodology + Loop Engineering + [12-Factor Agents](https://github.com/humanlayer/12-factor-agents)
 
 ---
 
 ## 📖 Introduction
 
-**Hermes Production Patterns** is a collection of engineering conventions, templates, and scripts that turn Hermes Agent from a chat toy into a 7×24 autonomous production system.
+**Hermes Production Patterns** is a production engineering system that turns Hermes Agent from a chat toy into a 7×24 autonomous production system.
+
+> 🚀 **v2.0.0 (2026-08-31) Productization Phase**: upgraded from Pattern Library to Production Engineering System — **6 Starter Kits** (`starter-kits/`), **5 official Production Stacks** (`stacks/`), **10-Minute Quick Start** (`quickstart.md`), **7 Production Recipes** (`recipes/`), **Production Audit + Readiness Score** (`audit/`), **Compatibility Matrix** (`compatibility/`), and the **hpp CLI** (`cli/`: init/add/validate/audit/doctor). The goal is no longer More Patterns — it is **MAKE PATTERNS USABLE.**
 
 You've installed Hermes. Now what? If you're struggling with:
 

@@ -23,17 +23,27 @@
 | 🔄 自更新安全流程 | `conventions/self-update-pattern.md` |
 | 🧠 认知记忆系统 | `conventions/memory-os-pattern.md` |
 | 📈 进化闸门 | `conventions/evolution-gate.md` |
-| 🧪 回归反测集 | `test-prompts.json`(20 条,含 assertions/forbidden) |
+| 回归反测集 | `test-prompts.json`(20 条,含 assertions/forbidden) |
 | 模板 | `templates/` |
 | 设计模式 | `patterns/` |
 | 实战示例 | `examples/` |
 | 公众号文章流水线 | `examples/wechat-article-pipeline.md` |
+| 🚀 Starter Kits(6 个可复制骨架) | `starter-kits/`(入口 `starter-kits/index.md`) |
+| 🚀 Production Stacks(5 个官方组合) | `stacks/`(入口 `stacks/index.md`) |
+| 🚀 10-Minute Quick Start | `quickstart.md` |
+| 🚀 Production Recipes(7 个完整方案) | `recipes/`(入口 `recipes/index.md`) |
+| 🚀 Production Audit + Readiness Score | `audit/audit.md` |
+| 🚀 兼容性矩阵 | `compatibility/README.md` |
+| 🚀 hpp CLI(init/add/validate/audit/doctor) | `cli/hpp.py` |
 
 ## 你的角色
 
+- **新用户路径**:读 `quickstart.md` → 复制 starter-kit → 按验证清单跑通
 - **阅读 `conventions/` 理解工程模式** — 这些是可执行的技能文件
 - **阅读 `patterns/` 理解方法论** — 这些是设计决策的上下文
 - **使用 `templates/` 快速起步** — 填空即用
+- **选场景方案** — 先看 `stacks/` 组合,再看 `recipes/` 完整方案
+- **验收项目** — `cli/hpp audit` 出五维得分,`audit/checks/checklist.md` 逐项核对
 
 ## 约束
 

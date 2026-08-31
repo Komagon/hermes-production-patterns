@@ -86,39 +86,66 @@ extra:
 
 nav:
   - 首页: index.md
-  - 决策入口:
+  - START HERE:
+      - 10-Minute Quick Start: quickstart.md
+      - Starter Kits: starter-kits.md
+      - Production Stacks:
+          - stacks/index.md
+          - 🟢 Starter Stack: stacks/starter.md
+          - 🟡 Reliable Automation: stacks/reliable-automation.md
+          - 🔵 Quality Stack: stacks/quality.md
+          - 🟣 Memory Stack: stacks/memory.md
+          - 🔴 Evolution Stack: stacks/evolution.md
+  - BUILD:
       - 路由入口 Router: router.md
-      - 模式图谱 Skill Graph: skill-graph.md
       - Pattern Explorer: patterns-library.md
+      - Production Recipes:
+          - recipes/index.md
+          - 每日新闻 Agent: recipes/daily-news-agent.md
+          - 内容生产流水线: recipes/content-pipeline.md
+          - 研究调研流水线: recipes/research-pipeline.md
+          - 无人值守监控: recipes/autonomous-monitor.md
+          - 编码任务流水线: recipes/coding-agent-pipeline.md
+          - 知识库问答: recipes/knowledge-agent.md
+          - 多角色协同: recipes/multi-agent-workflow.md
+      - 模式图谱 Skill Graph: skill-graph.md
       - 生产架构 Architecture: architecture-page.md
+  - UNDERSTAND:
+      - 方法论 Patterns:
+          - patterns/index.md
+          - 12-Factor Agents 落地映射: patterns/12-factor-agents-for-hermes.md
+          - Loop Engineering 14 步: patterns/loop-engineering-14-steps.md
+          - 成熟度检查清单: patterns/maturity-checklist.md
+          - 成熟度分级 L1→L3: patterns/maturity-staging-l1-l2-l3.md
+      - 工程公约 Conventions:
+          - conventions/index.md
+          - Maker/Checker 双角色分离: conventions/maker-checker.md
+          - Cron 任务设计模式: conventions/cron-job-pattern.md
+          - STATE.md 跨运行状态: conventions/state-file-pattern.md
+          - 检查点模式: conventions/checkpoint-pattern.md
+          - 控制流分离: conventions/control-flow-separation.md
+          - 错误压缩模式: conventions/error-compact-pattern.md
+          - 反面模式 Anti-Patterns: conventions/anti-patterns.md
+          - 密钥管理: conventions/secret-management.md
+          - 自更新安全流程: conventions/self-update-pattern.md
+          - Memory OS 五层记忆: conventions/memory-os-pattern.md
+          - 进化闸门 G1-G5: conventions/evolution-gate.md
+          - 技能进化管理: conventions/skill-evolution.md
+          - 数据驱动优化: conventions/data-driven-optimization.md
+          - 模式组合指南: conventions/pattern-composition.md
+          - 能力 × 模式映射: conventions/hermes-capability-map.md
+  - VALIDATE:
+      - Production Audit:
+          - audit/audit.md
+          - 审计检查单: audit/checks/checklist.md
+          - Readiness Score 模型: audit/scoring/readiness-score.md
+      - 兼容性矩阵: compatibility/README.md
+      - hpp CLI: cli.md
   - 项目说明: readme.md
   - 总览:
       - 架构总览: ARCHITECTURE.md
       - 上下文: CONTEXT.md
       - 变更日志: CHANGELOG.md
-  - 方法论 Patterns:
-      - patterns/index.md
-      - 12-Factor Agents 落地映射: patterns/12-factor-agents-for-hermes.md
-      - Loop Engineering 14 步: patterns/loop-engineering-14-steps.md
-      - 成熟度检查清单: patterns/maturity-checklist.md
-      - 成熟度分级 L1→L3: patterns/maturity-staging-l1-l2-l3.md
-  - 工程公约 Conventions:
-      - conventions/index.md
-      - Maker/Checker 双角色分离: conventions/maker-checker.md
-      - Cron 任务设计模式: conventions/cron-job-pattern.md
-      - STATE.md 跨运行状态: conventions/state-file-pattern.md
-      - 检查点模式: conventions/checkpoint-pattern.md
-      - 控制流分离: conventions/control-flow-separation.md
-      - 错误压缩模式: conventions/error-compact-pattern.md
-      - 反面模式 Anti-Patterns: conventions/anti-patterns.md
-      - 密钥管理: conventions/secret-management.md
-      - 自更新安全流程: conventions/self-update-pattern.md
-      - Memory OS 五层记忆: conventions/memory-os-pattern.md
-      - 进化闸门 G1-G5: conventions/evolution-gate.md
-      - 技能进化管理: conventions/skill-evolution.md
-      - 数据驱动优化: conventions/data-driven-optimization.md
-      - 模式组合指南: conventions/pattern-composition.md
-      - 能力 × 模式映射: conventions/hermes-capability-map.md
   - 实战案例 Examples:
       - examples/index.md
       - 公众号文章流水线:

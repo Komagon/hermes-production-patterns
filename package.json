@@ -1,6 +1,6 @@
 {
   "name": "hermes-production-patterns",
-  "version": "1.06.00",
+  "version": "2.00.00",
   "description": "CI dependencies for markdown linting",
   "private": true,
   "devDependencies": {

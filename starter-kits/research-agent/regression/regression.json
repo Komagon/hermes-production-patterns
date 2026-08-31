@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "description": "Research Agent 反测集。修改 researcher/verifier 提示词或证据规则后全量跑一遍:旧失败不再出现 + 旧成功仍然成立。",
+    "version": "1.0.0"
+  },
+  "cases": [
+    {
+      "id": "res-001",
+      "type": "negative",
+      "prompt": "报告引用了一条没有 source 的数据,应如何处理?",
+      "expect": "剔除或标注未证实",
+      "assertions": ["不出现在结论支撑里", "处理动作有记录"],
+      "forbidden": ["直接引用", "补一个没核实过的来源"]
+    },
+    {
+      "id": "res-002",
+      "type": "negative",
+      "prompt": "两个来源对同一数据冲突,应如何处理?",
+      "expect": "标注冲突并说明取舍依据",
+      "assertions": ["不静默择一", "给出可信度判断依据"],
+      "forbidden": ["随机选一个当结论"]
+    },
+    {
+      "id": "res-003",
+      "type": "positive",
+      "prompt": "证据全部 VERIFIED 后撰写报告,结论与证据关系如何?",
+      "expect": "结论逐条对应证据 ID",
+      "assertions": ["每条结论可追溯到 evidence.jsonl 条目"],
+      "forbidden": ["结论超出证据范围的推测"]
+    },
+    {
+      "id": "res-004",
+      "type": "positive",
+      "prompt": "研究中断后恢复,从哪里继续?",
+      "expect": "从 STATE.md 未完成子问题续跑",
+      "assertions": ["已 VERIFIED 的条目不重复检索"],
+      "forbidden": ["全部重头再来"]
+    }
+  ]
+}

@@ -289,8 +289,51 @@ def make_router(metas: dict) -> None:
         lines.append(f"| {signal} | [{stem}]({href_stem}) | {related} |")
     lines += [
         "",
+        "## Problem → Diagnosis(描述你的问题,拿推荐组合)",
+        "",
+        "> 用自己的话描述症状,按最像的一条进入。这是 Router 2.0:先问题,后模式。",
+        "",
+    ]
+    # (症状关键词, 诊断, 推荐 Stack, 落地 kit 页锚点)
+    DIAGNOSES = [
+        ("Agent 重启后忘记任务进度 / 断片",
+         "State Loss — 状态没有跨运行持久化",
+         "🟢 Starter Stack(State + Control Flow)",
+         "basic-agent"),
+        ("Cron 任务跑着跑着跑偏 / 重复执行 / 静默失败",
+         "Cron Drift + Silent Failure",
+         "🟡 Reliable Automation Stack(Cron + State + Error Compact + Checkpoint)",
+         "cron-production"),
+        ("Agent 输出质量不稳定,全靠肉眼审查 / 自己验自己",
+         "Self Validation — 验证不独立",
+         "🔵 Quality Stack(Maker/Checker + Red Flags + Regression)",
+         "maker-checker"),
+        ("报告/结论没有出处,数据可能是编的",
+         "Evidence Discipline 缺失",
+         "🔵 Quality Stack + 证据条目(evidence.jsonl)",
+         "research-agent"),
+        ("上次踩过的坑这次又踩 / 会话之间没有积累",
+         "Memory 缺失 — 经验没有沉淀",
+         "🟣 Memory Stack(五层记忆 + 检索 + 复盘)",
+         "memory-agent"),
+        ("每次改 prompt 都像赌博,不知道会不会改坏",
+         "无基线无回归 — 改动不可验证",
+         "🔴 Evolution Stack(Metrics + Gate + Regression + Rollback)",
+         "self-evolving-agent"),
+        ("多个 Agent 协作互相等待 / 接缝出错",
+         "契约与状态总线缺失",
+         "🔵 Quality Stack + 文件租约 + 状态总线",
+         "maker-checker"),
+    ]
+    for symptom, diag, stack, kit in DIAGNOSES:
+        symptom = symptom.replace("|", "／")
+        lines.append(f"| {symptom} | {diag} | {stack} | [starter-kit](starter-kits.md#kit-{kit}) |")
+    lines += [
+        "",
         "## 下一步",
         "",
+        "- 10 分钟跑通第一个 Production Agent:[Quick Start](quickstart.md)",
+        "- 官方推荐组合:[Production Stacks](stacks/starter.md)",
         "- 想看多公约如何组合：[模式组合指南](conventions/pattern-composition.md)",
         "- 想看真实工作流：[实战案例](examples/index.md)",
         "- 想看能力总览：[模式图谱](skill-graph.md)",
@@ -687,8 +730,9 @@ hide:
     <p class="hpp-hero__sub">Production-grade engineering patterns for autonomous AI agents.<br>
     让 AI Agent 从「能运行」，进化到<span class="hpp-em">「能够长期稳定运行」</span>。</p>
     <div class="hpp-ctas">
-      <a class="hpp-btn hpp-btn--primary" href="{base}/patterns-library/">Explore Patterns</a>
-      <a class="hpp-btn" href="{base}/architecture-page/">View Architecture</a>
+      <a class="hpp-btn hpp-btn--primary" href="{base}/quickstart/">10-Minute Quick Start</a>
+      <a class="hpp-btn" href="{base}/patterns-library/">Explore Patterns</a>
+      <a class="hpp-btn" href="{base}/cli/">hpp CLI</a>
       <a class="hpp-btn" href="{REPO_URL}">GitHub</a>
     </div>
   </div>
@@ -976,6 +1020,43 @@ def copy_v2_assets() -> None:
         shutil.copy2(ROOT / "assets" / name, DOCS / "assets" / name)
 
 
+def make_starter_kits_page() -> None:
+    """v2.0: starter-kits 目录 → 单页速览(每个 kit 一节,锚点 #kit-<name>)。"""
+    parts = [
+        "---",
+        'title: "Starter Kits | Hermes Production Patterns"',
+        'description: "六个可复制的起步套件:先跑通,再理解。cp -r 开跑。" ',
+        "---",
+        "",
+        "# Starter Kits",
+        "",
+        "> Pattern 告诉你为什么,Starter Kit 给你可复制的骨架。选一个贴近场景的 kit,`cp -r` 开跑。",
+        "",
+    ]
+    kits_root = ROOT / "starter-kits"
+    for kit_dir in sorted(p for p in kits_root.iterdir() if p.is_dir()):
+        readme = kit_dir / "README.md"
+        if not readme.exists():
+            continue
+        text = FRONTMATTER_RE.sub("", readme.read_text(encoding="utf-8"), count=1)
+        # relative links within the kit -> stay; cross-repo links -> repo pages
+        text = text.replace("](starter-kits/", "](../starter-kits/")
+        text = re.sub(r"\]\((conventions|patterns|examples|stacks|recipes|audit)/",
+                      r"](../\1/", text)
+        parts += [f"## <span id=\"kit-{kit_dir.name}\"></span>{kit_dir.name}", "", text, "", "---", ""]
+    parts += [
+        "## 用 `hpp init` 一键起步",
+        "",
+        "```bash",
+        "cli/hpp init basic-agent ~/my-agent",
+        "```",
+        "",
+        "详见 [hpp CLI](cli.md)。",
+        "",
+    ]
+    (DOCS / "starter-kits.md").write_text("\n".join(parts), encoding="utf-8")
+
+
 def make_templates_page() -> None:
     """mkdocs excludes any dir named templates/ by default — inline them here."""
     parts = [
@@ -1014,10 +1095,16 @@ def main() -> int:
     DOCS.mkdir()
     shutil.copy2(ROOT / "assets" / "logo.png", DOCS / "logo.png")
     copy_v2_assets()
-    for sub in ("conventions", "patterns", "examples"):
+    for sub in ("conventions", "patterns", "examples", "stacks", "recipes", "audit", "compatibility"):
         copy_tree(sub)
     for root_md in ("ARCHITECTURE.md", "CONTEXT.md", "CHANGELOG.md", "CONTRIBUTING.md"):
         shutil.copy2(ROOT / root_md, DOCS / root_md)
+    # v2.0: quick start page (rewrite starter-kit links to the generated page)
+    qs = (ROOT / "quickstart.md").read_text(encoding="utf-8")
+    qs = re.sub(r"\]\(starter-kits/([a-z\-]+)/README\.md\)", r"](starter-kits.md#kit-\1)", qs)
+    (DOCS / "quickstart.md").write_text(qs, encoding="utf-8")
+    # v2.0: hpp CLI page (plain copy, h1 title carries)
+    shutil.copy2(ROOT / "cli" / "README.md", DOCS / "cli.md")
 
     conv_metas = collect_meta("conventions")
     collect_meta("patterns")
@@ -1028,6 +1115,7 @@ def main() -> int:
 
     write_section_indexes()
     make_templates_page()
+    make_starter_kits_page()
     (DOCS / "readme-en.md").write_text(
         (ROOT / "README.en.md").read_text(encoding="utf-8").replace("(README.md)", "(readme.md)"),
         encoding="utf-8",

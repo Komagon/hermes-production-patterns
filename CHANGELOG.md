@@ -1,5 +1,22 @@
 # Changelog
 
+## v2.0.0 (2026-08-31)
+
+### 🚀 Productization Phase：从 Pattern Library 到 Production Engineering System
+
+按 vault 路线图《Hermes_Production_Patterns_v2.0_产品化升级路线图》执行。核心战略转变：不再以增加 Pattern 数量为目标，而是 **MAKE PATTERNS USABLE**——先提升采用率，再扩展知识库。
+
+- **Starter Kits（P0）** — `starter-kits/` 六个可复制骨架全部就位：basic-agent / cron-production / maker-checker / research-agent / memory-agent / self-evolving-agent。每个含 Patterns Used 表、安装、流程与验证清单；maker-checker 含 schema 契约 + red-flags + 压缩反馈模板 + 反测集；research-agent 含 evidence.jsonl 证据纪律 + 独立 Verifier；self-evolving-agent 含 Metrics/Baseline/Gate/Deploy/Rollback 全闭环。新增 `starter-kits/index.md` 选择路径表。
+- **Production Stacks（P0）** — `stacks/` 五个官方组合：🟢 Starter / 🟡 Reliable Automation / 🔵 Quality / 🟣 Memory / 🔴 Evolution。每个含组合公式、对应公约、何时用、何时升级、落地方式；叠加原则对齐成熟度 L1-L3。
+- **10-Minute Quick Start（P0）** — `quickstart.md`：六步从零到第一个 Production Agent（复制 kit → 定义技能 → 初始化状态 → 运行 → 独立验证 → 挂定时）。
+- **Router 2.0（P0）** — docs Router 页新增 Problem→Diagnosis 表：7 类用户症状 → 诊断 → 推荐 Stack → 落地 kit 锚点。
+- **Production Recipes（P1）** — `recipes/` 七个完整工程方案：daily-news-agent / content-pipeline / research-pipeline / autonomous-monitor / coding-agent-pipeline / knowledge-agent / multi-agent-workflow。每个九节齐全：Problem / Architecture / Patterns Used / Installation / Configuration / Run / Failure Modes / Recovery / Metrics。
+- **Compatibility Matrix（P1）** — `compatibility/`：人读版 README + 机器可读 `hermes-versions.yaml`（13 个 pattern 的 min_hermes/status/requires）。
+- **Production Audit（P1）** — `audit/`：审计规范（Pattern Evidence 哲学）+ 15 项行为检查单（五组 A-E）+ 五维加权 Readiness Score 模型（Reliability 25 / Observability 20 / Recoverability 20 / Quality 20 / Evolution 15）。
+- **hpp CLI（P2）** — `cli/hpp.py`（纯 stdlib）：`hpp init` 六 kit 脚手架、`hpp add` 五 pattern 增量注入（幂等跳过）、`hpp validate` 结构/契约/密钥校验、`hpp audit` 五维打分条形图 + 缺失项 + 建议命令、`hpp doctor` 环境诊断。已在本地完成全命令实测。
+- **网站重组** — mkdocs nav 改为 START HERE / BUILD / UNDERSTAND / VALIDATE / 项目说明 / 总览 / Examples / Templates / 参与贡献；build_docs.py 复制清单扩展至 stacks/recipes/audit/compatibility + 新增 starter-kits 生成页与 cli 页；首页 Hero CTA 改为 10-Minute Quick Start 优先。
+- **清理** — 移除误生成的 `' /'` 目录与 stacks/ 空骨架。
+
 ## v1.06.00 (2026-08-30)
 
 ### ✨ 网站 V2:从文档站升级为 Agent Production Engineering 知识系统

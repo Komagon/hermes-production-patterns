@@ -1,0 +1,3 @@
+# {job} run log — 每轮一行,追加写
+# format: ISO8601 | status | batch | duration_s | note
+2026-08-30T09:00:00+08:00 | ok | 001 | 42 | first run

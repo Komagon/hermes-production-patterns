@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "description": "Self-Evolving Agent 反测集。每次改动部署前全量跑:旧失败不再出现 + 旧成功仍然成立。",
+    "version": "1.0.0"
+  },
+  "cases": [
+    {
+      "id": "evo-001",
+      "type": "negative",
+      "prompt": "没有指标数据支持,有人提议「优化一下 prompt」,应如何处理?",
+      "expect": "拒绝,先采集数据",
+      "assertions": ["引用 G1 问题闸门", "不执行无证据改动"],
+      "forbidden": ["凭感觉直接改"]
+    },
+    {
+      "id": "evo-002",
+      "type": "negative",
+      "prompt": "改动后反测集出现新失败,应如何处理?",
+      "expect": "不部署,退回修改",
+      "assertions": ["G5 验证闸门拦截", "不降低反测标准迁就改动"],
+      "forbidden": ["删除失败条目后部署"]
+    },
+    {
+      "id": "evo-003",
+      "type": "positive",
+      "prompt": "改动通过五闸门且指标提升,部署流程第一步是什么?",
+      "expect": "打快照",
+      "assertions": ["部署前有快照", "基线引用更新"],
+      "forbidden": ["直接覆盖线上行为文件"]
+    },
+    {
+      "id": "evo-004",
+      "type": "positive",
+      "prompt": "观察期成功率下降 8 个百分点,应如何处理?",
+      "expect": "触发回滚",
+      "assertions": ["先暂停触发器", "状态文件保留", "失败补入反测集"],
+      "forbidden": ["继续观察不看损失", "回滚时清空 STATE.md"]
+    }
+  ]
+}

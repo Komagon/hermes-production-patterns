@@ -20,11 +20,13 @@
   <a href="README.en.md">🇬🇧 English</a>
 </p>
 
-> **Production-grade engineering patterns for Hermes Agent**  
+> **A production engineering system for building reliable Hermes Agents.**
+> Reliable. Observable. Recoverable. Evolvable.  \
 > Built on Harness Engineering methodology + Loop Engineering + 12-Factor Agents
 
 把 Hermes Agent 从「聊天玩具」变成「7x24 小时自主工作的生产系统」所需的全部工程模式、公约和模板。
 
+> 🚀 **v2.0.0（2026-08-31）Productization Phase**：从 Pattern Library 升级为 Production Engineering System——新增 **6 个 Starter Kits**（`starter-kits/`，cp -r 开跑）、**5 个官方 Production Stacks**（`stacks/`，Opinionated Defaults）、**10-Minute Quick Start**（`quickstart.md`）、**7 个 Production Recipes**（`recipes/`，九节齐全的完整工程方案）、**Production Audit 规范 + Readiness Score**（`audit/`）、**兼容性矩阵**（`compatibility/`）、**hpp CLI**（`cli/`，init/add/validate/audit/doctor）；Router 2.0 升级为 Problem→Diagnosis 问题式入口；网站导航重组为 START HERE / BUILD / UNDERSTAND / VALIDATE。核心不再是 More Patterns，而是 **MAKE PATTERNS USABLE.** 详见 CHANGELOG v2.0.0。
 > 🆕 **2026-08 已同步 Hermes 最新能力**：Monitor 原生监控（哈希抑制，变了才烧 token）、delegate Checker（独立子代理 + schema 契约）、能力×模式映射表（`conventions/hermes-capability-map.md`）。详见 CHANGELOG v1.02.00。
 >
 > 🧠 **v1.03.00（2026-08-20）**：新增 3 个实战模式——自更新安全流程（`self-update-pattern`，autostash 坑 + 测试失败基线）、Memory OS（`memory-os-pattern`，五层记忆 + 向量/图谱/RRF + 写侧纪律）、进化闸门（`evolution-gate`，G1-G5 + 五维评估 + 回归闭环）。详见 CHANGELOG v1.03.00。
@@ -89,8 +91,46 @@ Hermes Agent 本身是一个强大的 Agent 框架，但社区里最缺的不是
 hermes-production-patterns/
 ├── AGENTS.md                    ← Harness 入口（AI 读我）
 ├── README.md
+├── quickstart.md                ← 10-Minute Quick Start（v2.0 新增）
 ├── LICENSE                      ← MIT
 ├── config.yaml.example          ← Hermes 配置模板
+│
+├── starter-kits/                ← 🚀 v2.0 起步套件（cp -r 开跑）
+│   ├── basic-agent/             — 最小可运行 Agent（★）
+│   ├── cron-production/         — 定时生产级 Agent（★★）
+│   ├── maker-checker/           — 双角色验证流水线（★★）
+│   ├── research-agent/          — 证据驱动研究（★★★）
+│   ├── memory-agent/            — 五层记忆体系（★★★）
+│   └── self-evolving-agent/     — 自进化闭环（★★★★）
+│
+├── stacks/                      ← 🚀 v2.0 官方推荐组合
+│   ├── starter.md               — 🟢 SKILL + STATE + Control Flow
+│   ├── reliable-automation.md   — 🟡 STATE + Cron + Error Compact + Checkpoint
+│   ├── quality.md               — 🔵 Maker + Checker + Red Flags + Regression
+│   ├── memory.md                — 🟣 Memory OS + Evidence + Retrieval + Review
+│   └── evolution.md             — 🔴 Metrics + Gate + Regression + Deploy/Rollback
+│
+├── recipes/                     ← 🚀 v2.0 完整工程方案（九节齐全）
+│   ├── daily-news-agent.md
+│   ├── content-pipeline.md
+│   ├── research-pipeline.md
+│   ├── autonomous-monitor.md
+│   ├── coding-agent-pipeline.md
+│   ├── knowledge-agent.md
+│   └── multi-agent-workflow.md
+│
+├── audit/                       ← 🚀 v2.0 生产审计
+│   ├── audit.md                 — 审计规范（Pattern Evidence）
+│   ├── checks/checklist.md      — 15 项行为检查单
+│   └── scoring/readiness-score.md — 五维加权 100 分制
+│
+├── compatibility/               ← 🚀 v2.0 兼容性矩阵
+│   ├── README.md
+│   └── hermes-versions.yaml     — 机器可读,CLI 审计引用
+│
+├── cli/                         ← 🚀 v2.0 hpp CLI
+│   ├── hpp.py                   — init / add / validate / audit / doctor
+│   └── README.md
 │
 ├── conventions/                 ← 工程公约（核心产出）
 │   ├── maker-checker.md         — 生成/验证双角色分离
@@ -153,6 +193,17 @@ hermes-production-patterns/
 ---
 
 ## 快速开始
+
+### 0. 10-Minute Quick Start（推荐）
+
+跟 [quickstart.md](quickstart.md) 走：10 分钟内得到一个带状态、可验证、能定时运行的 Production Agent。也可以用 hpp CLI 一键起步：
+
+```bash
+git clone https://github.com/Komagon/hermes-production-patterns.git
+cd hermes-production-patterns
+cli/hpp init basic-agent ~/my-agent
+cli/hpp doctor   # 环境诊断
+```
 
 ### 1. 把模式装进你的 Hermes
 

@@ -1,0 +1,69 @@
+# Hermes Production Patterns — pattern ↔ Hermes version compatibility.
+# Machine-readable source of truth. cli/hpp audit reads this file.
+# status: stable | experimental | deprecated
+# min_hermes: "any" means no version-dependent native capability required.
+
+state-file-pattern:
+  min_hermes: "any"
+  status: stable
+  requires: []
+
+control-flow-separation:
+  min_hermes: "any"
+  status: stable
+  requires: []
+
+error-compact-pattern:
+  min_hermes: "any"
+  status: stable
+  requires: []
+
+checkpoint-pattern:
+  min_hermes: "any"
+  status: stable
+  requires: []
+
+maker-checker:
+  min_hermes: ">=0.20"
+  status: stable
+  requires: [delegate, output-schema]
+
+cron-job-pattern:
+  min_hermes: ">=0.20"
+  status: stable
+  requires: [cron, monitor]
+
+monitor:
+  min_hermes: ">=0.20"
+  status: stable
+  requires: [cron, monitor]
+
+skill-evolution:
+  min_hermes: ">=0.15"
+  status: stable
+  requires: []
+
+secret-management:
+  min_hermes: "any"
+  status: stable
+  requires: [env]
+
+memory-os-pattern:
+  min_hermes: "version-dependent"
+  status: experimental
+  requires: []
+
+evolution-gate:
+  min_hermes: "any"
+  status: stable
+  requires: [regression-data]
+
+data-driven-optimization:
+  min_hermes: "any"
+  status: stable
+  requires: []
+
+self-update-pattern:
+  min_hermes: ">=0.20"
+  status: stable
+  requires: [git]

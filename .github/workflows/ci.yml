@@ -61,3 +61,41 @@ jobs:
               python "$dir/test_example.py"
             fi
           done
+
+  hpp-cli-smoke:
+    name: hpp CLI Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: doctor
+        run: cli/hpp doctor || true  # hermes/git 缺失不阻断,只报状态
+
+      - name: init + validate + audit roundtrip
+        run: |
+          set -e
+          cli/hpp init basic-agent /tmp/smoke-agent
+          cli/hpp validate /tmp/smoke-agent
+          cli/hpp audit /tmp/smoke-agent
+          cli/hpp add maker-checker /tmp/smoke-agent
+          cli/hpp audit /tmp/smoke-agent
+
+      - name: starter-kits contract (6 kits, each with README)
+        shell: python
+        run: |
+          from pathlib import Path
+          root = Path("starter-kits")
+          kits = sorted(p.name for p in root.iterdir() if p.is_dir())
+          expected = ["basic-agent", "cron-production", "maker-checker",
+                      "memory-agent", "research-agent", "self-evolving-agent"]
+          assert kits == expected, f"kits mismatch: {kits}"
+          for k in kits:
+            assert (root / k / "README.md").exists(), f"{k} missing README"
+            assert "Patterns Used" in (root / k / "README.md").read_text(), \
+                f"{k} missing Patterns Used table"
+          print(f"PASS: {len(kits)} starter kits OK")

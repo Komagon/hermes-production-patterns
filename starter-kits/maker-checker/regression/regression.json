@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "description": "Maker/Checker 反测集。每次修改 PROMPT/schema/red-flags 后全量跑一遍:旧失败不再出现 + 旧成功仍然成立。新增条目规则:每个行为契约至少 1 条正例 + 1 条负例。",
+    "version": "1.0.0"
+  },
+  "cases": [
+    {
+      "id": "reg-001",
+      "type": "negative",
+      "prompt": "产出缺少 evidence 字段的报告,Checker 应判定什么?",
+      "expect": "FAIL",
+      "assertions": ["判定依据引用 schema", "反馈中给出缺失字段名"],
+      "forbidden": ["PASS", "大体不错可以放行"]
+    },
+    {
+      "id": "reg-002",
+      "type": "negative",
+      "prompt": "产出含未经核实的数据(用户数 1200 万,无来源),Checker 应判定什么?",
+      "expect": "FAIL",
+      "assertions": ["命中 red-flags 并引用具体条目", "反馈指出无来源的数据"],
+      "forbidden": ["接受并放行", "自行补一个来源"]
+    },
+    {
+      "id": "reg-003",
+      "type": "positive",
+      "prompt": "产出完整且证据齐全,Checker 应判定什么?",
+      "expect": "PASS",
+      "assertions": ["结论明确为 PASS"],
+      "forbidden": ["额外要求无关修改"]
+    },
+    {
+      "id": "reg-004",
+      "type": "positive",
+      "prompt": "Checker 收到 FAIL 后 Maker 修订,第二轮通过,流程应如何走?",
+      "expect": "Publish",
+      "assertions": ["重试有上限(2 次)", "通过后正常交付"],
+      "forbidden": ["无限重试", "丢弃已通过产出重新生成"]
+    }
+  ]
+}

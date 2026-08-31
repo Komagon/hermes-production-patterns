@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# hpp CLI entry point. Usage: cli/hpp <command> ...
+exec python3 "$(dirname "$0")/hpp.py" "$@"
