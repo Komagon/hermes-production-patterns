@@ -15,6 +15,8 @@
   --hpp-accent-secondary: #62d9ff;
   --hpp-warning: #ffb454;
   --hpp-error: #ff6b6b;
+  /* Hero 背景图 */
+  --hpp-hero-bg: url('hero-bg.webp');
   /* 分类 accent (§14) */
   --hpp-cat-state: #62d9ff;
   --hpp-cat-quality: #78ffb7;
@@ -65,6 +67,69 @@
 .md-container,
 .md-content {
   background-color: var(--hpp-bg-primary);
+}
+
+/* ---- 亮色主题 ---- */
+[data-md-color-scheme="default"] {
+  --hpp-bg-primary: #ffffff;
+  --hpp-bg-secondary: #f6f8fa;
+  --hpp-bg-card: #ffffff;
+  --hpp-line: #d0d7de;
+  --hpp-text-primary: #1f2328;
+  --hpp-text-secondary: #656d76;
+  --hpp-accent-primary: #0969da;
+  --hpp-accent-secondary: #0550ae;
+  --hpp-warning: #bf8700;
+  --hpp-error: #d1242f;
+  --hpp-cat-state: #0969da;
+  --hpp-cat-quality: #1a7f37;
+  --hpp-cat-automation: #8250df;
+  --hpp-cat-memory: #6639ba;
+  --hpp-cat-reliability: #0891b2;
+  --hpp-cat-evolution: #bf8700;
+  --hpp-cat-security: #d1242f;
+  --hpp-cat-meta: #656d76;
+  --md-default-bg-color: #ffffff;
+  --md-default-bg-color--light: rgba(255, 255, 255, 0.75);
+  --md-default-bg-color--lighter: rgba(255, 255, 255, 0.35);
+  --md-default-bg-color--lightest: rgba(255, 255, 255, 0.12);
+  --md-default-fg-color: #1f2328;
+  --md-default-fg-color--light: #656d76;
+  --md-default-fg-color--lighter: rgba(101, 109, 118, 0.45);
+  --md-default-fg-color--lightest: rgba(101, 109, 118, 0.18);
+  --md-code-bg-color: #f6f8fa;
+  --md-code-fg-color: #24292f;
+  --md-typeset-a-color: #0550ae;
+  --md-accent-fg-color: #0969da;
+  --md-accent-fg-color--transparent: rgba(9, 105, 218, 0.12);
+  --md-primary-fg-color: #f6f8fa;
+  --md-primary-fg-color--light: #eaeef2;
+  --md-primary-fg-color--dark: #ffffff;
+  --md-primary-bg-color: #1f2328;
+  --md-primary-bg-color--light: #656d76;
+  --md-shadow-z1: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.08), 0 0 0.05rem rgba(0, 0, 0, 0.12);
+  --md-footer-bg-color: #f6f8fa;
+  --md-footer-bg-color--dark: #eaeef2;
+  --md-typeset-table-color: #d0d7de;
+  --md-admonition-bg-color: #ffffff;
+  /* 亮色主题不用背景图 */
+  --hpp-hero-bg: none;
+}
+[data-md-color-scheme="default"] body {
+  --hpp-cat: var(--hpp-cat-meta);
+}
+[data-md-color-scheme="default"] body,
+.md-container,
+.md-content {
+  background-color: var(--hpp-bg-primary);
+}
+[data-md-color-scheme="default"] .md-header,
+[data-md-color-scheme="default"] .md-banner,
+[data-md-color-scheme="default"] .md-footer {
+  border-bottom: 1px solid var(--hpp-line);
+}
+[data-md-color-scheme="default"] .md-typeset h1 {
+  color: var(--hpp-text-primary) !important;
 }
 .md-header,
 .md-banner,
@@ -160,6 +225,10 @@ pre {
 
 /* ---- Hero ---- */
 .hpp-hero {
+  background-image: var(--hpp-hero-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: clamp(24px, 4vw, 64px);
