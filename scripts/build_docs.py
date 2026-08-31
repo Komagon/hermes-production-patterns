@@ -696,7 +696,7 @@ def make_home(base: str, conv_metas: dict, ex_metas: dict) -> None:
             for s in stems
         )
         secondary.append(
-            f'<div class="hpp-chain__row hpp-reveal" class="hpp-chain-row">'
+            f'<div class="hpp-chain__row hpp-reveal hpp-chain-row">'
             f'<span class="hpp-chain__pattern" style="text-align:left;color:var(--hpp-cat-{cat})">{esc(CAT_LABEL.get(cat, cat.upper()))}</span>'
             f'<span class="hpp-chain-label">{chips}</span></div>'
         )
