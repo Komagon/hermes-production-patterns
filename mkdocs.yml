@@ -21,22 +21,13 @@ theme:
     - content.code.copy
     - content.code.annotate
   palette:
-    # 亮色主题（默认）
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: custom
-      accent: custom
-      toggle:
-        icon: material/weather-sunny
-        name: 切换到深色
-    # 暗色主题
-    - media: "(prefers-color-scheme: dark)"
+    - media: "(prefers-color-scheme)"
       scheme: slate
       primary: custom
       accent: custom
       toggle:
-        icon: material/weather-night
-        name: 切换到亮色
+        icon: material/brightness-auto
+        name: 切换主题
   font: false   # V2: 零外部请求(§39),用系统字体栈+显式 CJK 回退
 
 extra_css:
