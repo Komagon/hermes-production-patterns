@@ -99,3 +99,13 @@ jobs:
             assert "Patterns Used" in (root / k / "README.md").read_text(), \
                 f"{k} missing Patterns Used table"
           print(f"PASS: {len(kits)} starter kits OK")
+          yaml
+
+  bilingual-check:
+    name: Bilingual Consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check README section count sync
+        run: bash scripts/check-bilingual.sh
