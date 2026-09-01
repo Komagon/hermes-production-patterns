@@ -14,6 +14,12 @@
   <a href="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml">
     <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
+  </a>
+  <a href="https://github.com/Komagon/hermes-production-patterns/stargazers">
+    <img src="https://img.shields.io/github/stars/Komagon/hermes-production-patterns?style=social" alt="Stars">
+  </a>
 </p>
 
 <p align="right">
@@ -69,6 +75,31 @@ This project is for you.
 These aren't armchair best practices. Every pattern here has been battle-tested in real 7x24 production runs, broken, fixed, and hardened into reusable conventions.
 
 ---
+
+## 30 秒看懂一个模式
+
+以**错误压缩**（`conventions/error-compact-pattern.md`）为例——不用装环境，改前 vs 改后一目了然：
+
+**❌ 改前（原始错误直接塞上下文）：**
+
+```text
+Error: ModuleNotFoundError: No module named "requests"
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/runpy.py", line 196, in _run_module_as_main
+    ...（30 行堆栈）
+ModuleNotFoundError: No module named "requests"
+```
+
+**✅ 改后（压缩成一行结构化摘要）：**
+
+```text
+[STEP_FAILED] fetch_data@2026-08-28T10:00:00
+  Error: ModuleNotFoundError - "requests" 包未安装
+  Hint: pip install requests
+  Recoverable: YES
+```
+
+> 一个模式解决一个问题。全部 15 个公约见 `conventions/` 目录。
 
 ## 为什么需要这个项目
 
@@ -269,6 +300,26 @@ Copy-Item templates\STATE.md.template "reports\my-cron-job\STATE.md"
 ```bash
 cp config.yaml.example ~/.hermes/config.yaml
 # 替换 YOUR_xxx_HERE 为你的真实 API Key
+```
+
+---
+
+## 环境变量
+
+| 变量 | 用途 | 必填 |
+|:---|:---|:---:|
+| `HERMES_API_KEY` | Hermes API 认证 | 是 |
+| `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` | LLM 服务商 | 取决于服务商 |
+| `FAL_KEY` | 图片生成 (FAL.ai) | 可选 |
+| `MINERU_API_KEY` | PDF 解析 (MinerU) | 可选 |
+| `GITHUB_TOKEN` | GitHub API 操作 | 可选 (CI 自动注入) |
+
+```bash
+# Linux / macOS
+export HERMES_API_KEY="your-key-here"
+
+# Windows (PowerShell)
+$env:HERMES_API_KEY = "your-key-here"
 ```
 
 ---

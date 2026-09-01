@@ -17,6 +17,9 @@
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
   </a>
+  <a href="https://github.com/Komagon/hermes-production-patterns/stargazers">
+    <img src="https://img.shields.io/github/stars/Komagon/hermes-production-patterns?style=social" alt="Stars">
+  </a>
 </p>
 
 > **A production engineering system for building reliable [Hermes Agents](https://github.com/NousResearch/hermes-agent).**  
@@ -48,6 +51,31 @@ These aren't armchair best practices — every pattern here has been **battle-te
 > 🇨🇳 [中文版](README.md) also available.
 
 ---
+
+## See a Pattern in 30 Seconds
+
+Take **Error Compact** (`conventions/error-compact-pattern.md`) as an example — no setup needed, just before vs after:
+
+**❌ Before (raw error floods the context window):**
+
+```text
+Error: ModuleNotFoundError: No module named "requests"
+Traceback (most recent call last):
+  File "/usr/lib/python3.11/runpy.py", line 196, in _run_module_as_main
+    ...(30 lines of stack trace)
+ModuleNotFoundError: No module named "requests"
+```
+
+**✅ After (compressed into a one-line structured summary):**
+
+```text
+[STEP_FAILED] fetch_data@2026-08-28T10:00:00
+  Error: ModuleNotFoundError - "requests" package not installed
+  Hint: pip install requests
+  Recoverable: YES
+```
+
+> One pattern, one problem solved. All 15 conventions are in the `conventions/` directory.
 
 ## Why This Project
 

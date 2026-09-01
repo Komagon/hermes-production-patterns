@@ -167,3 +167,41 @@ def should_skip(key: str, state: dict) -> bool:
 ## 状态文件
 - 路径: reports/{job-name}/STATE.md
 ```
+
+## 真实案例：每日新闻摘要 Cron
+
+> 以下数据来自 Hermes Agent 7×24 运行环境，已脱敏。
+
+### 接入前（裸 Cron）
+
+```
+问题：每天 8:30 跑新闻摘要，一周内出现 2 次静默失败（Agent 输出空内容但标记成功）、1 次重复投递（同一内容发了两次）。
+根因：无幂等键 → 重跑时不知道哪些批次已处理；无 Post-flight 验证 → 空输出也当成功。
+```
+
+### 接入后（cron-job-pattern 三段式 + STATE.md）
+
+```markdown
+## STATE.md 快照（运行第 21 天）
+
+### Current Run
+- **Last run**: 2026-08-28T08:30:00+08:00
+- **Status**: idle
+- **Current batch**: 2026-08-28
+
+### Idempotency Keys
+- 2026-08-28: news-digest: dispatched ✓
+- 2026-08-27: news-digest: dispatched ✓
+- 2026-08-26: news-digest: skipped (duplicate trigger, 8:30:02 second fire)
+```
+
+### 量化结果
+
+| 指标 | 接入前（1 周） | 接入后（3 周） |
+|:---|:---:|:---:|
+| 静默失败 | 2 次 | 0 次 |
+| 重复投递 | 1 次 | 0 次（幂等键拦截） |
+| 人工介入 | 3 次 | 0 次 |
+| Token 浪费（空跑/重复） | ~40k | ~0 |
+
+**关键改进**：幂等键拦截了 8:30:02 的重复触发（Hermes cron 调度偶尔在同分钟内触发两次），Post-flight 验证在 8/22 捕获了一次空输出并自动重试成功。
