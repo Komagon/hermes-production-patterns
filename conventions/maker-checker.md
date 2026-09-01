@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, pattern, convention, maker-checker, quality]
     category: conventions
-    related_skills: [state-file-pattern, control-flow-separation, error-compact-pattern, opik-eval]
+    related_skills: [state-file-pattern, control-flow-separation, error-compact-pattern]
 hpp_category: quality
 hpp_en: "Separate generation from validation."
 hpp_maturity: L2

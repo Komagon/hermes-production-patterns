@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, pattern, convention, cron, idempotency, monitor]
     category: conventions
-    related_skills: [state-file-pattern, maturity-staging, error-compact-pattern, control-flow-separation]
+    related_skills: [state-file-pattern, evolution-gate, error-compact-pattern, control-flow-separation]
 hpp_category: automation
 hpp_en: "Idempotent, dedup-safe, silent-failure-proof scheduling."
 hpp_maturity: L2

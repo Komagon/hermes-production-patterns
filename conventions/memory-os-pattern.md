@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, pattern, convention, memory, vector, graph, rrf, retrieval]
     category: conventions
-    related_skills: [state-file-pattern, evidence-memory, self-update-pattern, data-driven-optimization]
+    related_skills: [state-file-pattern, self-update-pattern, data-driven-optimization]
 hpp_category: memory
 hpp_en: "Five-layer memory architecture with vector/graph retrieval."
 hpp_maturity: L3

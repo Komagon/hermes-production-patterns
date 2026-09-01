@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, pattern, guide, composition, decision-tree]
     category: conventions
-    related_skills: [maker-checker, state-file-pattern, control-flow-separation, error-compact-pattern, skill-evolution, checkpoint-pattern, graph-executor]
+    related_skills: [maker-checker, state-file-pattern, control-flow-separation, error-compact-pattern, skill-evolution, checkpoint-pattern]
 hpp_category: guide
 hpp_en: "When to combine which conventions into a production stack."
 hpp_maturity: L1
