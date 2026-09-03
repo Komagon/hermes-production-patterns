@@ -48,7 +48,7 @@
   --md-code-fg-color: #d6deeb;
   --md-typeset-a-color: var(--hpp-accent-secondary);
   --md-accent-fg-color: var(--hpp-accent-primary);
-  --md-accent-fg-color--transparent: rgba(120, 255, 183, 0.12);
+  --md-accent-fg-color--transparent: rgba(120, 255, 183, 0.06);
   --md-primary-fg-color: var(--hpp-bg-secondary);
   --md-primary-fg-color--light: #1a222c;
   --md-primary-fg-color--dark: var(--hpp-bg-primary);
@@ -165,16 +165,13 @@ pre {
   overflow: clip; /* 装饰性网格背景不得外溢产生横向滚动 */
 }
 .hpp-hero::before {
-  /* 细网格背景(工程图纸感,5% 以内存在感) */
   content: "";
   position: absolute;
   inset: -60px -80px 0;
   background-image: linear-gradient(var(--hpp-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--hpp-line) 1px, transparent 1px);
   background-size: 44px 44px;
-  opacity: 0.22;
-  -webkit-mask-image: radial-gradient(65% 75% at 30% 18%, #000 0%, transparent 72%);
-  mask-image: radial-gradient(65% 75% at 30% 18%, #000 0%, transparent 72%);
+  opacity: 0.12;
   pointer-events: none;
 }
 .hpp-hero > * {
@@ -190,7 +187,6 @@ pre {
 }
 .hpp-hero__title .hpp-accent {
   color: var(--hpp-accent-primary);
-  text-shadow: 0 0 34px rgba(120, 255, 183, 0.35); /* 轻微 glow */
 }
 .hpp-hero__sub {
   color: var(--hpp-text-secondary);
@@ -226,9 +222,8 @@ pre {
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .md-typeset .hpp-btn:hover {
-  transform: translateY(-2px);
-  border-color: var(--hpp-accent-primary);
-  box-shadow: 0 6px 24px rgba(120, 255, 183, 0.14);
+  transform: translateY(-1px);
+  border-color: var(--hpp-border-default);
   color: var(--hpp-text-primary);
 }
 .md-typeset .hpp-btn--primary {
@@ -238,7 +233,6 @@ pre {
   font-weight: 700;
 }
 .md-typeset .hpp-btn--primary:hover {
-  box-shadow: 0 8px 30px rgba(120, 255, 183, 0.35);
   color: #04110a;
 }
 .hpp-hero__visual {
@@ -253,7 +247,7 @@ pre {
   border-radius: 8px;
   overflow: hidden;
   font-family: var(--hpp-font-mono);
-  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 .hpp-terminal__bar {
   display: flex;
@@ -379,12 +373,11 @@ pre {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease;
 }
 .hpp-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
-    0 0 0 1px color-mix(in srgb, var(--hpp-cat, #2d333b) 45%, transparent);
+  transform: translateY(-2px);
+  border-color: var(--hpp-border-default);
 }
 .hpp-card .hpp-card__num {
   font-family: var(--hpp-font-mono);
@@ -636,7 +629,6 @@ pre {
 }
 .hpp-maturity__step:last-child .hpp-maturity__dot {
   background: var(--hpp-accent-primary);
-  box-shadow: 0 0 18px rgba(120, 255, 183, 0.5);
 }
 .hpp-maturity__label {
   font-family: var(--hpp-font-mono);
@@ -776,9 +768,7 @@ html.hpp-js .hpp-reveal.hpp-in { opacity: 1; transform: none; }
 .hpp-finale {
   text-align: center;
   padding: clamp(72px, 12vw, 160px) 0 !important;
-  background:
-    radial-gradient(60% 90% at 50% 110%, rgba(120, 255, 183, 0.09), transparent),
-    var(--hpp-bg-primary);
+  background: var(--hpp-bg-secondary);
   border-radius: 12px;
 }
 .hpp-finale .hpp-sec__title { margin-inline: auto; }
@@ -920,7 +910,6 @@ html.hpp-js .hpp-reveal.hpp-in { opacity: 1; transform: none; }
 .hpp-maturity__step:hover .hpp-maturity__dot {
   border-color: var(--hpp-accent-primary);
   background: var(--hpp-accent-primary);
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
 }
 .hpp-maturity__label {
   font-family: var(--hpp-font-mono);
