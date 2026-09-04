@@ -119,12 +119,19 @@ nav:
           - 数据驱动优化: conventions/data-driven-optimization.md
           - 模式组合指南: conventions/pattern-composition.md
           - 能力 × 模式映射: conventions/hermes-capability-map.md
+          - 💰 成本护栏: conventions/budget-guardrail.md
+          - 🆙 人工介入升级: conventions/human-escalation.md
+          - 🔒 多 Agent 隔离: conventions/multi-agent-isolation.md
+          - 👁️ 决策追溯: conventions/observability-trace.md
+          - 🛡️ 数据隐私: conventions/data-retention-privacy.md
   - VALIDATE:
       - Production Audit:
           - audit/audit.md
           - 审计检查单: audit/checks/checklist.md
           - Readiness Score 模型: audit/scoring/readiness-score.md
-      - 兼容性矩阵: compatibility/README.md
+      - 兼容性矩阵:
+          - compatibility/README.md
+          - 版本兼容表: compatibility/matrix.md
       - hpp CLI: cli.md
   - 项目说明: readme.md
   - 总览:
@@ -146,6 +153,14 @@ nav:
       - Cron 安全集成:
           - examples/cron-safety-integration.md
           - Cron Safety 案例: examples/cron-safety/README.md
+      - 🆕 极简 Demo:
+          - examples/minimal-demo/README.md
+      - 🆕 失败案例复盘:
+          - examples/failures/README.md
+          - Token 失控: examples/failures/runaway-cron-tokens.md
+          - 数据静默损坏: examples/failures/silent-data-corruption.md
+          - 状态冲突: examples/failures/concurrent-state-conflict.md
+          - 注入越权: examples/failures/prompt-injection-escalation.md
   - 模板 Templates: templates.md
   - 参与贡献:
       - 贡献指南: CONTRIBUTING.md
