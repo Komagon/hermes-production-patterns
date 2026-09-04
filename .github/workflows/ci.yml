@@ -100,6 +100,27 @@ jobs:
                 f"{k} missing Patterns Used table"
           print(f"PASS: {len(kits)} starter kits OK")
 
+  regression-test:
+    name: Regression Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Run regression tests
+        run: python scripts/run_regression.py
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: TEST_REPORT.md
+
   bilingual-check:
     name: Bilingual Consistency
     runs-on: ubuntu-latest

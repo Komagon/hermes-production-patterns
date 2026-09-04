@@ -16,6 +16,7 @@ hpp_maturity: L3
 hpp_complexity: low
 hpp_reliability: high
 hpp_capability: context
+maturity: battle-tested
 hpp_when_to_use: ["Agents with retry loops", "Long-running error collection", "Noisy external integrations"]
 hpp_when_not_to_use: ["Single-attempt workflows"]
 ---

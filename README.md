@@ -14,6 +14,9 @@
   <a href="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml">
     <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
+  <a href="TEST_REPORT.md">
+    <img src="https://img.shields.io/badge/Regression-25/25%20Pass-brightgreen" alt="Regression Tests">
+  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
   </a>
@@ -56,7 +59,9 @@
 
 这个项目就是为你准备的。
 
-它不是什么「最佳实践」大合集，每一条模式都在真实的 7x24 运行环境中验证过，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
+它不是什么「最佳实践」大合集。每一条模式都来自真实的 7x24 运行环境——在运行数十天、数百次触发的公众号流水线、新闻摘要 Cron、自动更新等场景中反复验证，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
+
+> **如何验证可信度？** 本项目附带 [25 条回归反测提示词](test-prompts.json)（覆盖 14 个行为契约模式）和 [STATE.md 校验脚本](scripts/validate_state.py)，CI 自动运行。成熟度分级：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考性）。
 
 ### English
 
@@ -72,7 +77,9 @@ You've installed Hermes. Now what? If you're struggling with:
 
 This project is for you.
 
-These aren't armchair best practices. Every pattern here has been battle-tested in real 7x24 production runs, broken, fixed, and hardened into reusable conventions.
+These aren't armchair best practices. Every pattern comes from real 7x24 production runs — tested across dozens of days and hundreds of triggers in content pipelines, news digest crons, and auto-update workflows — broken, fixed, and hardened into reusable conventions.
+
+> **How to verify credibility?** This repo ships with [25 regression test prompts](test-prompts.json) (covering 14 behavioral contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested · 🟡 beta · 🔵 experimental.
 
 ---
 
@@ -113,6 +120,20 @@ Hermes Agent 本身是一个强大的 Agent 框架，但社区里最缺的不是
 - 什么时候用 LLM，什么时候用确定性代码？
 
 **这个项目回答的就是这些问题。**
+
+### 和现有方案有什么区别？
+
+|| 对比维度 | LangGraph / AutoGPT | Hermes 原生能力 | 本项目（Hermes Production Patterns） |
+||:---|:---|:---|:---|
+|| 状态管理 | 内置 checkpoint API，框架绑定 | `memory` 工具（容量有限，无结构） | **STATE.md 文本文件**，零依赖、Git 可追踪、任何编辑器可读 |
+|| 错误处理 | 框架层 try/catch + retry | Agent 自行处理（容易失焦） | **error-compact-pattern** 压缩→分类→自愈，上下文可控 |
+|| 任务调度 | Celery/Airflow 等外部依赖 | `cronjob_manage` 原生支持 | 幂等+Monitor+Pre/Post-flight 三段式 |
+|| 质量保障 | 需自建 eval pipeline | 无内置 | **Maker/Checker + 回归反测集**（25 条 test-prompts.json） |
+|| 记忆体系 | 向量数据库（重） | `memory` 工具（轻但无序） | **Memory OS 五层架构** + 三层检索 RRF |
+|| 安装复杂度 | 需要 Python/Node 环境 + 依赖 | 已内置 | 文本文件，cp 即用 |
+|| 适用场景 | 大型 Agent 应用开发 | 日常对话和任务 | **Hermes 生态内的生产级自动化** |
+
+> **定位**：不是重型 Agent 框架的替代品，而是解决 Hermes 生态特有的「轻量文本文件驱动的生产工程」问题。如果你用的是 LangGraph，你不需要这个项目；如果你用的是 Hermes 且想让它 7x24 自主工作，这就是你需要的。
 
 ---
 
@@ -196,7 +217,15 @@ hermes-production-patterns/
 │   ├── daily-news-digest.md
 │   ├── maker-checker-article-pipeline.md
 │   ├── cron-safety-integration.md
-│   └── wechat-article-pipeline.md   — 公众号写作+AI检测+配图流水线
+│   ├── wechat-article-pipeline.md   — 公众号写作+AI检测+配图流水线
+│   └── minimal-demo/                — 🆕 5 分钟极简 Demo（STATE.md + Cron 生命周期）
+│
+├── scripts/                     ← 工具脚本
+│   ├── validate_state.py        — STATE.md Schema 校验
+│   ├── run_regression.py        — 回归测试运行器（生成 TEST_REPORT.md）
+│   └── ...
+│
+├── TEST_REPORT.md               ← 🆕 回归测试报告（CI 自动生成）
 │
 ```
 
@@ -235,6 +264,18 @@ cd hermes-production-patterns
 cli/hpp init basic-agent ~/my-agent
 cli/hpp doctor   # 环境诊断
 ```
+
+### 0.1 极简 Demo（5 分钟看懂价值）
+
+不想装环境？直接跑这个脚本，5 分钟看到 STATE.md 自动更新：
+
+```bash
+python examples/minimal-demo/demo_cron.py
+# 打开 reports/STATE.md 看状态变化
+# 再跑一次，观察幂等跳过
+```
+
+详见 [examples/minimal-demo/](examples/minimal-demo/)。
 
 ### 1. 把模式装进你的 Hermes
 
@@ -326,26 +367,29 @@ $env:HERMES_API_KEY = "your-key-here"
 
 ## 核心概念速查
 
-|| 概念 | 文件 | 一句话 |
-||:---|:---|:---|
-|| Maker/Checker | `conventions/maker-checker.md` | 写代码的 Agent 和验证的 Agent 不是同一个 |
-|| STATE.md | `conventions/state-file-pattern.md` | 每次运行先读状态，每步执行后写状态 |
-|| 控制流分离 | `conventions/control-flow-separation.md` | 能用代码的别用 LLM |
-|| 错误压缩与自愈 | `conventions/error-compact-pattern.md` | 错误压成一行，分类后尝试自愈 |
-|| 技能进化 | `conventions/skill-evolution.md` | 技能有版本、有生命周期、有迁移路径 |
-|| Cron 任务设计 | `conventions/cron-job-pattern.md` | 幂等+防静默失败+原生 Monitor 模式（变了才烧 token） |
-|| 检查点恢复 | `conventions/checkpoint-pattern.md` | 长任务挂了能从检查点续跑 |
-|| 密钥管理 | `conventions/secret-management.md` | 密钥不进 Git、不进上下文、不落日志 |
-|| 💡 反面模式 | `conventions/anti-patterns.md` | 8 种常见错误实践及纠正 |
-|| 🧩 模式组合 | `conventions/pattern-composition.md` | 场景→模式决策树+成熟度映射 |
-|| 📐 状态 Schema | `conventions/state-schema.json` | STATE.md 的 JSON Schema 程序校验 |
-|| Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 |
-|| 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 |
-|| 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 |
-|| 🗺️ 能力映射 | `conventions/hermes-capability-map.md` | Hermes 新能力对号入座到既有模式（2026-08） |
-|| 🔄 自更新安全 | `conventions/self-update-pattern.md` | 更新前快照 → 更新后验 stash → 测试基线 → 可回滚 |
-|| 🧠 Memory OS | `conventions/memory-os-pattern.md` | 五层记忆 + 三层检索（向量/图谱/RRF）+ 写侧纪律 |
-|| 📈 进化闸门 | `conventions/evolution-gate.md` | G1-G5 五闸门 + 五维加权评估 + 回归 Deploy/Rollback |
+成熟度说明：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考/实验性）
+
+|| 概念 | 文件 | 一句话 | 成熟度 |
+||:---|:---|:---|:---:|
+|| Maker/Checker | `conventions/maker-checker.md` | 写代码的 Agent 和验证的 Agent 不是同一个 | 🟢 |
+|| STATE.md | `conventions/state-file-pattern.md` | 每次运行先读状态，每步执行后写状态 | 🟢 |
+|| 控制流分离 | `conventions/control-flow-separation.md` | 能用代码的别用 LLM | 🟡 |
+|| 错误压缩与自愈 | `conventions/error-compact-pattern.md` | 错误压成一行，分类后尝试自愈 | 🟢 |
+|| 技能进化 | `conventions/skill-evolution.md` | 技能有版本、有生命周期、有迁移路径 | 🟡 |
+|| Cron 任务设计 | `conventions/cron-job-pattern.md` | 幂等+防静默失败+原生 Monitor 模式（变了才烧 token） | 🟢 |
+|| 检查点恢复 | `conventions/checkpoint-pattern.md` | 长任务挂了能从检查点续跑 | 🟡 |
+|| 密钥管理 | `conventions/secret-management.md` | 密钥不进 Git、不进上下文、不落日志 | 🔵 |
+|| 💡 反面模式 | `conventions/anti-patterns.md` | 8 种常见错误实践及纠正 | 🔵 |
+|| 🧩 模式组合 | `conventions/pattern-composition.md` | 场景→模式决策树+成熟度映射 | 🔵 |
+|| 📐 状态 Schema | `conventions/state-schema.json` | STATE.md 的 JSON Schema 程序校验 | — |
+|| Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 | — |
+|| 成熟度分级 | `patterns/maturity-staging-l1-l2-l3.md` | L1 只报告 → L2 辅助 → L3 自动 | — |
+|| 12-Factor 对照 | `patterns/12-factor-agents-for-hermes.md` | 12 条工程原则的 Hermes 落地映射 | — |
+|| 🗺️ 能力映射 | `conventions/hermes-capability-map.md` | Hermes 新能力对号入座到既有模式（2026-08） | 🔵 |
+|| 🔄 自更新安全 | `conventions/self-update-pattern.md` | 更新前快照 → 更新后验 stash → 测试基线 → 可回滚 | 🟡 |
+|| 🧠 Memory OS | `conventions/memory-os-pattern.md` | 五层记忆 + 三层检索（向量/图谱/RRF）+ 写侧纪律 | 🟡 |
+|| 📈 进化闸门 | `conventions/evolution-gate.md` | G1-G5 五闸门 + 五维加权评估 + 回归 Deploy/Rollback | 🟡 |
+|| 📊 数据驱动优化 | `conventions/data-driven-optimization.md` | 用真实运营数据驱动技能迭代 | 🟡 |
 
 ---
 

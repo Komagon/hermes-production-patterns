@@ -16,6 +16,7 @@ hpp_maturity: L2
 hpp_complexity: medium
 hpp_reliability: high
 hpp_capability: delegate
+maturity: battle-tested
 hpp_when_to_use: ["Long-running Agent", "High-value task", "Autonomous workflow", "Output needs validation"]
 hpp_when_not_to_use: ["Simple one-shot task", "Low-value operation", "Validation cost exceeds task value"]
 ---

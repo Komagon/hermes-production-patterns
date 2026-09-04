@@ -30,3 +30,6 @@ hermes/config.yaml
 # mkdocs generated artifacts
 site/
 docs/
+
+# Demo runtime output
+examples/minimal-demo/reports/

@@ -16,6 +16,7 @@ hpp_maturity: L2
 hpp_complexity: low
 hpp_reliability: high
 hpp_capability: terminal
+maturity: beta
 hpp_when_to_use: ["Loops with fixed logic", "Retry / counting / branching", "Cost-sensitive repeated runs"]
 hpp_when_not_to_use: ["Genuinely open-ended exploration"]
 ---

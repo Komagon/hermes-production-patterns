@@ -16,6 +16,7 @@ hpp_maturity: L3
 hpp_complexity: medium
 hpp_reliability: medium
 hpp_capability: analytics
+maturity: beta
 hpp_when_to_use: ["Mature agents with usage logs"]
 hpp_when_not_to_use: ["Pre-launch intuition phase"]
 ---

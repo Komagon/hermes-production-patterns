@@ -16,6 +16,7 @@ hpp_maturity: L1
 hpp_complexity: low
 hpp_reliability: medium
 hpp_capability: docs
+maturity: experimental
 ---
 
 # Hermes 能力 × 生产模式映射（2026-08）

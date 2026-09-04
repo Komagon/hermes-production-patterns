@@ -16,6 +16,7 @@ hpp_maturity: L2
 hpp_complexity: medium
 hpp_reliability: high
 hpp_capability: files
+maturity: beta
 hpp_when_to_use: ["Long batch processing", "Multi-hour pipelines", "Anything too expensive to redo"]
 hpp_when_not_to_use: ["Short tasks under one session"]
 ---

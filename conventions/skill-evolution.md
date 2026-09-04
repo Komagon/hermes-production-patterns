@@ -17,6 +17,7 @@ hpp_maturity: L2
 hpp_complexity: medium
 hpp_reliability: medium
 hpp_capability: skills
+maturity: beta
 hpp_when_to_use: ["Iterating production skills"]
 hpp_when_not_to_use: ["Scratch skills with no dependents"]
 ---

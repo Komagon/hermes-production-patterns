@@ -16,6 +16,7 @@ hpp_maturity: L3
 hpp_complexity: high
 hpp_reliability: medium
 hpp_capability: memory
+maturity: beta
 hpp_when_to_use: ["Long-lived personal agents", "Agents needing cross-session facts"]
 hpp_when_not_to_use: ["Stateless request/response bots"]
 ---

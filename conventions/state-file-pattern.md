@@ -16,6 +16,7 @@ hpp_maturity: L2
 hpp_complexity: low
 hpp_reliability: high
 hpp_capability: files
+maturity: battle-tested
 hpp_when_to_use: ["Any task that survives sessions", "Cron jobs with incremental progress", "Multi-step pipelines"]
 hpp_when_not_to_use: ["Truly one-shot stateless queries"]
 ---

@@ -16,6 +16,7 @@ hpp_maturity: L3
 hpp_complexity: high
 hpp_reliability: high
 hpp_capability: skills
+maturity: beta
 hpp_when_to_use: ["Skill/prompt changes on live agents", "Model or config swaps"]
 hpp_when_not_to_use: ["Throwaway experiments"]
 ---

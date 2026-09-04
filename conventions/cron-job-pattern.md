@@ -16,6 +16,7 @@ hpp_maturity: L2
 hpp_complexity: medium
 hpp_reliability: high
 hpp_capability: cron
+maturity: battle-tested
 hpp_when_to_use: ["Recurring autonomous jobs", "Jobs that must never double-fire", "Jobs needing delivery guarantees"]
 hpp_when_not_to_use: ["One-off tasks", "Jobs needing interactive input"]
 ---

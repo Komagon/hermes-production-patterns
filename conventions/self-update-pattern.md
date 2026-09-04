@@ -16,6 +16,7 @@ hpp_maturity: L3
 hpp_complexity: high
 hpp_reliability: medium
 hpp_capability: skills
+maturity: beta
 hpp_when_to_use: ["Agents that patch their own config/skills", "Versioned infrastructure changes"]
 hpp_when_not_to_use: ["Frozen production systems"]
 ---

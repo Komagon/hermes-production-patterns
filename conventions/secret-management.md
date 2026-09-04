@@ -16,6 +16,7 @@ hpp_maturity: L1
 hpp_complexity: low
 hpp_reliability: high
 hpp_capability: config
+maturity: experimental
 hpp_when_to_use: ["Any agent holding credentials", "Shared or CI-run configurations"]
 hpp_when_not_to_use: ["Fully offline demos"]
 ---
