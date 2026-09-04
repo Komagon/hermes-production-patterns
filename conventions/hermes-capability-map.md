@@ -1,7 +1,7 @@
 ---
 name: hermes-capability-map
 description: "Hermes 能力 × 生产模式映射 — 2026-08 工具能力总览，把新能力对号入座到既有模式"
-version: 1.2.0
+version: 1.3.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -19,7 +19,7 @@ hpp_capability: docs
 maturity: experimental
 ---
 
-# Hermes 能力 × 生产模式映射（2026-08）
+# Hermes 能力 × 生产模式映射（2026-09）
 
 > 目的：Hermes 每次升级都会带来新工具能力。本表把 2026-08 前后的关键能力对号入座到既有模式，避免"有新模式但不知道用哪个工具落地"。
 > 原则：**能力在变，模式不变**——新能力优先落地到已有模式，不急着造新模式。
@@ -110,6 +110,30 @@ maturity: experimental
 | MASTER-ROUTING.md | 任务决策六步入口 ROUTING→RESOLVE→CASE→EXECUTE→VERIFY→PERSIST | `~/.hermes/routing/` |
 | routing_check.py / capability_probe.py | 确定性校验与探测，改路由/技能后必跑，exit 0 才算完成 | `~/.hermes/scripts/` |
 | cases/_template + field-journal | Case 状态容器与经验回流（retrospective→journal→SKILL.md/memory） | `~/.hermes/` |
+
+## 十、可视化表达路由（2026-09-04 新增，入口技能 show-me）
+
+> 从 HumanLayer/skills 借鉴 show-me 思路：不是画图工具，是"根据内容类型选最合适的视觉表达方式"的路由决策层。
+
+| 内容类型 | 表达方式 | 路由技能 | CLI 可用 |
+|:--|:--|:--|:--:|
+| 架构/系统/基础设施 | 架构图 SVG/HTML | `architecture-diagram` / `diagram-design` | ❌ |
+| 算法/逻辑 | 文本伪代码块 | 直接输出 | ✅ |
+| 运行时控制流 | 调用树 | 直接输出 | ✅ |
+| 时序/交互 | Mermaid sequenceDiagram | `diagram-design` | ✅ |
+| 数据流/管道 | Mermaid flowchart / Sankey | `diagram-design` | ✅ |
+| 文件结构/布局 | 文件树 | 直接输出 | ✅ |
+| 状态机/生命周期 | 状态图 | `diagram-design` / `html-diagram` | 部分 |
+| 对比/前后差异 | diff 格式 | 直接输出 | ✅ |
+| 定量数据/趋势 | 图表 | `diagram-design` chart | ❌ |
+| 概念关系/层次 | 信息图 | `baoyu-infographic` / `diagram-design` | ❌ |
+| 复杂可视化 | HTML artifact | `html` 路由 | ❌ |
+
+设计原则：
+- **最小视图**：只画回答当前问题需要的最小范围，不画全景
+- **CLI 降级有序**：HTML → Mermaid → 文本树 → 表格
+- **图紧跟文字**：每个视觉元素紧贴它支持的解释段落
+- 路由信号聚焦"理解/解释"，与 `R_DIAGRAM`（直接画图请求）区分
 
 维护规则：本表或 capability-registry 任一处工具状态变化 → 同步另一处；
 routing.json 结构性改动视同技能改动，过 evolution-gate。
