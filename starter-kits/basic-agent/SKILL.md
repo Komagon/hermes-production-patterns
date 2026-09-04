@@ -1,4 +1,5 @@
 ---
+maturity: experimental
 name: {my-skill}
 description: 一句话描述这个技能做什么
 version: 1.0.0

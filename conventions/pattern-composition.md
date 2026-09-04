@@ -33,26 +33,37 @@ maturity: experimental
     ├─ 内容生成（写摘要、日报、周报）
     │   ├─ state-file-pattern（基础）
     │   ├─ + maker-checker（质量控制）
-    │   └─ + error-compact-pattern（异常处理）
+    │   ├─ + error-compact-pattern（异常处理）
+    │   └─ + budget-guardrail（防止 token 失控）
     │
     ├─ 数据流水线（抓取→清洗→转换→入库）
     │   ├─ control-flow-separation（决定哪些步用代码）
     │   ├─ state-file-pattern（进度追踪 + 断点续跑）
     │   ├─ + error-compact-pattern（各步骤错处理）
+    │   ├─ + data-retention-privacy（敏感数据脱敏）
     │   └─ + skill-evolution（长周期优化）
     │
     ├─ 复杂多 Agent 协作
     │   ├─ maker-checker（角色分离）
+    │   ├─ multi-agent-isolation（资源隔离 + 文件锁 + 命名空间）
     │   ├─ control-flow-separation（协调者用代码控制流）
     │   ├─ state-file-pattern（全局状态）
     │   ├─ + error-compact-pattern（错误隔离）
     │   └─ + skill-evolution（持续优化）
     │
-    └─ 🧩 Graph 工作流（节点编排）
-        ├─ control-flow-separation（决定节点内 Code vs LLM）
-        ├─ state-file-pattern（跨节点状态传递）
-        ├─ maker-checker（关键节点双重验证）
-        └─ + checkpoint-pattern（断点续跑）
+    ├─ 🧩 Graph 工作流（节点编排）
+    │   ├─ control-flow-separation（决定节点内 Code vs LLM）
+    │   ├─ state-file-pattern（跨节点状态传递）
+    │   ├─ maker-checker（关键节点双重验证）
+    │   └─ + checkpoint-pattern（断点续跑）
+    │
+    └─ 全自主 7x24 Agent
+        ├─ budget-guardrail（三级预算防护）
+        ├─ human-escalation（高风险人工兜底）
+        ├─ observability-trace（决策链路追溯）
+        ├─ state-file-pattern + checkpoint-pattern
+        ├─ + maker-checker + error-compact
+        └─ + evolution-gate + memory-os-pattern
 
 你的系统处于什么阶段？
     │
@@ -77,6 +88,11 @@ maturity: experimental
 | 🔄 系统升级/更新 | self-update-pattern | state-file（基线） | error-compact |
 | 🧠 知识沉淀与检索 | memory-os-pattern | state-file | evolution-gate |
 | 📈 技能/流程持续优化 | evolution-gate, data-driven-optimization | maker-checker, state-file | skill-evolution |
+| 💰 全自主 Agent 成本控制 | budget-guardrail, state-file | cron-job-pattern | error-compact |
+| 🆙 高风险操作人工兜底 | human-escalation, maker-checker | state-file | secret-management |
+| 🔒 多 Agent 并行协作 | multi-agent-isolation, state-file | maker-checker | control-flow |
+| 👁️ 决策链路追溯 | observability-trace | state-file | error-compact |
+| 🛡️ 敏感数据管理 | data-retention-privacy, secret-management | state-file | error-compact |
 
 ## 模式间的关系图
 

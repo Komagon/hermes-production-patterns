@@ -1,5 +1,44 @@
 # Changelog
 
+## v2.1.0 (2026-09-04)
+
+### ✨ Pattern Expansion + Tooling Phase
+
+#### Phase 1: 5 New Patterns (20 conventions total)
+- **budget-guardrail.md** — 三级预算响应（预警/降级/熔断）防止 token/API 失控，与 cron-job-pattern/state-file-pattern 联动
+- **human-escalation.md** — 高风险/低置信度/连续失败时升级到人工兜底，含状态机（running→escalated→confirm/reject）
+- **multi-agent-isolation.md** — 命名空间隔离 + 文件锁 + 令牌桶，解决多 Agent 资源竞争
+- **observability-trace.md** — 结构化决策追溯日志（决策/置信度/备选/证据），配套 trace-schema.json
+- **data-retention-privacy.md** — 敏感信息检测（PII/密钥/API 响应）、保留期限、自动清理脚本
+
+#### Phase 2: Pattern Linter (MVP)
+- **scripts/lint.js** — 扫描 SKILL.md/STATE.md，三条规则：版本号缺失、STATE.md 缺失、敏感数据检测
+- 支持 `--fix` 自动修复（补 frontmatter version/maturity 字段）
+- `npx hpp-lint <path>` 或 `node scripts/lint.js <path>`
+- 注册进 `package.json` bin + scripts
+
+#### Phase 3: doctor CLI
+- **scripts/doctor.py** — 交互式问答，5 个问题（任务类型/自主程度/风险等级/多 Agent/状态复杂度）
+- 对照 pattern-composition 决策树自动推荐 pattern 列表（must/should/nice/reference）
+- 输出 markdown 报告 + 安装命令，支持 `--auto` 非交互模式
+
+#### Phase 4: Failure Case Library
+- **examples/failures/** — 4 个真实失败案例复盘：
+  - runaway-cron-tokens.md（Cron token 失控）
+  - silent-data-corruption.md（数据静默损坏）
+  - concurrent-state-conflict.md（多 Agent 状态冲突）
+  - prompt-injection-escalation.md（注入导致越权）
+
+#### Phase 5: Schema & Compatibility
+- **conventions/pattern-schema.json** — Pattern frontmatter JSON Schema，linter 和文档共用同一份真理源
+- **compatibility/matrix.md** — Pattern × Hermes 版本 × 依赖能力矩阵
+
+#### Quality & Infrastructure
+- test-prompts.json 从 25 条扩展到 30 条（覆盖 5 个新 pattern）
+- pattern-composition.md 决策树新增「全自主 7x24 Agent」分支和 5 个新场景行
+- README 核心概念表新增 5 个 pattern + 成熟度标注
+- 回归测试 badge 更新为 30/30 Pass
+
 ## v2.0.0 (2026-08-31)
 
 ### 🚀 Productization Phase：从 Pattern Library 到 Production Engineering System

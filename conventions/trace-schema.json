@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Decision Trace Schema",
+  "description": "Hermes Production Patterns — Agent 决策追溯日志的 JSON Schema",
+  "type": "object",
+  "required": ["timestamp", "agent_id", "step", "decision", "confidence", "outcome"],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "决策发生时间（ISO 8601）",
+      "examples": ["2026-09-04T14:30:00+08:00"]
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "做出决策的 Agent 标识",
+      "minLength": 1,
+      "examples": ["research-agent-01", "main-agent"]
+    },
+    "step": {
+      "type": "string",
+      "description": "当前执行步骤名",
+      "minLength": 1,
+      "examples": ["select_data_source", "choose_model", "parse_response"]
+    },
+    "decision": {
+      "type": "string",
+      "description": "实际做出的决策（一句话描述）",
+      "minLength": 1,
+      "examples": ["使用 HuggingFace Hub 搜索模型，而非直接访问 arXiv"]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "对该决策的置信度（0-1，1 表示完全确定）",
+      "examples": [0.85, 0.6, 1.0]
+    },
+    "alternatives": {
+      "type": "array",
+      "description": "考虑过但未选中的备选方案",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "examples": [
+        ["直接搜索 arXiv API（延迟较高，但覆盖更全）", "使用本地缓存的模型列表（可能过期）"]
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "description": "决策依据列表",
+      "items": {
+        "type": "object",
+        "required": ["source", "summary"],
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "证据来源（工具名、数据集、文档等）",
+            "minLength": 1,
+            "examples": ["performance_benchmark", "task_requirements", "user_preference"]
+          },
+          "summary": {
+            "type": "string",
+            "description": "证据摘要",
+            "minLength": 1,
+            "examples": ["HF Hub API 平均响应 200ms，arXiv API 平均 1.2s"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["success", "failure", "partial"],
+      "description": "决策执行结果"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "timestamp": "2026-09-04T14:30:00+08:00",
+      "agent_id": "research-agent-01",
+      "step": "select_data_source",
+      "decision": "使用 HuggingFace Hub 搜索模型，而非直接访问 arXiv",
+      "confidence": 0.85,
+      "alternatives": [
+        "直接搜索 arXiv API（延迟较高，但覆盖更全）",
+        "使用本地缓存的模型列表（可能过期）"
+      ],
+      "evidence": [
+        {
+          "source": "performance_benchmark",
+          "summary": "HF Hub API 平均响应 200ms，arXiv API 平均 1.2s"
+        },
+        {
+          "source": "task_requirements",
+          "summary": "任务需要最新模型元数据，本地缓存不满足"
+        }
+      ],
+      "outcome": "success"
+    }
+  ]
+}

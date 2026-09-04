@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/Komagon/hermes-production-patterns/pattern-schema.json",
+  "title": "Hermes Production Pattern Frontmatter Schema",
+  "description": "Defines required and optional frontmatter fields for all convention pattern files.",
+  "type": "object",
+  "required": ["name", "description", "version", "author", "license", "platforms", "metadata", "hpp_category", "hpp_en", "maturity"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Pattern identifier (lowercase, hyphens only)"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "description": "One-line description of the pattern"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version (e.g. 1.0.0)"
+    },
+    "author": {
+      "type": "string"
+    },
+    "license": {
+      "type": "string",
+      "enum": ["MIT", "Apache-2.0", "GPL-3.0"]
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["linux", "macos", "windows"]
+      },
+      "minItems": 1
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "hermes": {
+          "type": "object",
+          "properties": {
+            "tags": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "category": {
+              "type": "string",
+              "enum": ["conventions", "patterns", "recipes"]
+            },
+            "related_skills": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "required": ["tags", "category"]
+        }
+      },
+      "required": ["hermes"]
+    },
+    "hpp_category": {
+      "type": "string",
+      "enum": ["reliability", "quality", "automation", "memory", "security", "observability", "reference"],
+      "description": "Primary category for hpp CLI routing"
+    },
+    "hpp_en": {
+      "type": "string",
+      "minLength": 5,
+      "description": "One-line English description"
+    },
+    "hpp_maturity": {
+      "type": "string",
+      "enum": ["L1", "L2", "L3"],
+      "description": "Maturity level: L1=report-only, L2=assisted, L3=automated"
+    },
+    "hpp_complexity": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "hpp_reliability": {
+      "type": "string",
+      "enum": ["low", "medium", "high"]
+    },
+    "hpp_capability": {
+      "type": "string",
+      "description": "Hermes capability this pattern uses"
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["battle-tested", "beta", "experimental"],
+      "description": "Production maturity classification"
+    },
+    "depends_on": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Hermes version or capability dependencies"
+    },
+    "hermes_version_min": {
+      "type": "string",
+      "description": "Minimum Hermes version required"
+    }
+  },
+  "additionalProperties": true
+}

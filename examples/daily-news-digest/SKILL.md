@@ -1,4 +1,5 @@
 ---
+maturity: experimental
 name: daily-news-digest
 description: 定时抓取 RSS 源，用 LLM 生成中文新闻摘要，遵循 STATE.md 状态管理和 Maker/Checker 验证
 version: 1.0.0

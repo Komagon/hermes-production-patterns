@@ -1,4 +1,5 @@
 ---
+maturity: experimental
 name: {job-name}
 description: 定时任务执行技能:有状态、幂等、可断点恢复
 version: 1.0.0

@@ -1,17 +1,17 @@
 # Regression Test Report
 
-**Generated**: 2026-09-04 05:30 UTC
-**Source**: `test-prompts.json` (25 test cases)
+**Generated**: 2026-09-04 06:54 UTC
+**Source**: `test-prompts.json` (30 test cases)
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Total test cases | 25 |
-| Passed | 25 |
+| Total test cases | 30 |
+| Passed | 30 |
 | Failed | 0 |
 | Pass rate | 100% |
-| Patterns covered | 25 |
+| Patterns covered | 30 |
 
 ## Results
 
@@ -42,6 +42,11 @@
 | 23 | `memory-recall-three-layer-retrieval` | ✅ PASS | 4 | 4 |
 | 24 | `memory-recall-rrf-formula` | ✅ PASS | 4 | 3 |
 | 25 | `memory-recall-daily-review` | ✅ PASS | 4 | 4 |
+| 26 | `budget-guardrail-threshold` | ✅ PASS | 4 | 4 |
+| 27 | `human-escalation-trigger` | ✅ PASS | 4 | 3 |
+| 28 | `multi-agent-isolation-lock` | ✅ PASS | 4 | 3 |
+| 29 | `observability-trace-decision` | ✅ PASS | 4 | 3 |
+| 30 | `data-retention-cleanup` | ✅ PASS | 4 | 3 |
 
 ---
 

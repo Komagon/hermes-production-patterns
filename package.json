@@ -1,9 +1,24 @@
 {
   "name": "hermes-production-patterns",
-  "version": "2.00.00",
-  "description": "CI dependencies for markdown linting",
+  "version": "2.01.00",
+  "description": "Production engineering patterns for Hermes Agent — linter, validator, and pattern library",
   "private": true,
+  "bin": {
+    "hpp-lint": "scripts/lint.js"
+  },
+  "scripts": {
+    "lint": "node scripts/lint.js",
+    "lint:fix": "node scripts/lint.js --fix",
+    "test": "python scripts/run_regression.py",
+    "validate": "python scripts/validate_state.py"
+  },
   "devDependencies": {
     "markdownlint-cli2": "^0.17.0"
-  }
+  },
+  "keywords": ["hermes", "agent", "production", "patterns", "linter"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Komagon/hermes-production-patterns.git"
+  },
+  "license": "MIT"
 }

@@ -15,7 +15,7 @@
     <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
   <a href="TEST_REPORT.md">
-    <img src="https://img.shields.io/badge/Regression-25/25%20Pass-brightgreen" alt="Regression Tests">
+    <img src="https://img.shields.io/badge/Regression-30/30%20Pass-brightgreen" alt="Regression Tests">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
@@ -106,7 +106,7 @@ ModuleNotFoundError: No module named "requests"
   Recoverable: YES
 ```
 
-> 一个模式解决一个问题。全部 15 个公约见 `conventions/` 目录。
+> 一个模式解决一个问题。全部 20 个公约见 `conventions/` 目录。
 
 ## 为什么需要这个项目
 
@@ -184,7 +184,7 @@ hermes-production-patterns/
 │   ├── hpp.py                   — init / add / validate / audit / doctor
 │   └── README.md
 │
-├── conventions/                 ← 工程公约（核心产出）
+├── conventions/                 ← 工程公约（核心产出，20 个 pattern）
 │   ├── maker-checker.md         — 生成/验证双角色分离
 │   ├── state-file-pattern.md    — STATE.md 跨运行状态管理
 │   ├── control-flow-separation.md — 确定性 vs LLM 控制流
@@ -196,11 +196,18 @@ hermes-production-patterns/
 │   ├── anti-patterns.md         — 💡 反面模式与纠正方案
 │   ├── pattern-composition.md   — 🧩 场景→模式组合决策树
 │   ├── state-schema.json        — 📐 STATE.md JSON Schema（程序校验用）
+│   ├── pattern-schema.json      — 📐 Pattern frontmatter JSON Schema
+│   ├── trace-schema.json        — 📐 决策追溯日志 JSON Schema
 │   ├── data-driven-optimization.md — 📊 用真实运营数据驱动技能迭代
-│   ├── hermes-capability-map.md — 🗺️ Hermes 能力 × 生产模式映射（2026-08，新能力落地到既有模式）
-│   ├── self-update-pattern.md — 🔄 自更新安全流程：autostash 恢复、测试失败基线、可回滚
-│   ├── memory-os-pattern.md — 🧠 认知记忆系统：五层记忆 + 向量/图谱/RRF 检索 + 写侧纪律
-│   └── evolution-gate.md — 📈 进化闸门：G1-G5 + 五维加权评估 + 回归对比 Deploy or Rollback
+│   ├── hermes-capability-map.md — 🗺️ Hermes 能力 × 生产模式映射（2026-08）
+│   ├── self-update-pattern.md   — 🔄 自更新安全流程
+│   ├── memory-os-pattern.md     — 🧠 认知记忆系统
+│   ├── evolution-gate.md        — 📈 进化闸门
+│   ├── budget-guardrail.md      — 💰 成本护栏（三级响应）
+│   ├── human-escalation.md      — 🆙 人工介入升级
+│   ├── multi-agent-isolation.md — 🔒 多 Agent 协作隔离
+│   ├── observability-trace.md   — 👁️ 决策追溯
+│   └── data-retention-privacy.md — 🛡️ 数据保留与隐私
 │
 ├── templates/                   ← 可复用的文件模板
 │   ├── SKILL.md.template
@@ -218,14 +225,18 @@ hermes-production-patterns/
 │   ├── maker-checker-article-pipeline.md
 │   ├── cron-safety-integration.md
 │   ├── wechat-article-pipeline.md   — 公众号写作+AI检测+配图流水线
-│   └── minimal-demo/                — 🆕 5 分钟极简 Demo（STATE.md + Cron 生命周期）
+│   ├── minimal-demo/                — 🆕 5 分钟极简 Demo
+│   └── failures/                    — 🆕 真实失败案例复盘（Hall of Shame）
 │
 ├── scripts/                     ← 工具脚本
 │   ├── validate_state.py        — STATE.md Schema 校验
 │   ├── run_regression.py        — 回归测试运行器（生成 TEST_REPORT.md）
+│   ├── lint.js                  — 🆕 Pattern Linter（SKILL.md/STATE.md 检查）
+│   ├── doctor.py                — 🆕 Pattern 推荐引擎（交互式问答）
 │   └── ...
 │
-├── TEST_REPORT.md               ← 🆕 回归测试报告（CI 自动生成）
+├── TEST_REPORT.md               ← 回归测试报告（CI 自动生成）
+├── DOCTOR_REPORT.md             — 🆕 doctor 推荐报告（运行时生成）
 │
 ```
 
@@ -390,6 +401,11 @@ $env:HERMES_API_KEY = "your-key-here"
 || 🧠 Memory OS | `conventions/memory-os-pattern.md` | 五层记忆 + 三层检索（向量/图谱/RRF）+ 写侧纪律 | 🟡 |
 || 📈 进化闸门 | `conventions/evolution-gate.md` | G1-G5 五闸门 + 五维加权评估 + 回归 Deploy/Rollback | 🟡 |
 || 📊 数据驱动优化 | `conventions/data-driven-optimization.md` | 用真实运营数据驱动技能迭代 | 🟡 |
+|| 💰 成本护栏 | `conventions/budget-guardrail.md` | 三级预算响应（预警/降级/熔断）防止 token 失控 | 🔵 |
+|| 🆙 人工介入 | `conventions/human-escalation.md` | 高风险/低置信度时升级到人工兜底 | 🔵 |
+|| 🔒 多 Agent 隔离 | `conventions/multi-agent-isolation.md` | 命名空间/文件锁/令牌桶防止资源竞争 | 🔵 |
+|| 👁️ 决策追溯 | `conventions/observability-trace.md` | 结构化日志记录决策链路、置信度、备选方案 | 🔵 |
+|| 🛡️ 数据隐私 | `conventions/data-retention-privacy.md` | 敏感信息检测、保留期限、自动清理 | 🔵 |
 
 ---
 
