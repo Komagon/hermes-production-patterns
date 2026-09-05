@@ -8,7 +8,7 @@
 |------|------|------|----------|
 | [runaway-cron-tokens](runaway-cron-tokens.md) | 资源失控 | 一夜烧掉 $47 API token | [cron-job-pattern](../../conventions/cron-job-pattern.md) |
 | [silent-data-corruption](silent-data-corruption.md) | 数据损坏 | 连续 3 天产出错误报告 | [maker-checker](../../conventions/maker-checker.md), [checkpoint-pattern](../../conventions/checkpoint-pattern.md) |
-| [concurrent-state-conflict](concurrent-state-conflict.md) | 状态冲突 | 两个 agent 互相覆盖 STATE.md | [state-file-pattern](../../conventions/state-file-pattern.md), [path-leasing](../../conventions/path-leasing.md) |
+| [concurrent-state-conflict](concurrent-state-conflict.md) | 状态冲突 | 两个 agent 互相覆盖 STATE.md | [state-file-pattern](../../conventions/state-file-pattern.md), [multi-agent-isolation](../../conventions/multi-agent-isolation.md) |
 | [prompt-injection-escalation](prompt-injection-escalation.md) | 安全漏洞 | 从网页注入执行了未授权命令 | [secret-management](../../conventions/secret-management.md), [anti-patterns](../../conventions/anti-patterns.md) |
 
 ## 使用方式

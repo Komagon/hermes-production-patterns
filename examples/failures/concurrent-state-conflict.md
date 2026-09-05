@@ -126,6 +126,6 @@ shared_state:
 ## 关联模式
 
 - [state-file-pattern](../../conventions/state-file-pattern.md) — STATE.md 的正确读写方式
-- [path-leasing](../../conventions/path-leasing.md) — 多 agent 文件锁机制
+- [multi-agent-isolation](../../conventions/multi-agent-isolation.md) — 多 agent 命名空间隔离与文件锁机制
 - [checkpoint-pattern](../../conventions/checkpoint-pattern.md) — checkpoint 的一致性保证
 - [anti-patterns](../../conventions/anti-patterns.md) — "盲目覆盖"反模式

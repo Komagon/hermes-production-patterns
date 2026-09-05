@@ -1125,6 +1125,26 @@ def copy_v2_assets() -> None:
         shutil.copy2(ROOT / "assets" / name, DOCS / "assets" / name)
 
 
+def copy_aux_resources() -> None:
+    """Copy non-markdown assets referenced by docs so --strict link checks pass.
+
+    build_docs only copies .md into the docs set; docs pages that link to
+    json/py assets (README → test-prompts.json / scripts/validate_state.py,
+    observability-trace → ./trace-schema.json) would dangle without these.
+    """
+    (DOCS / "scripts").mkdir(exist_ok=True)
+    for src, dst in [
+        (ROOT / "test-prompts.json", DOCS / "test-prompts.json"),
+        (ROOT / "scripts" / "validate_state.py", DOCS / "scripts" / "validate_state.py"),
+        (ROOT / "conventions" / "trace-schema.json", DOCS / "conventions" / "trace-schema.json"),
+        (ROOT / "conventions" / "state-schema.json", DOCS / "conventions" / "state-schema.json"),
+        (ROOT / "conventions" / "pattern-schema.json", DOCS / "conventions" / "pattern-schema.json"),
+        (ROOT / "conventions" / "memory-exam.json", DOCS / "conventions" / "memory-exam.json"),
+    ]:
+        (dst).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+
+
 def make_starter_kits_page() -> None:
     """v2.0: starter-kits 目录 → 单页速览(每个 kit 一节,锚点 #kit-<name>)。"""
     parts = [
@@ -1200,6 +1220,7 @@ def main() -> int:
     DOCS.mkdir()
     shutil.copy2(ROOT / "assets" / "logo.png", DOCS / "logo.png")
     copy_v2_assets()
+    copy_aux_resources()
     for sub in ("conventions", "patterns", "examples", "stacks", "recipes", "audit", "compatibility"):
         copy_tree(sub)
     for root_md in ("ARCHITECTURE.md", "CONTEXT.md", "CHANGELOG.md", "CONTRIBUTING.md"):
