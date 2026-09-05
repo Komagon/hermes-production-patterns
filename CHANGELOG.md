@@ -1,5 +1,28 @@
 # Changelog
 
+## v2.2.0 (2026-09-05)
+
+### ✨ Capability Sync: 四族新能力 + 真实验证案例
+
+按 v2.1.0 的「能力在变，模式不变」原则，把 2026-09-05 前后系统里已实测可用的四族 Hermes 能力对号入座到既有模式。
+
+- **hermes-capability-map 升级 v1.4.0** — 新增四个能力族章节：
+  - 「十一、浏览器自动化」— browser_navigate/snapshot/click/type/scroll/vision/console/get_images + vision_analyze，落地调研兜底 / maker-checker UI 验证 / 前端审计
+  - 「十二、消息网关」— `platforms.qqbot`（官方 QQ 机器人网关），落地 human-escalation 投递渠道 / secret-management / self-update
+  - 「十三、多模态产出」— image_generate（qwen-image 文生图）+ text_to_speech，落地公众号/头条配图与内容分发
+  - 「十四、能力验证（元能力）」— 新能力必须跑出可复现的真实输出作为证据锚点，反 hallucination
+- **新增验证案例** `examples/capability-verification-2026-09.md` — 四族 9 项能力全部在真实环境实际调用跑通：
+  - 浏览器：navigate 成功解析 example.com + console JS 求值 + vision 截图落盘（3/3）
+  - 网关：config 授权 + `gateway run` 进程 PID 1058 常驻（2/2）
+  - 多模态：qwen-image-3.0-pro 生成 1280×1280 落 `/mnt/g/hermes图片/` + edge TTS 生成 mp3（2/2）
+  - 检索：hybrid_retrieve.py 三层（语义→混合→RRF）检索「如何防止上下文膨胀」得 16 hits、Top10 单调排序（16 hits）
+- **补齐 examples/index.md** — mkdocs nav 引用了但文件缺失，本次补建。
+- 维护规则新增：能力表新增族时，同步在 examples/ 补验证案例。
+
+### 🧹 兼容性
+
+- 无破坏性变更。hermes-capability-map v1.4.0 向后兼容 v1.3.0。
+
 ## v2.1.0 (2026-09-04)
 
 ### ✨ Pattern Expansion + Tooling Phase

@@ -1,7 +1,7 @@
 ---
 name: hermes-capability-map
-description: "Hermes 能力 × 生产模式映射 — 2026-08 工具能力总览，把新能力对号入座到既有模式"
-version: 1.3.0
+description: "Hermes 能力 × 生产模式映射 — 2026-09 工具能力总览，把新能力对号入座到既有模式"
+version: 1.4.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -24,6 +24,7 @@ maturity: experimental
 > 目的：Hermes 每次升级都会带来新工具能力。本表把 2026-08 前后的关键能力对号入座到既有模式，避免"有新模式但不知道用哪个工具落地"。
 > 原则：**能力在变，模式不变**——新能力优先落地到已有模式，不急着造新模式。
 > v1.1.0（2026-08-20）：新增「七、知识检索与记忆」与「八、生命周期与进化」两族，落地 memory-os-pattern / evolution-gate / self-update-pattern。
+> v1.4.0（2026-09-05）：新增「十一、浏览器自动化」「十二、消息网关」「十三、多模态产出」「十四、能力验证」四族，落地呈现实操链路；全部能力均在真实环境跑出验证案例（见 `examples/capability-verification-2026-09.md`）。
 
 ## 一、Cron 与自动化（cronjob 工具族）
 
@@ -135,11 +136,62 @@ maturity: experimental
 - **图紧跟文字**：每个视觉元素紧贴它支持的解释段落
 - 路由信号聚焦"理解/解释"，与 `R_DIAGRAM`（直接画图请求）区分
 
-维护规则：本表或 capability-registry 任一处工具状态变化 → 同步另一处；
-routing.json 结构性改动视同技能改动，过 evolution-gate。
+## 十一、浏览器自动化（browser / vision 工具族，2026-09-05 新增）
+
+> 入口技能：`browser-skill`（bsk 驱动真实 Chromium，Agent 隔离窗口 + 用户登录态）。
+
+| Hermes 能力 | 干什么 | 落地模式 |
+|:-----------|:-------|:---------|
+| `browser_navigate` / `browser_snapshot` | 导航 + 可访问性树快照（含 ref 号，可点击/输入） | 调研/回归：见「无法直接抓取」时作为 web_extract 的兜底 |
+| `browser_click` / `browser_type` / `browser_scroll` | 交互式操作动态页面 / 填表 / 翻页 | automation：需要登录态或 JS 渲染的抓取任务 |
+| `browser_vision` | 页面截图 + 视觉/OCR 理解（验证码、布局、渲染结果） | maker-checker：UI 层验证不可能靠文本断言时 |
+| `browser_console` | 读页面 console 与浏览器异常，或求值 JS 表达式 | 前端工程审计（error handling / silent JS 失败） |
+| `browser_get_images` | 列出页面图片 URL + alt | 视觉素材采集（配图/抓素材） |
+| `vision_analyze` | 将图片载入上下文进行视觉理解（支持 region 放大局部文字） | maker-checker：图片类产物人工/机器检查 |
+
+**验证案例**：`browser_navigate` 成功打开 example.com 并解析出标题与可交互元素 ref；`browser_console` 求值 `document.title` 可读回页面标题。详见 examples/capability-verification-2026-09.md。
+
+## 十二、消息网关（platforms.*，2026-09-05 新增）
+
+> 入口：`config.yaml platform` 接第三方消息渠道，Hermes 网关作为机器人常驻。
+
+| Hermes 能力 | 干什么 | 落地模式 |
+|:-----------|:-------|:---------|
+| `config.yaml platforms.qqbot` | 官方 QQ 机器人网关（appId + client_secret），WebSocket 长连；私聊 / 群 @ / 频道消息收发 | human-escalation：人工 Checker / 运维告警的投递渠道 |
+| 凭证入环境变量而非明文 | `QQ_APP_ID` / `QQ_CLIENT_SECRET` 存 `.env`，config 只引用 key | secret-management：密钥不进版本库 |
+| 网关进程常驻（gateway run） | 一个网关进程承载所有渠道连接，pairing 授权后消息自动路由进会话 | self-update-pattern：升级后网关需重启自动重连 |
+
+**验证案例**：config.yaml `qqbot.enabled: true`、home_channel 已 pairing 授权、`gateway run` 进程在 PID 1058 常驻。详见 examples/capability-verification-2026-09.md。
+
+## 十三、多模态产出（image_generate / text_to_speech，2026-09-05 新增）
+
+| Hermes 能力 | 干什么 | 落地模式 |
+|:-----------|:-------|:---------|
+| `image_generate`（text-to-image） | 文生图，支持 aspect_ratio；qwen-image provider 成图落到本地盘 | 配图生产：公众号/头条文章插图、架构示意图 |
+| `text_to_speech` | 文本转语音（edge provider），返回音频文件 | 内容分发：音频化公众号/播客素材 |
+
+**验证案例**：`image_generate` 以 qwen-image-3.0-pro 生成 1280×1280 图并落 `/mnt/g/hermes图片/`；`text_to_speech` 生成 mp3 到音频缓存。Qwen-image 成图路径与 js 配图管线一致（图片=qwen-image，落 G:\hermes图片）。详见 examples/capability-verification-2026-09.md。
+
+## 十四、能力验证（2026-09-05 新增，元能力）
+
+> 每族新能力落地时，都要跑出「可复现的真实输出」作为验证案例，长在 examples/ 里，成为说话算数的证据，而不仅是文档描述。
+
+| 验证方式 | 干什么 | 落地模式 |
+|:--------|:-------|:---------|
+| 真实调用产出 | 每族能力实际运行一次，留存输出/路径，作为 README 与 change 的锚点 | 反 hallucination：claim 必须有可复现 token |
+| RRF 三层检索 | `hybrid_retrieve.py` 语义→混合→精确 + Reciprocal Rank Fusion 融合排序 | retrieval-os：多源检索排重 |
+| 独立工具验证 | 图片/音频实际落盘、进程存活、页面可解析等客观检查 | maker-checker：验证不走同一 Agent 的自我声明 |
+
+---
 
 ## 使用建议
 
 1. 升级 Hermes 后先对照本表看新模式：能力在变，模式不变
 2. 新能力优先落地到已有模式（`monitor` → cron-job-pattern 是 2026-08 的最新例子）
 3. 本表随 Hermes 版本持续更新（CHANGELOG 记录每次映射变更）
+
+## 维护规则
+
+- 本表或 capability-registry 任一处工具状态变化 → 同步另一处。
+- routing.json 结构性改动视同技能改动，过 evolution-gate。
+- 本表新增能力族时，同步在 `examples/` 补验证案例，作为「实际运行验证」的证据锚点。

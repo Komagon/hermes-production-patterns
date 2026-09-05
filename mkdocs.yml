@@ -140,6 +140,7 @@ nav:
       - 变更日志: CHANGELOG.md
   - 实战案例 Examples:
       - examples/index.md
+      - 🆕 真实运行验证 2026-09: examples/capability-verification-2026-09.md
       - 公众号文章流水线:
           - examples/wechat-article-pipeline.md
           - 范文模板: examples/wechat-article-pipeline/references/article-template.md

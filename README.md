@@ -36,7 +36,7 @@
 把 Hermes Agent 从「聊天玩具」变成「7x24 小时自主工作的生产系统」所需的全部工程模式、公约和模板。
 
 > 🚀 **v2.0.0（2026-08-31）Productization Phase**：从 Pattern Library 升级为 Production Engineering System——新增 **6 个 Starter Kits**（`starter-kits/`，cp -r 开跑）、**5 个官方 Production Stacks**（`stacks/`，Opinionated Defaults）、**10-Minute Quick Start**（`quickstart.md`）、**7 个 Production Recipes**（`recipes/`，九节齐全的完整工程方案）、**Production Audit 规范 + Readiness Score**（`audit/`）、**兼容性矩阵**（`compatibility/`）、**hpp CLI**（`cli/`，init/add/validate/audit/doctor）；Router 2.0 升级为 Problem→Diagnosis 问题式入口；网站导航重组为 START HERE / BUILD / UNDERSTAND / VALIDATE。核心不再是 More Patterns，而是 **MAKE PATTERNS USABLE.** 详见 CHANGELOG v2.0.0。
-> 🆕 **2026-08 已同步 Hermes 最新能力**：Monitor 原生监控（哈希抑制，变了才烧 token）、delegate Checker（独立子代理 + schema 契约）、能力×模式映射表（`conventions/hermes-capability-map.md`）。详见 CHANGELOG v1.02.00。
+> 🆕 **2026-09 已同步 Hermes 最新能力**：浏览器自动化（browser_navigate/snapshot/click/vision/console）、消息网关（QQ 官方 Bot platforms.qqbot）、多模态产出（image_generate 配图 + text_to_speech）、检索强化（zg/hybrid_retrieve 三层+RRF）。全部能力在真实环境跑出验证案例 `examples/capability-verification-2026-09.md`，能力表升级至 v1.4.0。详见 CHANGELOG v2.2.0。
 >
 > 🧠 **v1.03.00（2026-08-20）**：新增 3 个实战模式——自更新安全流程（`self-update-pattern`，autostash 坑 + 测试失败基线）、Memory OS（`memory-os-pattern`，五层记忆 + 向量/图谱/RRF + 写侧纪律）、进化闸门（`evolution-gate`，G1-G5 + 五维评估 + 回归闭环）。详见 CHANGELOG v1.03.00。
 >
