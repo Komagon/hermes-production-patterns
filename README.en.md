@@ -17,6 +17,9 @@
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
   </a>
+  <a href="TEST_REPORT.md">
+    <img src="https://img.shields.io/badge/Regression-30/30%20Pass-brightgreen" alt="Regression Tests">
+  </a>
   <a href="https://github.com/Komagon/hermes-production-patterns/stargazers">
     <img src="https://img.shields.io/github/stars/Komagon/hermes-production-patterns?style=social" alt="Stars">
   </a>
@@ -33,6 +36,8 @@
 **Hermes Production Patterns** is a production engineering system that turns Hermes Agent from a chat toy into a 7×24 autonomous production system.
 
 > 🚀 **v2.0.0 (2026-08-31) Productization Phase**: upgraded from Pattern Library to Production Engineering System — **6 Starter Kits** (`starter-kits/`), **5 official Production Stacks** (`stacks/`), **10-Minute Quick Start** (`quickstart.md`), **7 Production Recipes** (`recipes/`), **Production Audit + Readiness Score** (`audit/`), **Compatibility Matrix** (`compatibility/`), and the **hpp CLI** (`cli/`: init/add/validate/audit/doctor). The goal is no longer More Patterns — it is **MAKE PATTERNS USABLE.**
+>
+> 🆕 **2026-09 — synced with the latest Hermes capabilities**: browser automation (`browser_navigate`/`snapshot`/`click`/`vision`/`console`), messaging gateway (QQ official Bot via `platforms.qqbot`), multimodal output (`image_generate` for diagrams + `text_to_speech`), enhanced retrieval (`zg`/`hybrid_retrieve`, three-layer + RRF). Every capability has a verified run in a real environment (`examples/capability-verification-2026-09.md`), and the capability map is bumped to v1.4.0. See CHANGELOG v2.2.0.
 
 You've installed Hermes. Now what? If you're struggling with:
 
