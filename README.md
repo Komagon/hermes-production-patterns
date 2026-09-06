@@ -40,7 +40,7 @@
 >
 > 🧠 **v1.03.00（2026-08-20）**：新增 3 个实战模式——自更新安全流程（`self-update-pattern`，autostash 坑 + 测试失败基线）、Memory OS（`memory-os-pattern`，五层记忆 + 向量/图谱/RRF + 写侧纪律）、进化闸门（`evolution-gate`，G1-G5 + 五维评估 + 回归闭环）。详见 CHANGELOG v1.03.00。
 >
-> 🧪 **v1.04.00（2026-08-27）**：新增回归反测集 `test-prompts.json`（25 条回归提示词，覆盖 14 个行为契约模式——`hermes-capability-map` 为参考映射表不设反测；每条含 assertions/forbidden）；`skill-evolution` 升级 v1.3.0 并内置反测用法（何时跑、怎么跑、新增条目规则）。技能升级验收标准 = 旧失败不再出现 + 旧成功仍然成立。详见 CHANGELOG v1.04.00。
+> 🧪 **v1.04.00（2026-08-27）**：新增回归反测集 `test-prompts.json`（30 条回归提示词，覆盖 19 个行为契约模式——`hermes-capability-map` 为参考映射表不设反测；每条含 assertions/forbidden）；`skill-evolution` 升级 v1.3.0 并内置反测用法（何时跑、怎么跑、新增条目规则）。技能升级验收标准 = 旧失败不再出现 + 旧成功仍然成立。详见 CHANGELOG v1.04.00。
 
 ---
 
@@ -61,7 +61,7 @@
 
 它不是什么「最佳实践」大合集。每一条模式都来自真实的 7x24 运行环境——在运行数十天、数百次触发的公众号流水线、新闻摘要 Cron、自动更新等场景中反复验证，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
 
-> **如何验证可信度？** 本项目附带 [25 条回归反测提示词](test-prompts.json)（覆盖 14 个行为契约模式）和 [STATE.md 校验脚本](scripts/validate_state.py)，CI 自动运行。成熟度分级：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考性）。
+> **如何验证可信度？** 本项目附带 [30 条回归反测提示词](test-prompts.json)（覆盖 19 个行为契约模式）和 [STATE.md 校验脚本](scripts/validate_state.py)，CI 自动运行。成熟度分级：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考性）。
 
 ### English
 
@@ -79,7 +79,7 @@ This project is for you.
 
 These aren't armchair best practices. Every pattern comes from real 7x24 production runs — tested across dozens of days and hundreds of triggers in content pipelines, news digest crons, and auto-update workflows — broken, fixed, and hardened into reusable conventions.
 
-> **How to verify credibility?** This repo ships with [25 regression test prompts](test-prompts.json) (covering 14 behavioral contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested · 🟡 beta · 🔵 experimental.
+> **How to verify credibility?** This repo ships with [30 regression test prompts](test-prompts.json) (covering 19 behavioral contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested · 🟡 beta · 🔵 experimental.
 
 ---
 
@@ -128,7 +128,7 @@ Hermes Agent 本身是一个强大的 Agent 框架，但社区里最缺的不是
 || 状态管理 | 内置 checkpoint API，框架绑定 | `memory` 工具（容量有限，无结构） | **STATE.md 文本文件**，零依赖、Git 可追踪、任何编辑器可读 |
 || 错误处理 | 框架层 try/catch + retry | Agent 自行处理（容易失焦） | **error-compact-pattern** 压缩→分类→自愈，上下文可控 |
 || 任务调度 | Celery/Airflow 等外部依赖 | `cronjob_manage` 原生支持 | 幂等+Monitor+Pre/Post-flight 三段式 |
-|| 质量保障 | 需自建 eval pipeline | 无内置 | **Maker/Checker + 回归反测集**（25 条 test-prompts.json） |
+|| 质量保障 | 需自建 eval pipeline | 无内置 | **Maker/Checker + 回归反测集**（30 条 test-prompts.json） |
 || 记忆体系 | 向量数据库（重） | `memory` 工具（轻但无序） | **Memory OS 五层架构** + 三层检索 RRF |
 || 安装复杂度 | 需要 Python/Node 环境 + 依赖 | 已内置 | 文本文件，cp 即用 |
 || 适用场景 | 大型 Agent 应用开发 | 日常对话和任务 | **Hermes 生态内的生产级自动化** |

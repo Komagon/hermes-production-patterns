@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, example, article, maker-checker, pipeline, opik]
     category: examples
-    related_skills: [maker-checker, state-file-pattern, error-compact-pattern, maturity-staging-l1-l2-l3, opik-eval]
+    related_skills: [maker-checker, state-file-pattern, error-compact-pattern, maturity-staging-l1-l2-l3]
 ---
 
 # Maker/Checker Article Pipeline

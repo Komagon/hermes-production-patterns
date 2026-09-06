@@ -91,8 +91,8 @@ version: 1.2.0
 
 **技能升级的验收标准不是「看起来对」，而是「旧失败不再出现、旧成功仍然成立」。** 反测集就是把这句口号变成可执行资产。
 
-- **位置**:`hermes-production-patterns/test-prompts.json`(与 15 个技能平级),25 条回归提示词,每条含 `prompt / expected / assertions(应命中) / forbidden(禁止触犯)`。
-- **覆盖范围**:14 个行为契约技能 1:1 全覆盖;`hermes-capability-map` 为参考映射表(无行为契约,不设陷阱式反测,其正确性由 CI 链接检查与人工审校保证)。
+- **位置**:`hermes-production-patterns/test-prompts.json`(与 19 个技能平级),30 条回归提示词,每条含 `prompt / expected / assertions(应命中) / forbidden(禁止触犯)`。
+- **覆盖范围**:19 个行为契约技能 1:1 全覆盖;`hermes-capability-map` 为参考映射表(无行为契约,不设陷阱式反测,其正确性由 CI 链接检查与人工审校保证)。
 - **何时跑**:
   - 任何技能 major/minor 升级后 → 跑该技能相关反测条目(至少 1 条)
   - 用户反馈「不对 / 不好用 / 还是老样子」→ 先跑对应反测定位是技能缺陷还是 Agent 未遵守
@@ -100,7 +100,7 @@ version: 1.2.0
 - **怎么跑**:把条目的 `prompt` 喂给 Agent(或复盘历史会话),检查行为是否命中所有 `assertions`、未触任何 `forbidden`。结构检查(SKILL.md 格式/语法)不等于行为反测——dry-run 不能当已验证。
 - **新增条目规则**:每修复一个「真实发生的失败模式」,就补一条能暴露旧失败的反测条目;同根同触发合并进现有条目,不无脑堆条目(防膨胀,呼应瘦身原则)。
 - **铁律**:改完技能不跑反测 = 改完技能不验证 = 禁止宣称完成。
-- **范围说明**:任何技能 major/minor 升级后只跑该技能映射的 1-2 条(按下方速查表 1:1 查表);全量 25 条只在发版 tag 前跑,或当被改技能是横切技能(`evolution-gate` / `pattern-composition`,它们影响其他技能的验证方式)时跑。条目失败时:先重跑一次排除偶发,再犯则按 Deploy-or-Rollback 回滚,修复该条目后才允许合并——这是 G5 数据闸的落地形态。
+- **范围说明**:任何技能 major/minor 升级后只跑该技能映射的 1-2 条(按下方速查表 1:1 查表);全量 30 条只在发版 tag 前跑,或当被改技能是横切技能(`evolution-gate` / `pattern-composition`,它们影响其他技能的验证方式)时跑。条目失败时:先重跑一次排除偶发,再犯则按 Deploy-or-Rollback 回滚,修复该条目后才允许合并——这是 G5 数据闸的落地形态。
 
 ### 反测覆盖速查
 
@@ -119,7 +119,12 @@ version: 1.2.0
 | skill-evolution | skill-evolution-backward-compat / skill-evolution-versioned-files |
 | anti-patterns | anti-patterns-no-adhoc-prompt |
 | pattern-composition | pattern-composition-selection |
-| memory-os-pattern | memory-os-write-discipline |
+| memory-os-pattern | memory-os-write-discipline / memory-recall-write-policy / memory-recall-evidence-gate / memory-recall-three-layer-retrieval / memory-recall-rrf-formula / memory-recall-daily-review |
+| budget-guardrail | budget-guardrail-threshold |
+| human-escalation | human-escalation-trigger |
+| multi-agent-isolation | multi-agent-isolation-lock |
+| observability-trace | observability-trace-decision |
+| data-retention-privacy | data-retention-cleanup |
 | hermes-capability-map | (豁免:参考映射表,无行为契约;由 CI 链接检查保证) |
 
 ## 与 STATE.md 的配合
