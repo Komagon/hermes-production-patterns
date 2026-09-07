@@ -38,6 +38,8 @@
 > 🚀 **v2.0.0（2026-08-31）Productization Phase**：从 Pattern Library 升级为 Production Engineering System——新增 **6 个 Starter Kits**（`starter-kits/`，cp -r 开跑）、**5 个官方 Production Stacks**（`stacks/`，Opinionated Defaults）、**10-Minute Quick Start**（`quickstart.md`）、**7 个 Production Recipes**（`recipes/`，九节齐全的完整工程方案）、**Production Audit 规范 + Readiness Score**（`audit/`）、**兼容性矩阵**（`compatibility/`）、**hpp CLI**（`cli/`，init/add/validate/audit/doctor）；Router 2.0 升级为 Problem→Diagnosis 问题式入口；网站导航重组为 START HERE / BUILD / UNDERSTAND / VALIDATE。核心不再是 More Patterns，而是 **MAKE PATTERNS USABLE.** 详见 CHANGELOG v2.0.0。
 > 🆕 **2026-09 已同步 Hermes 最新能力**：浏览器自动化（browser_navigate/snapshot/click/vision/console）、消息网关（QQ 官方 Bot platforms.qqbot）、多模态产出（image_generate 配图 + text_to_speech）、检索强化（zg/hybrid_retrieve 三层+RRF）。全部能力在真实环境跑出验证案例 `examples/capability-verification-2026-09.md`，能力表升级至 v1.4.0。详见 CHANGELOG v2.2.0。
 >
+> 🧪 **v2.3.0（2026-09-07）**：三篇 X/GitHub 项目吸收——① `skill-evolution` v1.3.3：「硬门禁判定纪律」（N/A 与验证失败分离/横切技能强制门禁/分数封顶）+「变更后自动验证 hook」（改技能必跑 ①routing_check+capability_probe ②反向引用 grep ③反测)；② `cron-job-pattern` v1.1.1：「频率×可逆性任务遴选」（频率/可验证/可逆三条门槛）；③ `state-file-pattern` v1.1.1：「变更收据」（state+evidence+unresolved risk 三件套）。详见 CHANGELOG v2.3.0。
+>
 > 🧠 **v1.03.00（2026-08-20）**：新增 3 个实战模式——自更新安全流程（`self-update-pattern`，autostash 坑 + 测试失败基线）、Memory OS（`memory-os-pattern`，五层记忆 + 向量/图谱/RRF + 写侧纪律）、进化闸门（`evolution-gate`，G1-G5 + 五维评估 + 回归闭环）。详见 CHANGELOG v1.03.00。
 >
 > 🧪 **v1.04.00（2026-08-27）**：新增回归反测集 `test-prompts.json`（30 条回归提示词，覆盖 19 个行为契约模式——`hermes-capability-map` 为参考映射表不设反测；每条含 assertions/forbidden）；`skill-evolution` 升级 v1.3.0 并内置反测用法（何时跑、怎么跑、新增条目规则）。技能升级验收标准 = 旧失败不再出现 + 旧成功仍然成立。详见 CHANGELOG v1.04.00。

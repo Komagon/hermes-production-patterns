@@ -1,7 +1,7 @@
 ---
 name: cron-job-pattern
 description: "Cron 任务设计模式 — 幂等、防重复、防静默失败（含 Hermes 原生 Monitor 模式）"
-version: 1.1.0
+version: 1.1.1
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -10,6 +10,7 @@ metadata:
     tags: [production, pattern, convention, cron, idempotency, monitor]
     category: conventions
     related_skills: [state-file-pattern, evolution-gate, error-compact-pattern, control-flow-separation]
+migration: "v1.1.0 → v1.1.1:新增「该不该自动化:频率×可逆性遴选」章节(借鉴 polydao loop engineering;频率/可验证/可逆三条门槛,反例:发消息/支付/发布/发邮件)"
 hpp_category: automation
 hpp_en: "Idempotent, dedup-safe, silent-failure-proof scheduling."
 hpp_maturity: L2
@@ -29,6 +30,24 @@ hpp_when_not_to_use: ["One-off tasks", "Jobs needing interactive input"]
 ## 核心原则
 
 Cron 任务的核心风险不是「跑崩了」，而是**「跑偏了但没人发现」**。
+
+### 该不该自动化:频率×可逆性遴选(2026-09-07,借鉴 polydao)
+
+> 不是所有任务都值得做成 cron。先用三条门槛筛,再谈怎么设计。
+
+一个任务值得做成定时自动化的唯一标准:**频率高 × 可逆性好**。
+
+| 判据 | 合格线 | 解释 |
+|:-----|:-----|:-----|
+| **频率** | 至少每周重复 | 跑得够多才能看出模式、积累纠正;一月跑一次的任务看不出规律,自动化不划算 |
+| **可验证** | 结果一分钟内能确认 | 输出必须有快、便宜的校验路径(读一眼、脚本断言、与 ground truth 对比),否则「准不准」永远悬着 |
+| **可逆** | 错了成本≈0、可撤销 | 错了能回滚/丢弃/重跑,不产生不可逆副作用;「错了白花钱」是昂贵教训不是学费 |
+
+**反例**:发消息 / 支付 / 发布 / 发邮件这类「一旦发出不可撤回」的动作,三条门槛没过前不配进自动化。这类任务要等成熟后,由确定性 gate 包住再上。
+
+合格示例:竞品跟踪、changelog 监控、线索补全、来源筛选、行情监控、财报抓取。不合格示例(现阶段):自动发推、自动下单、自动发布文章。
+
+判断口诀:**频率低→不做;验证不了→不做;不可逆→不做。三条都过才配谈三段式与幂等。** 本文剩下的三段式、幂等、防静默失败都是「确定要自动化之后」的工程,这条准则是「要不要自动化」的入口。
 
 ## 三段式结构
 

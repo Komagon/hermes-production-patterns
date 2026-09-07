@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.3.0 (2026-09-07)
+
+### ✨ 三篇 X/GitHub 项目吸收:硬门禁判定 + 任务遴选 + 变更收据
+
+按 v2.1.0「能力在变，模式不变」原则，把三次外部侦察提炼的工程纪律对号入座到既有模式，全部实机验证通过（改后跑 routing_check PASS + capability_probe OK + 反向引用核对 + 行为契约反测）。
+
+- **skill-evolution v1.3.1 → v1.3.3**（借鉴 ifixai-ai/iFixAi 的 mandatory-minimum + N/A sentinel 处理）：
+  - 「硬门禁判定纪律」— 反测结果三条不可违背门禁：N/A 与验证失败分离（仅能显式给 sentinel 才判 INCONCLUSIVE，其余 fail-closed）、横切技能条目强制门禁（evolution-gate/pattern-composition 不过则整体封顶）、分数封顶而非平均对消（PASS/FAIL 二值）。
+  - 「变更后自动验证强制 hook」— 任何 skill 变更必跑 ① routing_check + capability_probe ② 反向引用 grep（横切技能引用非空 → 全量反测）③ 反测条目；缺项不结项。把验证从「自觉纪律」升级成「必然发生的 hook」。
+- **cron-job-pattern v1.1.0 → v1.1.1**（借鉴 polydao 的 loop engineering）：
+  - 新增「该不该自动化：频率×可逆性遴选」— 三条门槛（频率：每周重复 / 可验证：一分钟确认 / 可逆：错成本≈0），剧本反例：发消息/支付/发布/发邮件。三条都过才配谈三段式与幂等。
+- **state-file-pattern v1.1.0 → v1.1.1**（借鉴 LunarResearcher 的 harness engineering）：
+  - 新增「变更收据（Change Receipt）」— run 结束时收敛 state + evidence + unresolved risk 三件套，给人类审 + 给下次 session 起跑；evidence 必须是已落地产物句柄，接上 SKILL.state「显式状态优于对话历史」。
+
+与既有资产关系：三处均为增量章节，未触碰既有行为契约；反测覆盖速查表已在 v1.04.00 的 test-prompts.json（30 条/19 模式）基础上。
+
 ## v2.2.0 (2026-09-05)
 
 ### ✨ Capability Sync: 四族新能力 + 真实验证案例
