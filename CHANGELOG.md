@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.3.2 (2026-09-07)
+
+### ✨ Trace Engineering 吸收:工具侧效标注 + capability-registry READ_ONLY/MUTATING 分类
+
+marfinxx Trace Engineering(2026-09-05,13.4 万浏览)新方向吸收,核心洞察:多 agent 系统的失败根因是分布式可追溯性问题,不是提示词问题。可落地的点:
+
+- **control-flow-separation v1.1.0 → v1.2.0**:新增「工具侧效标注(Tool Side-Effect Tagging)」章节。工具静态分为 `READ_ONLY`(纯查询,可安全全量重放)和 `MUTATING`(写文件/发消息/提交,重放走沙箱,真实执行需 approval,执行前写 WAL)。分类表覆盖 13 个能力;保守优先原则:凡无法证明无副作用一律标 MUTATING,缺字段=fail-closed。侧效标注是 anti-patterns #13「规则写两遍」在工具层的机械层落地:规则写进提示词(告诉 agent 工具性质)+ 规则写进 registry(让审批绕不过,agent 的建议只在 GUIDANCE 层有效)。
+- **capability-registry.json 机器可读化**:`~/.hermes/routing/capability-registry.json` 全部 13 个能力增加 `side_effect` 字段(6 READ_ONLY / 7 MUTATING),`capability_probe.py` 刷新时保留。示例:web-search=READ_ONLY,git/python/tts=MUTATING。
+
+与 v2.3.0/v2.3.1 关系:前两条(反测试集/状态管理/任务遴选/harness 规则写两遍)在 harness 层收口,本条进到 trace/观测层,是 harness 主题之后的新方向首波落地;真正可落地的只有侧效标注(确定性重放安全前提),其余(trace DAG/causal fault localization/token entropy 断路器/trace-to-memory 蒸馏)属于分布式框架基础设施,当前无接入点,记录为方向备忘不强行落地。
+
 ## v2.3.1 (2026-09-07)
 
 ### ✨ anti-patterns v1.0.0 → v1.2.0:三条补全 + 纯提示词约束(规则写两遍)
