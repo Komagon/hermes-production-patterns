@@ -1,5 +1,16 @@
 # Changelog
 
+## v2.3.1 (2026-09-07)
+
+### ✨ anti-patterns v1.0.0 → v1.2.0:三条补全 + 纯提示词约束(规则写两遍)
+
+harness 工程主题收尾(借鉴 0xwhrrari 的 harness checklist / Anthropic/OpenAI/Codex 引用),补齐反模式目录到 13 条:
+
+- **反模式 10-12 补全**(此前远端 conventions 落后于本地运行版):事后加载技能(Skill After Start)、过度确认(Premature Confirmation)、死马当活马医(Dead Horse Flogging)。
+- **反模式 13「纯提示词约束」(Prompt-Only Enforcement)** — 硬规则只写进提示词/SKILL.md prose、靠 agent「读到并记住」遵守 = 默认违规。纠正 = **规则写两遍**(双编码):指引层(agent 能理解的自然语言,解释为什么)+ 机械层(agent 绕不过的确定性检查:pre_tool_call 拦截、approval 审批域、enabled_toolsets、secret-management 扫描、测试脚本)。判定口诀:硬规则必须给机械层,只靠提示词就是默认违规。测试时 mock 掉 agent 自觉,看机械层拦不拦。
+
+与 v2.3.0 关系:这是「写两遍」共识的兑现,v2.3.0 那四条均在回测集/状态管理/任务遴选层落地,本条落进反面模式目录作为收敛收尾。
+
 ## v2.3.0 (2026-09-07)
 
 ### ✨ 三篇 X/GitHub 项目吸收:硬门禁判定 + 任务遴选 + 变更收据
