@@ -5,6 +5,7 @@
 | 案例 | 覆盖能力 | 状态 |
 |:----|:--------|:----:|
 | [真实运行验证 2026-09](capability-verification-2026-09.md) | 浏览器自动化 / 消息网关 / 多模态产出 / 检索强化 | ✅ 4 族 9 项全通过 |
+| [决策契约实测基线 2026-09](decision-os-baseline-2026-09.md) | 决策契约 / 复现 / 评测标定（8 个决策 labeled dataset + 基线） | ✅ 8 决策跑通，含 3 个真实坑修复 |
 | [公众号文章流水线](wechat-article-pipeline.md) | 写作 / 去 AI 味 / 配图 / 排版 | battle-tested |
 | [Maker/Checker 文章流水线](maker-checker-article-pipeline.md) | Maker/Checker 分离 + 手动/Opik 双通道 | battle-tested |
 | [每日新闻摘要](daily-news-digest.md) | Cron + 去重 + 摘要 + 投递 | battle-tested |

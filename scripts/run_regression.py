@@ -124,7 +124,7 @@ def generate_report(data: list[dict], passed: list[dict], errors: list[str], out
     lines.append("> Run `python scripts/run_regression.py` to regenerate.")
 
     with open(output_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
+        f.write("\n".join(lines) + "\n")
 
     return pass_count, fail_count
 

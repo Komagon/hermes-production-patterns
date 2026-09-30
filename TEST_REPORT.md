@@ -1,17 +1,17 @@
 # Regression Test Report
 
-**Generated**: 2026-09-04 06:54 UTC
-**Source**: `test-prompts.json` (30 test cases)
+**Generated**: 2026-09-30 08:04 UTC
+**Source**: `test-prompts.json` (36 test cases)
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Total test cases | 30 |
-| Passed | 30 |
+| Total test cases | 36 |
+| Passed | 36 |
 | Failed | 0 |
 | Pass rate | 100% |
-| Patterns covered | 30 |
+| Patterns covered | 36 |
 
 ## Results
 
@@ -47,6 +47,12 @@
 | 28 | `multi-agent-isolation-lock` | ✅ PASS | 4 | 3 |
 | 29 | `observability-trace-decision` | ✅ PASS | 4 | 3 |
 | 30 | `data-retention-cleanup` | ✅ PASS | 4 | 3 |
+| 31 | `decision-contract-threshold-by-type` | ✅ PASS | 6 | 3 |
+| 32 | `decision-contract-replay-version-bump` | ✅ PASS | 5 | 3 |
+| 33 | `decision-contract-abstain-not-wrong` | ✅ PASS | 5 | 3 |
+| 34 | `decision-contract-candidates-dynamic` | ✅ PASS | 4 | 3 |
+| 35 | `decision-contract-score-scale` | ✅ PASS | 4 | 3 |
+| 36 | `control-flow-mcp-deferred-catalog` | ✅ PASS | 4 | 3 |
 
 ---
 

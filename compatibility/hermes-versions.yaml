@@ -67,3 +67,8 @@ self-update-pattern:
   min_hermes: ">=0.20"
   status: stable
   requires: [git]
+
+decision-contract:
+  min_hermes: "any"
+  status: experimental
+  requires: []

@@ -15,7 +15,7 @@
     <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
   <a href="TEST_REPORT.md">
-    <img src="https://img.shields.io/badge/Regression-30/30%20Pass-brightgreen" alt="Regression Tests">
+    <img src="https://img.shields.io/badge/Regression-36/36%20Pass-brightgreen" alt="Regression Tests">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
@@ -37,6 +37,8 @@
 
 > 🚀 **v2.0.0（2026-08-31）Productization Phase**：从 Pattern Library 升级为 Production Engineering System——新增 **6 个 Starter Kits**（`starter-kits/`，cp -r 开跑）、**5 个官方 Production Stacks**（`stacks/`，Opinionated Defaults）、**10-Minute Quick Start**（`quickstart.md`）、**7 个 Production Recipes**（`recipes/`，九节齐全的完整工程方案）、**Production Audit 规范 + Readiness Score**（`audit/`）、**兼容性矩阵**（`compatibility/`）、**hpp CLI**（`cli/`，init/add/validate/audit/doctor）；Router 2.0 升级为 Problem→Diagnosis 问题式入口；网站导航重组为 START HERE / BUILD / UNDERSTAND / VALIDATE。核心不再是 More Patterns，而是 **MAKE PATTERNS USABLE.** 详见 CHANGELOG v2.0.0。
 > 🆕 **2026-09 已同步 Hermes 最新能力**：浏览器自动化（browser_navigate/snapshot/click/vision/console）、消息网关（QQ 官方 Bot platforms.qqbot）、多模态产出（image_generate 配图 + text_to_speech）、检索强化（zg/hybrid_retrieve 三层+RRF）。全部能力在真实环境跑出验证案例 `examples/capability-verification-2026-09.md`，能力表升级至 v1.4.0。详见 CHANGELOG v2.2.0。
+>
+> ⚖️ **v2.4.0（2026-09-30）判断层落地**：新增公约 `decision-contract`（**决策契约**：判断/授权/执行三分离；类型 choice/score/noul；后端链 rule→cache→local→jev→llm→human；三段门按 type 分阈值；收据含完整降级轨迹；Record & Replay 逐字复现；离线评测标定）。配套：`data-driven-optimization` v1.1.0 新增「标定闭环」（分离度检验/弃权单列/有序档位用档位距离），`human-escalation` v1.1.0 新增「弃权语义」（拒答 ≠ 答错），`hermes-capability-map` v1.5.0 首次覆盖**判断层**并新增「外部工具目录（MCP 延迟加载）」「多代理任务编排（kanban 工具族）」两族。反测集 30→36 条（覆盖 20 个行为契约模式）。8 个决策的实测基线见 `examples/decision-os-baseline-2026-09.md`。详见 CHANGELOG v2.4.0。
 >
 > 🧪 **v2.3.2（2026-09-07）**：Trace Engineering 吸收——`control-flow-separation` v1.2.0 新增「工具侧效标注」：工具静态分类 `READ_ONLY`（纯查询，可安全重放）/ `MUTATING`（写操作，重放走沙箱 + approval）；`capability-registry.json` 机器可读化（13 能力全部标注 `side_effect`，6 RO / 7 MU），`capability_probe.py` 刷新时保留。是 anti-patterns #13「规则写两遍」在工具层的机械层落地。
 >
@@ -67,7 +69,7 @@
 
 它不是什么「最佳实践」大合集。每一条模式都来自真实的 7x24 运行环境——在运行数十天、数百次触发的公众号流水线、新闻摘要 Cron、自动更新等场景中反复验证，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
 
-> **如何验证可信度？** 本项目附带 [30 条回归反测提示词](test-prompts.json)（覆盖 19 个行为契约模式）和 [STATE.md 校验脚本](scripts/validate_state.py)，CI 自动运行。成熟度分级：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考性）。
+> **如何验证可信度？** 本项目附带 [36 条回归反测提示词](test-prompts.json)（覆盖 20 个行为契约模式）和 [STATE.md 校验脚本](scripts/validate_state.py)，CI 自动运行。成熟度分级：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考性）。
 
 ### English
 
@@ -85,7 +87,7 @@ This project is for you.
 
 These aren't armchair best practices. Every pattern comes from real 7x24 production runs — tested across dozens of days and hundreds of triggers in content pipelines, news digest crons, and auto-update workflows — broken, fixed, and hardened into reusable conventions.
 
-> **How to verify credibility?** This repo ships with [30 regression test prompts](test-prompts.json) (covering 19 behavioral contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested · 🟡 beta · 🔵 experimental.
+> **How to verify credibility?** This repo ships with [36 regression test prompts](test-prompts.json) (covering 20 behavioral contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested · 🟡 beta · 🔵 experimental.
 
 ---
 
@@ -134,7 +136,7 @@ Hermes Agent 本身是一个强大的 Agent 框架，但社区里最缺的不是
 || 状态管理 | 内置 checkpoint API，框架绑定 | `memory` 工具（容量有限，无结构） | **STATE.md 文本文件**，零依赖、Git 可追踪、任何编辑器可读 |
 || 错误处理 | 框架层 try/catch + retry | Agent 自行处理（容易失焦） | **error-compact-pattern** 压缩→分类→自愈，上下文可控 |
 || 任务调度 | Celery/Airflow 等外部依赖 | `cronjob_manage` 原生支持 | 幂等+Monitor+Pre/Post-flight 三段式 |
-|| 质量保障 | 需自建 eval pipeline | 无内置 | **Maker/Checker + 回归反测集**（30 条 test-prompts.json） |
+|| 质量保障 | 需自建 eval pipeline | 无内置 | **Maker/Checker + 回归反测集**（36 条 test-prompts.json） |
 || 记忆体系 | 向量数据库（重） | `memory` 工具（轻但无序） | **Memory OS 五层架构** + 三层检索 RRF |
 || 安装复杂度 | 需要 Python/Node 环境 + 依赖 | 已内置 | 文本文件，cp 即用 |
 || 适用场景 | 大型 Agent 应用开发 | 日常对话和任务 | **Hermes 生态内的生产级自动化** |
@@ -213,6 +215,7 @@ hermes-production-patterns/
 │   ├── human-escalation.md      — 🆙 人工介入升级
 │   ├── multi-agent-isolation.md — 🔒 多 Agent 协作隔离
 │   ├── observability-trace.md   — 👁️ 决策追溯
+│   ├── decision-contract.md     — ⚖️ 决策契约（判断/授权/执行三分离）
 │   └── data-retention-privacy.md — 🛡️ 数据保留与隐私
 │
 ├── templates/                   ← 可复用的文件模板
@@ -411,6 +414,7 @@ $env:HERMES_API_KEY = "your-key-here"
 || 🆙 人工介入 | `conventions/human-escalation.md` | 高风险/低置信度时升级到人工兜底 | 🔵 |
 || 🔒 多 Agent 隔离 | `conventions/multi-agent-isolation.md` | 命名空间/文件锁/令牌桶防止资源竞争 | 🔵 |
 || 👁️ 决策追溯 | `conventions/observability-trace.md` | 结构化日志记录决策链路、置信度、备选方案 | 🔵 |
+|| ⚖️ 决策契约 | `conventions/decision-contract.md` | 判断/授权/执行三分离：类型+阈值+降级+收据+复现+评测标定 | 🟡 |
 || 🛡️ 数据隐私 | `conventions/data-retention-privacy.md` | 敏感信息检测、保留期限、自动清理 | 🔵 |
 
 ---

@@ -1,7 +1,7 @@
 ---
 name: human-escalation
 description: "人工介入升级 — 高风险/低置信度/连续失败时升级到人工兜底"
-version: 1.0.0
+version: 1.1.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, pattern, convention, escalation, human-in-the-loop]
     category: conventions
-    related_skills: [maker-checker, state-file-pattern, error-compact-pattern]
+    related_skills: [maker-checker, state-file-pattern, error-compact-pattern, decision-contract]
 hpp_category: reliability
 hpp_en: "Escalate to human when risk exceeds agent confidence."
 hpp_maturity: L1
@@ -17,6 +17,7 @@ hpp_complexity: medium
 hpp_reliability: high
 hpp_capability: delegate
 maturity: experimental
+migration: "v1.0.0 → v1.1.0:新增「弃权语义」章节(拒答≠答错;弃权单列,trace 里可归属到哪个后端;与 decision-contract 三段门 low 段对接)"
 ---
 
 # Human Escalation — 人工介入升级
@@ -91,6 +92,33 @@ escalation:
   same_error_pattern_threshold: 5
   retry_strategies: [exponential_backoff, alternative_tool, rephrase_query]
 ```
+
+## 弃权语义：拒绝猜测 ≠ 答错（2026-09-30 新增）
+
+> 上游文档：`conventions/decision-contract.md` 的「三段门」与「离线评测」两节。
+
+判断层最容易被指标坑的地方：**把「交给人类」算成失败。**
+
+一个「该不该升级人类」的判断，弃权（输出 `escalate`）本身就是**升级人类** —— 结果等价。但若评测把弃权计入答错，会得到反向结论：实测某决策弃权被算成失败时准确率 0.583，排除弃权后其实是 **1.000**。越谨慎的系统得分越低，指标开始反向激励。
+
+### 三条落地规则
+
+1. **弃权单列指标。** 至少三个数：`accuracy`（含弃权算错）/ `accuracy_answered`（排除弃权）/ `abstained_rate`（弃权率）。只看第一个数会误判一个正常工作的判断门。
+2. **弃权要能归因到「谁弃的」。** 收据里的降级轨迹（`attempts` / `fallback_used`）必须记全，否则事后无法区分「规则没命中」「后端答了但置信度低」「链末 human 兜底」这几种完全不同的弃权：
+   ```json
+   "trail": ["rule:no-match", "jev:answered", "human:answered-fallback"]
+   ```
+   读法：规则不适用 → 后端给了答案 → 三段门判低置信 → 降级到 human 弃权。降级是设计行为，不是故障。
+3. **弃权率要当 SLO 看，不当错误率看。** 弃权率长期偏高说明契约有问题（rubric 不清、刻度错、置信度算法错），而不是「模型不行」。实测一个真实案例：把 noul 的置信度从「离 0.5 的距离」改成「所选值的概率」后，弃权行从 5 行降到 1 行 —— 修的是置信度算法，不是判断能力。
+
+### 与升级通道的关系
+
+```
+决策层三段门                      升级通道(本模式)
+low  → escalate  ────────────▶  生成升级工单 → 人工处置 → 回写状态
+```
+
+三段门的 `low` 段是升级通道的**入口**；升级通道负责「升上去之后怎么处置」。判断层不猜，通道层不丢单。
 
 ## 升级通道设计
 

@@ -1,7 +1,7 @@
 ---
 name: hermes-capability-map
 description: "Hermes 能力 × 生产模式映射 — 2026-09 工具能力总览，把新能力对号入座到既有模式"
-version: 1.4.0
+version: 1.5.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [production, hermes, capability, mapping]
     category: conventions
-    related_skills: [cron-job-pattern, maker-checker, state-file-pattern, control-flow-separation, skill-evolution, secret-management]
+    related_skills: [cron-job-pattern, maker-checker, state-file-pattern, control-flow-separation, skill-evolution, secret-management, decision-contract]
 hpp_category: guide
 hpp_en: "Map every Hermes capability to the right pattern."
 hpp_maturity: L1
@@ -17,6 +17,7 @@ hpp_complexity: low
 hpp_reliability: medium
 hpp_capability: docs
 maturity: experimental
+migration: "v1.4.0 → v1.5.0:新增「十五、决策与路由」「十六、外部工具目录(MCP 延迟加载)」「十七、多代理任务编排(kanban 工具族)」三族"
 ---
 
 # Hermes 能力 × 生产模式映射（2026-09）
@@ -25,6 +26,7 @@ maturity: experimental
 > 原则：**能力在变，模式不变**——新能力优先落地到已有模式，不急着造新模式。
 > v1.1.0（2026-08-20）：新增「七、知识检索与记忆」与「八、生命周期与进化」两族，落地 memory-os-pattern / evolution-gate / self-update-pattern。
 > v1.4.0（2026-09-05）：新增「十一、浏览器自动化」「十二、消息网关」「十三、多模态产出」「十四、能力验证」四族，落地呈现实操链路；全部能力均在真实环境跑出验证案例（见 `examples/capability-verification-2026-09.md`）。
+> v1.5.0（2026-09-30）：新增「十五、决策与路由」「十六、外部工具目录」「十七、多代理任务编排」三族，落地 `decision-contract`（判断与执行分离 + 复现 + 评测标定）；能力地图首次覆盖**判断层**（此前只覆盖执行层与产出层）。验证案例见 `examples/decision-os-baseline-2026-09.md`。
 
 ## 一、Cron 与自动化（cronjob 工具族）
 
@@ -183,6 +185,47 @@ maturity: experimental
 | 独立工具验证 | 图片/音频实际落盘、进程存活、页面可解析等客观检查 | maker-checker：验证不走同一 Agent 的自我声明 |
 
 ---
+
+## 十五、决策与路由（2026-09-30 新增，入口公约 `decision-contract`）
+
+> 判断层：把「怎么判」从提示词里搬进契约文件，让判断可校验、可授权、可审计、可复现。
+
+| Hermes 能力 | 干什么 | 落地模式 |
+|:-----------|:-------|:---------|
+| `decision_decide`（插件工具） | agent 直接向决策层要一个带类型/置信度的决策，而不是自己发明判断标准 | decision-contract：判断与执行分离；插件在**新会话**才加载 |
+| `pre_tool_call` 影子钩子 | 每次工具调用问一次「该用哪个工具」，只记录「建议 vs 实际」，从不拦截 | observability-trace：先量再收，影子期不改行为 |
+| Jev 后端（systemone HTTP） | 只做 Choose / Score / Judge，不承担生成与推理 | decision-contract：后端链上的一个可选节点，无 key 即 fail-open |
+| 收据 + 降级轨迹 | 每次决策落 receipt：state 哈希 + `attempts` + `fallback_used` + 分段结果 | observability-trace / human-escalation：事后能回答「为什么这么判」「谁弃的权」 |
+| replay 记录 | 同一 state 逐字复现（key 含 decision/version/policy） | data-driven-optimization：回归可比的前提；改 rubric 必 bump version |
+| dataset + 离线评测 | 每个判断一个集，`--fresh` 重跑定基线，带弃权/档位距离指标 | data-driven-optimization：标定闭环 |
+
+**验证案例**：8 个决策的实测基线（含 0.31→1.00 的候选集修复、刻度档位坑、margin 置信度坑）见 `examples/decision-os-baseline-2026-09.md`。
+
+## 十六、外部工具目录（MCP 延迟加载，2026-09-30 新增）
+
+> 能力目录本身在膨胀：外部工具按需加载、不进默认上下文。「能力在变，模式不变」在这里的落地方式是**先查目录再加载**。
+
+| Hermes 能力 | 干什么 | 落地模式 |
+|:-----------|:-------|:---------|
+| 延迟加载工具目录（discover → describe → call） | 上百个外部工具不进默认上下文，先按关键词检索目录、确认签名、再调用 | control-flow-separation：能力按需加载；skill-evolution 的能力探测（先探再信） |
+| 金融数据 MCP（A 股行情/财务/估值/龙虎榜/基金/指数） | 结构化取数，替代「让模型回忆行情」 | control-flow-separation：确定性取数交给工具；decision-contract：把钱路判断留在决策层 |
+| 网页自动化 MCP（搜索 / 抓取 / 监控 / 批量 / 浏览器会话） | 带过滤条件的检索、页面正文抽取、页面变更监控 | blocked-page-recovery：抓取失败时的替代通道；cron-job-pattern：Monitor 模式 |
+| 文档知识 MCP（库文档 / 仓库文档问答） | 查第三方库与 GitHub 仓库的实时文档，替代凭记忆写 API | grounded-citations：回答问题先取证据 |
+| 投研多智能体 MCP | 多角色评审、委员会式判断 | maker-checker：多角色隔离评审 |
+
+## 十七、多代理任务编排（kanban 工具族，2026-09-30 新增）
+
+> 把多代理协作从「会话里口头分工」升级成「看板上的依赖图 + 状态机」。
+
+| Hermes 能力 | 干什么 | 落地模式 |
+|:-----------|:-------|:---------|
+| `kanban_create` / `kanban_link` | 建子任务并连父子依赖：父任务全部 done 之前，子任务停在 todo | control-flow-separation：依赖门由看板机械层执行，不靠 agent 自觉 |
+| `kanban_block`（kind 分级） | 按**原因**分流阻塞：`dependency`（等上游，自动恢复）/ `needs_input`（等人决策）/ `capability`（无权限，硬墙）/ `transient`（可能自愈） | human-escalation：`needs_input` 就是升级通道入口；错误压缩：阻塞原因结构化，不糊成一句「卡住了」 |
+| `kanban_request_review` / `kanban_request_changes` | 交审 / 打回给原实现者，带具体修改要求 | maker-checker：审与被审是两个实例；`request_changes` 是审查的**回退边**，不是失败 |
+| `kanban_attach` / `kanban_attach_url` | 交付物作为真实附件挂在任务上（报告/图表/导出） | state-file-pattern：产物随状态走，不靠聊天里贴路径 |
+| `kanban_heartbeat` | 长任务存活信号（与「进程还活着」分开看） | checkpoint-pattern：训练/编码/大抓取这类长任务的可观测性 |
+| `goal_mode`（判官续跑） | 每轮由判官对照目标判断是否完成，未完成且预算内继续 | evolution-gate：完成判定外部化，不让执行者自己宣布完成 |
+| 子任务交接契约（summary + metadata） | 子代理只回结构化结论与可验证句柄（URL/ID/绝对路径） | maker-checker：子代理自述 ≠ 已验证事实，外部副作用要回读确认 |
 
 ## 使用建议
 

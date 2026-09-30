@@ -15,7 +15,7 @@
     <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
   <a href="TEST_REPORT.md">
-    <img src="https://img.shields.io/badge/Regression-30/30%20Pass-brightgreen" alt="Regression Tests">
+    <img src="https://img.shields.io/badge/Regression-36/36%20Pass-brightgreen" alt="Regression Tests">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
@@ -37,6 +37,8 @@ A complete set of engineering patterns, conventions, and templates to turn Herme
 
 > 🚀 **v2.0.0 (2026-08-31) Productization Phase**: Upgraded from Pattern Library to Production Engineering System — **6 Starter Kits** (`starter-kits/`, just `cp -r` to start), **5 official Production Stacks** (`stacks/`, Opinionated Defaults), **10-Minute Quick Start** (`quickstart.md`), **7 Production Recipes** (`recipes/`, nine complete engineering solutions), **Production Audit spec + Readiness Score** (`audit/`), **Compatibility Matrix** (`compatibility/`), **hpp CLI** (`cli/`, init/add/validate/audit/doctor); Router 2.0 upgraded to Problem→Diagnosis question-based entry; site navigation reorganized into START HERE / BUILD / UNDERSTAND / VALIDATE. The core goal is no longer More Patterns — it is **MAKE PATTERNS USABLE.** See CHANGELOG v2.0.0.
 > 🆕 **2026-09 — synced with the latest Hermes capabilities**: Browser automation (`browser_navigate`/`snapshot`/`click`/`vision`/`console`), messaging gateway (QQ official Bot via `platforms.qqbot`), multimodal output (`image_generate` for diagrams + `text_to_speech`), enhanced retrieval (`zg`/`hybrid_retrieve`, three-layer + RRF). Every capability has a verified run in a real environment (`examples/capability-verification-2026-09.md`), and the capability map is bumped to v1.4.0. See CHANGELOG v2.2.0.
+>
+> ⚖️ **v2.4.0 (2026-09-30) Judgment layer**: new convention `decision-contract` — separate the judgment from the permission from the action (types choice/score/noul; backend chain rule→cache→local→jev→llm→human; three-band gate with per-type thresholds; receipts carrying the full fallback trail; Record & Replay for byte-identical decisions; offline eval for calibration). Companion updates: `data-driven-optimization` v1.1.0 "calibration loop" (confidence separation test, abstention counted separately, ordinal bands measured by rank distance), `human-escalation` v1.1.0 "abstention is not a wrong answer", `hermes-capability-map` v1.5.0 covering the **judgment layer** plus two new families (deferred MCP tool catalog, kanban multi-agent orchestration). Regression suite 30→36 prompts (20 behavioral-contract patterns). Measured baselines for 8 decisions: `examples/decision-os-baseline-2026-09.md`. See CHANGELOG v2.4.0.
 >
 > 🧪 **v2.3.2 (2026-09-07)**: Trace Engineering absorption — `control-flow-separation` v1.2.0 adds "tool-side effect annotation": static tool classification `READ_ONLY` (pure queries, safe to replay) / `MUTATING` (write ops, replay goes through sandbox + approval); `capability-registry.json` machine-readable (all 13 capabilities annotated with `side_effect`, 6 RO / 7 MU), preserved when `capability_probe.py` refreshes. This is the mechanical-layer landing of anti-patterns #13 "write rules twice" at the tool level.
 >
@@ -65,7 +67,7 @@ This project is for you.
 
 These aren't armchair best practices. Every pattern comes from real 7×24 production runs — tested across dozens of days and hundreds of triggers in content pipelines, news digest crons, and auto-update workflows — broken, fixed, and hardened into reusable conventions.
 
-> **How to verify credibility?** This repo ships with [30 regression test prompts](test-prompts.json) (covering 19 behavioral-contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested (long-term production verified) · 🟡 beta (being validated) · 🔵 experimental (reference/experimental).
+> **How to verify credibility?** This repo ships with [36 regression test prompts](test-prompts.json) (covering 20 behavioral-contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested (long-term production verified) · 🟡 beta (being validated) · 🔵 experimental (reference/experimental).
 
 ---
 
@@ -114,7 +116,7 @@ Hermes Agent is a powerful Agent framework, but what the community lacks most is
 | State Management | Built-in checkpoint API, framework-bound | `memory` tool (limited capacity, no structure) | **STATE.md text file**, zero dependencies, Git-trackable, readable in any editor |
 | Error Handling | Framework-layer try/catch + retry | Agent handles it itself (easily derails) | **error-compact-pattern** compress → categorize → self-heal, context under control |
 | Task Scheduling | External deps like Celery/Airflow | `cronjob_manage` native support | Idempotent + Monitor + Pre/Post-flight three-stage |
-| Quality Assurance | Build your own eval pipeline | None built-in | **Maker/Checker + regression test suite** (30 test-prompts.json) |
+| Quality Assurance | Build your own eval pipeline | None built-in | **Maker/Checker + regression test suite** (36 test-prompts.json) |
 | Memory System | Vector databases (heavy) | `memory` tool (light but unordered) | **Memory OS 5-layer architecture** + three-layer retrieval RRF |
 | Install Complexity | Requires Python/Node env + dependencies | Already built-in | Text files, just `cp` and go |
 | Use Cases | Large-scale Agent app development | Daily conversation and tasks | **Production-grade automation within the Hermes ecosystem** |
@@ -193,6 +195,7 @@ hermes-production-patterns/
 │   ├── human-escalation.md      — 🆙 Human-in-the-loop escalation
 │   ├── multi-agent-isolation.md — 🔒 Multi-agent collaboration isolation
 │   ├── observability-trace.md   — 👁️ Decision tracing
+│   ├── decision-contract.md     — ⚖️ Decision contract (judgment / permission / action)
 │   └── data-retention-privacy.md — 🛡️ Data retention & privacy
 │
 ├── templates/                   ← Reusable file templates
@@ -391,6 +394,7 @@ Maturity levels: 🟢 battle-tested (long-term production verified) · 🟡 beta
 | 🆙 Human Escalation | `conventions/human-escalation.md` | Escalate to human oversight for high-risk / low-confidence situations | 🔵 |
 | 🔒 Multi-Agent Isolation | `conventions/multi-agent-isolation.md` | Namespace / file locks / token buckets to prevent resource contention | 🔵 |
 | 👁️ Decision Tracing | `conventions/observability-trace.md` | Structured logging of decision chains, confidence, and alternatives | 🔵 |
+| ⚖️ Decision Contract | `conventions/decision-contract.md` | Separate judgment / permission / action: types + thresholds + fallback + receipts + replay + eval calibration | 🟡 |
 | 🛡️ Data Privacy | `conventions/data-retention-privacy.md` | Sensitive data detection, retention periods, auto-cleanup | 🔵 |
 
 ---

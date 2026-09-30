@@ -23,7 +23,9 @@
 | 🔄 自更新安全流程 | `conventions/self-update-pattern.md` |
 | 🧠 认知记忆系统 | `conventions/memory-os-pattern.md` |
 | 📈 进化闸门 | `conventions/evolution-gate.md` |
-| 回归反测集 | `test-prompts.json`(30 条,含 assertions/forbidden) |
+| 🔒 数据隐私 | `conventions/data-retention-privacy.md` |
+| ⚖️ 决策契约（判断/授权/执行分离） | `conventions/decision-contract.md` |
+| 回归反测集 | `test-prompts.json`(36 条,含 assertions/forbidden) |
 | 模板 | `templates/` |
 | 设计模式 | `patterns/` |
 | 实战示例 | `examples/` |

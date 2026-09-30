@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.4.0 (2026-09-30)
+
+### ⚖️ 判断层落地：决策契约（Decision Contract）+ 复现 + 评测标定
+
+此前的能力地图只覆盖**执行层**（cron/状态/错误）与**产出层**（浏览器/网关/多模态），本版首次覆盖**判断层**——「怎么判」不该埋在提示词里。
+
+- **新增公约 `conventions/decision-contract.md` v1.0.0（maturity: beta）**：判断/授权/执行三分离（Decision 出选择+置信度，Policy 出授权，Action 才执行）；五种判断形态的契约六件套（type/candidates/policy/fallback/receipt/version）；后端链 `rule→cache→local→jev→llm→human`（能规则就规则、硬边界先由代码裁剪候选集、失败与越界一律 fail-open）；三段门与**按 type 分阈值**；**Record & Replay**（key 含 version/policy，未接受与降级结果也记，命中即短路复现）；离线评测（弃权单列、有序档位用档位距离）。
+- **`data-driven-optimization` v1.0.0 → v1.1.0**：新增「标定闭环」——评测集 → 基线 → **分离度检验**（真值 vs 错值置信度中位）→ `--fresh` 重跑 → 写回 `policy.calibration`。附三条实测教训：置信度不区分对错时阈值无效；有序档位别用精确匹配当唯一指标；弃权 ≠ 答错。
+- **`human-escalation` v1.0.0 → v1.1.0**：新增「弃权语义」——拒答不等于答错（实测某决策被算成 0.583，排除弃权后是 1.000）；弃权要能归因到「谁弃的」（收据里的降级轨迹）；弃权率当 SLO 看，不当错误率看。
+- **`hermes-capability-map` v1.4.0 → v1.5.0**：新增三族——「十五、决策与路由」（决策插件 / 影子钩子 / 只做判断的后端 / 收据与降级轨迹 / replay / 评测）、「十六、外部工具目录（MCP 延迟加载）」、「十七、多代理任务编排（kanban 工具族：依赖门 / 按原因分流的阻塞 / 交审与打回 / 附件 / 心跳 / 判官续跑）」。
+- **反测集 30 → 36 条（覆盖 19 → 20 个行为契约模式）**：新增 5 条决策契约反测（按类型分阈值 / 改型必须升版本 / 弃权不是答错 / 先查候选集再怀疑模型 / 打分刻度由档数决定）+ 1 条能力目录按需加载；`skill-evolution` 速查表同步。
+- **验证案例 `examples/decision-os-baseline-2026-09.md`**：8 个判断的 labeled dataset 基线（含 4 个真实修复：候选集解析 0.31→1.00、打分刻度档位数坑、noul 置信度 margin 坑、弃权被算成答错），全部可 `--fresh` 复跑。按项目成熟度分级标为 🟡 beta（有初步验证数据，尚未 ≥30 天长期运行）。
+- **兼容性矩阵**：新增 Decision Contract 行（任意版本可用，纪律即可落地；参考实现为扩展面决策 CLI + 可选插件，标 experimental）。
+
+与既有资产关系：全部为增量章节与新增文件，未改动既有行为契约的既有小节；`control-flow-separation`（哪一步用代码）与本节（判断本身怎么被约束与授权）互补，`observability-trace`（收据）与 `data-driven-optimization`（标定闭环）为下游落地。
+
 ## v2.3.2 (2026-09-07)
 
 ### ✨ Trace Engineering 吸收:工具侧效标注 + capability-registry READ_ONLY/MUTATING 分类

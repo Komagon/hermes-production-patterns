@@ -1,7 +1,7 @@
 ---
 name: data-driven-optimization
 description: "数据驱动技能优化 — 以真实运营数据驱动技能迭代,技能是活文档"
-version: 1.0.0
+version: 1.1.0
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -17,6 +17,7 @@ hpp_complexity: medium
 hpp_reliability: medium
 hpp_capability: analytics
 maturity: beta
+migration: "v1.0.0 → v1.1.0:新增「标定闭环」章节(评测集→分离度检验→--fresh 重跑→policy.calibration 写回;弃权单列,有序档位用档位距离)"
 hpp_when_to_use: ["Mature agents with usage logs"]
 hpp_when_not_to_use: ["Pre-launch intuition phase"]
 ---
@@ -93,6 +94,34 @@ The raw data and derived constraints are placed at the top of the skill file, be
 │ Next article is smarter  │
 └──────────────────────────┘
 ```
+
+## 标定闭环：用评测集校准阈值与 rubric（2026-09-30 新增）
+
+> 上游文档：`conventions/decision-contract.md`。本节是它的**数据侧**落地：阈值和 rubric 都不是拍出来的，是用评测集标定出来的。
+
+### 闭环五步
+
+1. **先建集再看阈值** —— 每个判断一个 `datasets/<decision>.jsonl`，行格式 `{"state":..., "expected":..., "metadata":{...}}`。没有集就调阈值 = 猜。
+2. **跑基线** —— 一次跑出 `accuracy`（精确）、`accuracy_answered`（排除弃权）、`abstained_rate`（弃权率）、`near_accuracy` + `mae_rank`（有序档位的差档距离）。
+3. **做分离度检验** —— 比「真值上的置信度中位」vs「错值上的中位」。**分得开才动阈值；分不开就去改 rubric**。
+4. **改完用 `--fresh` 重跑** —— 绕过 replay 重新问后端，避免拿旧记录自我背书；日常回归则不 `--fresh`，走 replay 保持可比。
+5. **写回 policy 的 calibration 段** —— 记录 n / accuracy / 中位数 / 日期，让下一次改动有对照。
+
+### 三条实测教训
+
+- **置信度不区分对错时，阈值无效。** 实测某打分决策真值中位 0.92、错值中位 0.88，唯一错的那行置信度 1.0 —— 此时把阈值调高只是把好答案也拦下来。问题在 rubric/刻度，不在阈值。
+- **有序档位别用精确匹配当唯一指标。** 「差一档」和「差三档」不是一回事：实测一个 4 档相关度决策精确 0.722、差一档内 0.944、平均档位距离 0.333。只报精确匹配会把「边界有争议」误读成「几乎不可用」。
+- **弃权 ≠ 答错。** 判断拒答、交给人类是正确的失败模式。把它算成错误会得出反向结论：实测某「是否升级人类」决策被算成 0.583，排除弃权后其实是 1.000。指标里弃权必须单列。
+
+### 反模式
+
+| 反模式 | 后果 |
+|:---|:---|
+| 未建集先调阈值 | 调的是手感，不是数据 |
+| 只看精确匹配 | 有序档位的真实水平被低估，误判为不可用 |
+| 把弃权算成答错 | 越谨慎的系统得分越低，指标反向激励 |
+| 用 `--fresh` 的旧结果做回归对比 | 概率后端抖动混进结论，无法判断是改好了还是抖好了 |
+| 改完 rubric 不 bump 契约 version | 历史记录被复用，回归对比串台 |
 
 ## State File
 

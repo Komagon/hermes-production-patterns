@@ -20,6 +20,7 @@
 | Evolution Gate | ≥ supported baseline | Stable | 依赖 Regression 数据,不依赖特定原生能力 |
 | Data-Driven Optimization | 任意版本 | Stable | 运行日志留存 |
 | Self-Update | ≥ v0.20 | Stable | git autostash 行为 |
+| Decision Contract | 任意版本 | Experimental | 无(纪律即可落地);参考实现为扩展面决策 CLI + 可选插件 |
 
 ## 状态定义
 
