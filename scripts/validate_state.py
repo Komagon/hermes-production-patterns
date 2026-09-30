@@ -7,22 +7,25 @@ Checks:
   - Idempotency key format
   - Status value is valid
   - No corrupted content
+  - Deduplicate idempotency keys
 
 Usage:
     python scripts/validate_state.py <path-to-state.md>
     python scripts/validate_state.py examples/daily-news-digest/STATE.md
 """
 
-import os, sys, re
+import os
+import re
+import sys
 
 REQUIRED_SECTIONS = ["Current Run", "Progress", "Lessons Learned", "Idempotency Keys"]
 REQUIRED_FIELDS = {
     "Current Run": ["Last run", "Status", "Current batch"],
-    "Progress": [],  # no required sub-fields, but must exist
+    "Progress": [],
 }
 VALID_STATUSES = ["idle", "running", "paused", "failed"]
 IDEMPOTENCY_KEY_PATTERN = re.compile(
-    r"\d{4}-\d{2}-\d{2}:\s*\S+:\s*\S+"
+    r"^(?:\d{4}-\d{2}-\d{2}):\s*(?:[A-Za-z0-9_-]+):\s*(?:[A-Za-z0-9_-]+)$"
 )
 
 exit_code = 0
@@ -36,7 +39,20 @@ def check(ok: bool, msg: str):
         exit_code = 1
 
 
+def parse_sections(lines):
+    sections = {}
+    current_section = None
+    for line in lines:
+        if line.startswith("## "):
+            current_section = line.strip("# ").strip()
+            sections[current_section] = []
+        elif current_section:
+            sections[current_section].append(line)
+    return sections
+
+
 def validate(path: str):
+    global exit_code
     print(f"\n=== Validating: {path} ===")
 
     if not os.path.exists(path):
@@ -48,52 +64,50 @@ def validate(path: str):
 
     check(len(lines) > 0, f"File has content ({len(lines)} lines)")
 
-    # Parse sections
-    sections = {}
-    current_section = None
-    for i, line in enumerate(lines):
-        if line.startswith("## "):
-            current_section = line.strip("# ").strip()
-            sections[current_section] = []
-        elif current_section:
-            sections[current_section].append(line)
+    sections = parse_sections(lines)
 
-    # Check required sections
     for section in REQUIRED_SECTIONS:
         check(section in sections, f"Section exists: '{section}'")
 
-    # Check required fields in Current Run
     if "Current Run" in sections:
         text = "".join(sections["Current Run"])
         for field in REQUIRED_FIELDS["Current Run"]:
             check(f"**{field}**" in text, f"Field exists: 'Current Run' → '{field}'")
 
-    # Check status value
-    if "Current Run" in sections:
-        text = "".join(sections["Current Run"])
+        found_valid_status = False
         for status in VALID_STATUSES:
             if f"**Status**: {status}" in text:
                 check(True, f"Status is valid: '{status}'")
+                found_valid_status = True
                 break
-        else:
+        if not found_valid_status:
             check(False, "Status is not a valid value")
 
-    # Check Lessons Learned has content
     if "Lessons Learned" in sections:
         text = "".join(sections["Lessons Learned"]).strip()
-        # At minimum should have a comment or entry
         check(len(text) > 0, "Lessons Learned has content")
 
-    # Check Idempotency Keys format
     if "Idempotency Keys" in sections:
         keys_text = "".join(sections["Idempotency Keys"])
         key_lines = [
-            l.strip() for l in keys_text.split("\n")
-            if l.strip() and not l.strip().startswith("<!--")
+            line.strip()
+            for line in keys_text.split("\n")
+            if line.strip() and not line.strip().startswith("<!--")
         ]
+
         if key_lines:
-            valid_count = sum(1 for kl in key_lines if IDEMPOTENCY_KEY_PATTERN.search(kl))
-            check(valid_count > 0, f"Idempotency keys match format ({valid_count} valid)")
+            valid_lines = 0
+            seen = set()
+            for kl in key_lines:
+                if kl in seen:
+                    check(False, f"Duplicate idempotency key: '{kl}'")
+                    continue
+                seen.add(kl)
+                if IDEMPOTENCY_KEY_PATTERN.match(kl):
+                    valid_lines += 1
+                else:
+                    check(False, f"Idempotency key format invalid: '{kl}'")
+            check(valid_lines == len(key_lines), f"All idempotency keys match format ({valid_lines}/{len(key_lines)} valid)")
         else:
             check(True, "Idempotency Keys section exists (can be empty for new jobs)")
 
