@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.4.1 (2026-10-18)
+
+### 🔧 对齐修复：让「承诺」与「实现」一致（无新增模式）
+
+本版不写新内容，只修 v2.4.0 之前遗留的「说的和做的不一致」。起因是一次外部代码审查——审计脚本可以被 13 个空文件刷到 86 分，而 `main` 的 CI 从 2026-09-30 起一直是红的。
+
+- **`cli/hpp.py` `init` 不再用 cwd/home 路径白名单**：该白名单把 `/tmp` 挡死（CI 冒烟脚本正好写 `/tmp`），是 CI 连续两次失败的根因；同时它也不提供真实防护。改为「不跟随 symlink + 不覆盖已有内容 + 不删除任何东西」。顺带修三个同类问题：`~` 未展开（README 的 `~/my-agent` 在 Windows 上会建出字面量 `~` 目录）、已存在空目录无法初始化（`WinError 183`）、目标为文件时抛未捕获 `NotADirectoryError`。
+- **`scripts/validate_state.py` 接受 Markdown 列表前缀**：v2.4.0 的「安全加固」把幂等键正则改成行首锚定，结果拒绝了仓库自带的示例（`- 2026-06-29: article: uuid-a1b2c3`）。这正是 `skill-evolution` 里「旧成功仍然成立」那条被自己违反的实例。同时 `Lessons Learned` 改为「章节必须存在、内容可为空」（新任务尚无经验可写）。
+- **两个 starter kit 的 STATE.md 补齐缺失章节**（`basic-agent` 缺 `Idempotency Keys`，两者均缺 `Lessons Learned`），`cron-production` 的幂等键从表格改为与 `templates/STATE.md.template` 一致的列表格式——一个契约，不再各写各的。
+- **`scripts/run_regression.py` → `scripts/check_test_suite.py`**：它从来不跑任何 prompt，只校验 JSON 字段齐全。改名后报告口径同步改为 `schema-valid`，并显式标注「未执行行为验证」。徽章从 `Regression 36/36 Pass` 改为 `Test suite 36 schema-valid`。顺带删掉 `Patterns covered` 这个指标——它用 `id.rsplit("-", 1)` 猜模式名，36 条算出 36 个「模式」，是假的。
+- **CI 新增 `state-contract` job**：对 `templates/`、`examples/`、`starter-kits/` 下每个 STATE.md 逐一校验，README 里「CI 自动运行 STATE 校验」这句话从此为真（此前为假）。`regression-test` job 更名为 `test-suite-schema`。
+- **新增 `.gitattributes`（`* text=auto eol=lf`）**：修 Windows 检出（autocrlf）后 `lint.js` 把全部 21 篇公约误判为「无 frontmatter」的根因，也让后续跨平台工具行为一致。
+- **文档数字对齐**：21 个公约（原写 20）、anti-patterns 13 条（原写 8 种）；`package.json` 版本 `2.01.00`（非法 semver）→ `2.4.1`。
+
+已知未修（下一阶段）：`hpp audit` 仍只按文件名匹配证据、密钥扫描仍整行锚定、`lint.js` 在 CRLF 下仍会误判并可能写坏文件、`check_maturity.py` 仍有 6 条恒真项。详见审查报告的 P0-2/P0-3/P1-6/P1-7。
+
 ## v2.4.0 (2026-09-30)
 
 ### ⚖️ 判断层落地：决策契约（Decision Contract）+ 复现 + 评测标定

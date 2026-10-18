@@ -1,60 +1,64 @@
-# Regression Test Report
+# Test Suite Report
 
-**Generated**: 2026-09-30 08:04 UTC
-**Source**: `test-prompts.json` (36 test cases)
+**Generated**: 2026-10-18 05:59 UTC
+**Source**: `test-prompts.json` (36 entries)
+
+> **Scope: schema validation only.** No model was called and no prompt was
+> executed. A green report here means the suite is well-formed — it does
+> **not** mean the patterns still behave correctly. Behavioral verification
+> is a manual step; see `conventions/skill-evolution.md` → 回归反测.
 
 ## Summary
 
 | Metric | Value |
 |--------|-------|
-| Total test cases | 36 |
-| Passed | 36 |
-| Failed | 0 |
-| Pass rate | 100% |
-| Patterns covered | 36 |
+| Total entries | 36 |
+| Schema-valid | 36 |
+| Invalid | 0 |
+| Behavioral run | not executed (manual step) |
 
-## Results
+## Entries
 
-| # | ID | Status | Assertions | Forbidden Checks |
+| # | ID | Schema | Assertions | Forbidden Checks |
 |---|:---|:------:|:---:|:---:|
-| 1 | `evolution-gate-required` | ✅ PASS | 4 | 4 |
-| 2 | `evolution-gate-deploy-or-rollback` | ✅ PASS | 4 | 3 |
-| 3 | `state-file-read-before-run` | ✅ PASS | 4 | 3 |
-| 4 | `state-file-write-after-step` | ✅ PASS | 4 | 3 |
-| 5 | `checkpoint-recovery` | ✅ PASS | 4 | 3 |
-| 6 | `maker-checker-separation` | ✅ PASS | 4 | 3 |
-| 7 | `self-update-backup-first` | ✅ PASS | 5 | 4 |
-| 8 | `self-update-rollback-condition` | ✅ PASS | 3 | 3 |
-| 9 | `secret-management-env-only` | ✅ PASS | 4 | 4 |
-| 10 | `error-compact-before-context` | ✅ PASS | 4 | 3 |
-| 11 | `control-flow-code-not-llm` | ✅ PASS | 4 | 3 |
-| 12 | `cron-idempotency-key` | ✅ PASS | 4 | 3 |
-| 13 | `cron-no-silent-failure` | ✅ PASS | 4 | 3 |
-| 14 | `data-driven-optimization` | ✅ PASS | 4 | 3 |
-| 15 | `skill-evolution-backward-compat` | ✅ PASS | 4 | 3 |
-| 16 | `skill-evolution-versioned-files` | ✅ PASS | 4 | 3 |
-| 17 | `anti-patterns-no-adhoc-prompt` | ✅ PASS | 4 | 3 |
-| 18 | `pattern-composition-selection` | ✅ PASS | 4 | 3 |
-| 19 | `memory-os-write-discipline` | ✅ PASS | 4 | 3 |
-| 20 | `checkpoint-session-recovery-search` | ✅ PASS | 4 | 3 |
-| 21 | `memory-recall-write-policy` | ✅ PASS | 4 | 3 |
-| 22 | `memory-recall-evidence-gate` | ✅ PASS | 4 | 3 |
-| 23 | `memory-recall-three-layer-retrieval` | ✅ PASS | 4 | 4 |
-| 24 | `memory-recall-rrf-formula` | ✅ PASS | 4 | 3 |
-| 25 | `memory-recall-daily-review` | ✅ PASS | 4 | 4 |
-| 26 | `budget-guardrail-threshold` | ✅ PASS | 4 | 4 |
-| 27 | `human-escalation-trigger` | ✅ PASS | 4 | 3 |
-| 28 | `multi-agent-isolation-lock` | ✅ PASS | 4 | 3 |
-| 29 | `observability-trace-decision` | ✅ PASS | 4 | 3 |
-| 30 | `data-retention-cleanup` | ✅ PASS | 4 | 3 |
-| 31 | `decision-contract-threshold-by-type` | ✅ PASS | 6 | 3 |
-| 32 | `decision-contract-replay-version-bump` | ✅ PASS | 5 | 3 |
-| 33 | `decision-contract-abstain-not-wrong` | ✅ PASS | 5 | 3 |
-| 34 | `decision-contract-candidates-dynamic` | ✅ PASS | 4 | 3 |
-| 35 | `decision-contract-score-scale` | ✅ PASS | 4 | 3 |
-| 36 | `control-flow-mcp-deferred-catalog` | ✅ PASS | 4 | 3 |
+| 1 | `evolution-gate-required` | ✅ OK | 4 | 4 |
+| 2 | `evolution-gate-deploy-or-rollback` | ✅ OK | 4 | 3 |
+| 3 | `state-file-read-before-run` | ✅ OK | 4 | 3 |
+| 4 | `state-file-write-after-step` | ✅ OK | 4 | 3 |
+| 5 | `checkpoint-recovery` | ✅ OK | 4 | 3 |
+| 6 | `maker-checker-separation` | ✅ OK | 4 | 3 |
+| 7 | `self-update-backup-first` | ✅ OK | 5 | 4 |
+| 8 | `self-update-rollback-condition` | ✅ OK | 3 | 3 |
+| 9 | `secret-management-env-only` | ✅ OK | 4 | 4 |
+| 10 | `error-compact-before-context` | ✅ OK | 4 | 3 |
+| 11 | `control-flow-code-not-llm` | ✅ OK | 4 | 3 |
+| 12 | `cron-idempotency-key` | ✅ OK | 4 | 3 |
+| 13 | `cron-no-silent-failure` | ✅ OK | 4 | 3 |
+| 14 | `data-driven-optimization` | ✅ OK | 4 | 3 |
+| 15 | `skill-evolution-backward-compat` | ✅ OK | 4 | 3 |
+| 16 | `skill-evolution-versioned-files` | ✅ OK | 4 | 3 |
+| 17 | `anti-patterns-no-adhoc-prompt` | ✅ OK | 4 | 3 |
+| 18 | `pattern-composition-selection` | ✅ OK | 4 | 3 |
+| 19 | `memory-os-write-discipline` | ✅ OK | 4 | 3 |
+| 20 | `checkpoint-session-recovery-search` | ✅ OK | 4 | 3 |
+| 21 | `memory-recall-write-policy` | ✅ OK | 4 | 3 |
+| 22 | `memory-recall-evidence-gate` | ✅ OK | 4 | 3 |
+| 23 | `memory-recall-three-layer-retrieval` | ✅ OK | 4 | 4 |
+| 24 | `memory-recall-rrf-formula` | ✅ OK | 4 | 3 |
+| 25 | `memory-recall-daily-review` | ✅ OK | 4 | 4 |
+| 26 | `budget-guardrail-threshold` | ✅ OK | 4 | 4 |
+| 27 | `human-escalation-trigger` | ✅ OK | 4 | 3 |
+| 28 | `multi-agent-isolation-lock` | ✅ OK | 4 | 3 |
+| 29 | `observability-trace-decision` | ✅ OK | 4 | 3 |
+| 30 | `data-retention-cleanup` | ✅ OK | 4 | 3 |
+| 31 | `decision-contract-threshold-by-type` | ✅ OK | 6 | 3 |
+| 32 | `decision-contract-replay-version-bump` | ✅ OK | 5 | 3 |
+| 33 | `decision-contract-abstain-not-wrong` | ✅ OK | 5 | 3 |
+| 34 | `decision-contract-candidates-dynamic` | ✅ OK | 4 | 3 |
+| 35 | `decision-contract-score-scale` | ✅ OK | 4 | 3 |
+| 36 | `control-flow-mcp-deferred-catalog` | ✅ OK | 4 | 3 |
 
 ---
 
-> This report is auto-generated by `scripts/run_regression.py`.
-> Run `python scripts/run_regression.py` to regenerate.
+> This report is auto-generated by `scripts/check_test_suite.py`.
+> Run `python scripts/check_test_suite.py` to regenerate.

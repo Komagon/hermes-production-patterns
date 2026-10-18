@@ -15,7 +15,7 @@
     <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
   <a href="TEST_REPORT.md">
-    <img src="https://img.shields.io/badge/Regression-36/36%20Pass-brightgreen" alt="Regression Tests">
+    <img src="https://img.shields.io/badge/Test%20suite-36%20schema--valid-brightgreen" alt="Test Suite (schema-valid)">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
@@ -69,7 +69,7 @@
 
 它不是什么「最佳实践」大合集。每一条模式都来自真实的 7x24 运行环境——在运行数十天、数百次触发的公众号流水线、新闻摘要 Cron、自动更新等场景中反复验证，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
 
-> **如何验证可信度？** 本项目附带 [36 条回归反测提示词](test-prompts.json)（覆盖 20 个行为契约模式）和 [STATE.md 校验脚本](scripts/validate_state.py)，CI 自动运行。成熟度分级：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考性）。
+> **如何验证可信度？** 本项目附带 [36 条回归反测提示词](test-prompts.json)（**schema 由 CI 校验；行为验证需手动跑**，见 `conventions/skill-evolution.md`）和 [STATE.md 校验脚本](scripts/validate_state.py)（CI 对每个随仓库发布的 STATE.md 逐一校验）。成熟度分级：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考性）。
 
 ### English
 
@@ -87,7 +87,7 @@ This project is for you.
 
 These aren't armchair best practices. Every pattern comes from real 7x24 production runs — tested across dozens of days and hundreds of triggers in content pipelines, news digest crons, and auto-update workflows — broken, fixed, and hardened into reusable conventions.
 
-> **How to verify credibility?** This repo ships with [36 regression test prompts](test-prompts.json) (covering 20 behavioral contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested · 🟡 beta · 🔵 experimental.
+> **How to verify credibility?** This repo ships with [36 regression test prompts](test-prompts.json) (schema-checked in CI; **behavioral verification is manual** — see `conventions/skill-evolution.md`) and a [STATE.md validation script](scripts/validate_state.py) that CI runs against every shipped STATE.md. Maturity levels: 🟢 battle-tested · 🟡 beta · 🔵 experimental.
 
 ---
 
@@ -114,7 +114,7 @@ ModuleNotFoundError: No module named "requests"
   Recoverable: YES
 ```
 
-> 一个模式解决一个问题。全部 20 个公约见 `conventions/` 目录。
+> 一个模式解决一个问题。全部 21 个公约见 `conventions/` 目录。
 
 ## 为什么需要这个项目
 
@@ -239,12 +239,12 @@ hermes-production-patterns/
 │
 ├── scripts/                     ← 工具脚本
 │   ├── validate_state.py        — STATE.md Schema 校验
-│   ├── run_regression.py        — 回归测试运行器（生成 TEST_REPORT.md）
+│   ├── check_test_suite.py      — 测试套件 schema 校验（生成 TEST_REPORT.md，不跑模型）
 │   ├── lint.js                  — 🆕 Pattern Linter（SKILL.md/STATE.md 检查）
 │   ├── doctor.py                — 🆕 Pattern 推荐引擎（交互式问答）
 │   └── ...
 │
-├── TEST_REPORT.md               ← 回归测试报告（CI 自动生成）
+├── TEST_REPORT.md               ← 测试套件报告（schema 校验，CI 自动生成）
 ├── DOCTOR_REPORT.md             — 🆕 doctor 推荐报告（运行时生成）
 │
 ```
@@ -399,7 +399,7 @@ $env:HERMES_API_KEY = "your-key-here"
 || Cron 任务设计 | `conventions/cron-job-pattern.md` | 幂等+防静默失败+原生 Monitor 模式（变了才烧 token） | 🟢 |
 || 检查点恢复 | `conventions/checkpoint-pattern.md` | 长任务挂了能从检查点续跑 | 🟡 |
 || 密钥管理 | `conventions/secret-management.md` | 密钥不进 Git、不进上下文、不落日志 | 🔵 |
-|| 💡 反面模式 | `conventions/anti-patterns.md` | 8 种常见错误实践及纠正 | 🔵 |
+|| 💡 反面模式 | `conventions/anti-patterns.md` | 13 条常见错误实践及纠正 | 🔵 |
 || 🧩 模式组合 | `conventions/pattern-composition.md` | 场景→模式决策树+成熟度映射 | 🔵 |
 || 📐 状态 Schema | `conventions/state-schema.json` | STATE.md 的 JSON Schema 程序校验 | — |
 || Loop Engineering | `patterns/loop-engineering-14-steps.md` | 先判断值不值得做，再设计怎么做 | — |

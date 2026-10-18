@@ -1,6 +1,6 @@
 {
   "name": "hermes-production-patterns",
-  "version": "2.01.00",
+  "version": "2.4.1",
   "description": "Production engineering patterns for Hermes Agent — linter, validator, and pattern library",
   "private": true,
   "bin": {
@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "node scripts/lint.js",
     "lint:fix": "node scripts/lint.js --fix",
-    "test": "python scripts/run_regression.py",
+    "test": "python scripts/check_test_suite.py",
     "validate": "python scripts/validate_state.py"
   },
   "devDependencies": {

@@ -60,7 +60,7 @@
 }
 ```
 
-运行 `python scripts/run_regression.py` 验证格式正确。
+运行 `python scripts/check_test_suite.py` 验证格式正确（**只校验 schema，不跑模型**；行为验证需手动跑）。
 
 ## 行为准则
 

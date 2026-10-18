@@ -100,8 +100,8 @@ jobs:
                 f"{k} missing Patterns Used table"
           print(f"PASS: {len(kits)} starter kits OK")
 
-  regression-test:
-    name: Regression Test
+  test-suite-schema:
+    name: Test Suite Schema
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -111,8 +111,8 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run regression tests
-        run: python scripts/run_regression.py
+      - name: Validate test-prompts.json schema
+        run: python scripts/check_test_suite.py
 
       - name: Upload test report
         if: always()
@@ -120,6 +120,26 @@ jobs:
         with:
           name: test-report
           path: TEST_REPORT.md
+
+  state-contract:
+    name: STATE Contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Validate every shipped STATE.md against the schema
+        run: |
+          set -e
+          for f in templates/STATE.md.template examples/*/STATE.md starter-kits/*/STATE.md; do
+            [ -f "$f" ] || continue
+            echo "--- $f"
+            python scripts/validate_state.py "$f"
+          done
 
   bilingual-check:
     name: Bilingual Consistency

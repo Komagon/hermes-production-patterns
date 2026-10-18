@@ -1,0 +1,14 @@
+# Normalize line endings so tooling behaves identically on Windows / macOS / Linux.
+# Without this, a Windows checkout (autocrlf=true) produces CRLF files and the
+# Node linter mis-parses every YAML frontmatter block.
+* text=auto eol=lf
+
+# Keep binaries untouched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary

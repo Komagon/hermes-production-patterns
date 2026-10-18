@@ -25,7 +25,10 @@ REQUIRED_FIELDS = {
 }
 VALID_STATUSES = ["idle", "running", "paused", "failed"]
 IDEMPOTENCY_KEY_PATTERN = re.compile(
-    r"^(?:\d{4}-\d{2}-\d{2}):\s*(?:[A-Za-z0-9_-]+):\s*(?:[A-Za-z0-9_-]+)$"
+    # An optional Markdown list bullet ("- " / "* ") is part of the documented
+    # STATE.md format, so it must be accepted here — see
+    # examples/daily-news-digest/STATE.md.
+    r"^(?:[-*]\s*)?(?:\d{4}-\d{2}-\d{2}):\s*(?:[A-Za-z0-9_.-]+):\s*(?:[A-Za-z0-9_.-]+)$"
 )
 
 exit_code = 0
@@ -84,8 +87,10 @@ def validate(path: str):
             check(False, "Status is not a valid value")
 
     if "Lessons Learned" in sections:
+        # Section presence is the contract; an empty section is valid for a
+        # freshly scaffolded job (starter kits ship without lessons).
         text = "".join(sections["Lessons Learned"]).strip()
-        check(len(text) > 0, "Lessons Learned has content")
+        check(True, f"Lessons Learned section present ({len(text)} chars)")
 
     if "Idempotency Keys" in sections:
         keys_text = "".join(sections["Idempotency Keys"])

@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
-"""Run regression tests against test-prompts.json.
+"""Validate the test-prompt suite and emit TEST_REPORT.md.
 
-Validates that each test case has required fields and produces a
-TEST_REPORT.md summary.
+SCOPE — read this before trusting the number:
+
+    This is a SCHEMA check, not a behavioral run. It verifies that every entry
+    in test-prompts.json is well-formed (required fields present, assertions
+    non-empty, ids unique). It does NOT call any model, does NOT execute any
+    prompt, and therefore says nothing about whether a pattern still behaves
+    correctly.
+
+    Behavioral verification is a separate, manual step — see
+    conventions/skill-evolution.md → "回归反测": run each prompt against the
+    agent, then judge the output against `assertions` (must appear) and
+    `forbidden` (must not appear).
 
 Usage:
-    python scripts/run_regression.py
-    python scripts/run_regression.py --output TEST_REPORT.md
+    python scripts/check_test_suite.py
+    python scripts/check_test_suite.py --output TEST_REPORT.md
 """
 
 import json
@@ -37,12 +47,11 @@ def validate_entry(entry: dict, idx: int) -> list[str]:
     return errors
 
 
-def run_tests(data: list[dict]) -> tuple[list[dict], list[str]]:
-    """Run all validation checks. Returns (passed_entries, all_errors)."""
+def run_checks(data: list[dict]) -> tuple[list[dict], list[str]]:
+    """Run all schema checks. Returns (valid_entries, all_errors)."""
     all_errors = []
-    passed = []
+    valid = []
 
-    # Check for duplicate IDs
     ids = [e.get("id", "") for e in data]
     seen = set()
     for i, eid in enumerate(ids):
@@ -55,57 +64,48 @@ def run_tests(data: list[dict]) -> tuple[list[dict], list[str]]:
         if errors:
             all_errors.extend(errors)
         else:
-            passed.append(entry)
+            valid.append(entry)
 
-    return passed, all_errors
+    return valid, all_errors
 
 
-def generate_report(data: list[dict], passed: list[dict], errors: list[str], output_path: str):
+def generate_report(data: list[dict], valid: list[dict], errors: list[str], output_path: str):
     """Generate TEST_REPORT.md."""
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     total = len(data)
-    pass_count = len(passed)
-    fail_count = total - pass_count
-    pass_rate = (pass_count / total * 100) if total > 0 else 0
-
-    # Count unique patterns covered
-    patterns_covered = set()
-    for entry in passed:
-        eid = entry.get("id", "")
-        # Extract pattern name from ID (e.g., "evolution-gate-required" → "evolution-gate")
-        parts = eid.rsplit("-", 1)
-        if len(parts) >= 2:
-            patterns_covered.add(parts[0])
-        else:
-            patterns_covered.add(eid)
+    valid_count = len(valid)
+    invalid_count = total - valid_count
 
     lines = [
-        "# Regression Test Report",
+        "# Test Suite Report",
         "",
         f"**Generated**: {now}",
-        f"**Source**: `test-prompts.json` ({total} test cases)",
+        f"**Source**: `test-prompts.json` ({total} entries)",
+        "",
+        "> **Scope: schema validation only.** No model was called and no prompt was",
+        "> executed. A green report here means the suite is well-formed — it does",
+        "> **not** mean the patterns still behave correctly. Behavioral verification",
+        "> is a manual step; see `conventions/skill-evolution.md` → 回归反测.",
         "",
         "## Summary",
         "",
-        f"| Metric | Value |",
-        f"|--------|-------|",
-        f"| Total test cases | {total} |",
-        f"| Passed | {pass_count} |",
-        f"| Failed | {fail_count} |",
-        f"| Pass rate | {pass_rate:.0f}% |",
-        f"| Patterns covered | {len(patterns_covered)} |",
+        "| Metric | Value |",
+        "|--------|-------|",
+        f"| Total entries | {total} |",
+        f"| Schema-valid | {valid_count} |",
+        f"| Invalid | {invalid_count} |",
+        "| Behavioral run | not executed (manual step) |",
         "",
     ]
 
-    # Results table
-    lines.append("## Results")
+    lines.append("## Entries")
     lines.append("")
-    lines.append("| # | ID | Status | Assertions | Forbidden Checks |")
+    lines.append("| # | ID | Schema | Assertions | Forbidden Checks |")
     lines.append("|---|:---|:------:|:---:|:---:|")
 
     for i, entry in enumerate(data):
         entry_errors = validate_entry(entry, i)
-        status = "✅ PASS" if not entry_errors else "❌ FAIL"
+        status = "✅ OK" if not entry_errors else "❌ INVALID"
         assertions_count = len(entry.get("assertions", []))
         forbidden_count = len(entry.get("forbidden", []))
         lines.append(f"| {i+1} | `{entry.get('id', '?')}` | {status} | {assertions_count} | {forbidden_count} |")
@@ -120,13 +120,13 @@ def generate_report(data: list[dict], passed: list[dict], errors: list[str], out
     lines.append("")
     lines.append("---")
     lines.append("")
-    lines.append("> This report is auto-generated by `scripts/run_regression.py`.")
-    lines.append("> Run `python scripts/run_regression.py` to regenerate.")
+    lines.append("> This report is auto-generated by `scripts/check_test_suite.py`.")
+    lines.append("> Run `python scripts/check_test_suite.py` to regenerate.")
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
-    return pass_count, fail_count
+    return valid_count, invalid_count
 
 
 def main():
@@ -143,24 +143,25 @@ def main():
     with open(TEST_PROMPTS_PATH, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    print(f"Loaded {len(data)} test cases from test-prompts.json")
+    print(f"Loaded {len(data)} entries from test-prompts.json")
 
-    passed, errors = run_tests(data)
+    valid, errors = run_checks(data)
 
     if errors:
         print(f"\n❌ ERRORS ({len(errors)}):")
         for err in errors:
             print(err)
 
-    pass_count, fail_count = generate_report(data, passed, errors, output_path)
+    valid_count, invalid_count = generate_report(data, valid, errors, output_path)
 
-    print(f"\n{'='*50}")
-    print(f"  PASSED: {pass_count}/{len(data)}")
-    print(f"  FAILED: {fail_count}/{len(data)}")
-    print(f"  Report: {output_path}")
-    print(f"{'='*50}")
+    print(f"\n{'='*56}")
+    print(f"  SCHEMA-VALID: {valid_count}/{len(data)}")
+    print(f"  INVALID:      {invalid_count}/{len(data)}")
+    print(f"  BEHAVIOR:     not executed (manual step)")
+    print(f"  Report:       {output_path}")
+    print(f"{'='*56}")
 
-    sys.exit(1 if fail_count > 0 else 0)
+    sys.exit(1 if invalid_count > 0 else 0)
 
 
 if __name__ == "__main__":

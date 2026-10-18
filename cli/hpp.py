@@ -177,51 +177,56 @@ def _validate_yaml_safe(yaml_text: str, max_size: int = 1_000_000) -> tuple[bool
 def cmd_init(args) -> int:
     """
     Initialize a starter kit into a new directory.
-    
-    🔴 FIX #1: Add path traversal protection
+
+    Safety policy (v2.4.1): refuse to follow a symlink, refuse to clobber a
+    non-empty directory or an existing file, never delete anything. No path
+    whitelist — see the comment below for why.
     """
     kit = args.kit
     if kit not in KITS:
         print(f"unknown kit: {kit}")
         print(f"available: {', '.join(KITS)}")
         return 2
-    
+
     src = HPP_ROOT / "starter-kits" / kit
-    
-    # 🔴 Security: Normalize the destination path
+    if not src.is_dir():
+        print(f"kit source missing: {src}")
+        return 1
+
+    # Security: normalize + expand "~". pathlib does NOT expand it, so the
+    # documented `hpp init basic-agent ~/my-agent` used to create a literal
+    # "~" directory on Windows.
+    #
+    # There is deliberately NO "must be under cwd or home" whitelist: it
+    # blocked /tmp (which the CI smoke test writes to) and any legitimate
+    # path outside those two roots, while adding no real protection — the
+    # actual protection is "never follow a symlink, never clobber content".
     try:
-        dest = Path(args.target).resolve()
+        dest = Path(os.path.expanduser(args.target)).resolve()
     except (OSError, RuntimeError) as e:
         print(f"invalid target path: {e}")
         return 1
-    
-    # Prevent path traversal: ensure dest is under current directory or home
-    cwd = Path.cwd().resolve()
-    home = Path.home().resolve()
-    try:
-        dest.relative_to(cwd)  # Raises ValueError if not under cwd
-    except ValueError:
-        # Allow home directory as fallback
-        try:
-            dest.relative_to(home)
-        except ValueError:
-            print(f"ERROR: target must be under current directory or home")
-            return 1
-    
+
     # Prevent symlink attacks
-    if dest.exists() and dest.is_symlink():
+    if dest.is_symlink():
         print(f"ERROR: target is a symlink")
         return 1
-    
+
+    # Target must be a directory (or not exist yet)
+    if dest.exists() and not dest.is_dir():
+        print(f"ERROR: target exists and is not a directory: {dest}")
+        return 1
+
     # Check if target directory is empty or doesn't exist
-    if dest.exists() and any(dest.iterdir()):
+    if dest.is_dir() and any(dest.iterdir()):
         print(f"target not empty: {dest}")
         return 1
-    
-    # Safe to copy
+
+    # Safe to copy. dirs_exist_ok: an existing *empty* dir is a valid target
+    # (e.g. `hpp init basic-agent .` inside a freshly created folder).
     try:
-        shutil.copytree(src, dest)
-    except Exception as e:
+        shutil.copytree(src, dest, dirs_exist_ok=True)
+    except OSError as e:
         print(f"failed to scaffold: {e}")
         return 1
     

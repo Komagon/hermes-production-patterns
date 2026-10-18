@@ -15,7 +15,7 @@
     <img src="https://github.com/Komagon/hermes-production-patterns/actions/workflows/ci.yml/badge.svg" alt="CI">
   </a>
   <a href="TEST_REPORT.md">
-    <img src="https://img.shields.io/badge/Regression-36/36%20Pass-brightgreen" alt="Regression Tests">
+    <img src="https://img.shields.io/badge/Test%20suite-36%20schema--valid-brightgreen" alt="Test Suite (schema-valid)">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
@@ -67,7 +67,7 @@ This project is for you.
 
 These aren't armchair best practices. Every pattern comes from real 7×24 production runs — tested across dozens of days and hundreds of triggers in content pipelines, news digest crons, and auto-update workflows — broken, fixed, and hardened into reusable conventions.
 
-> **How to verify credibility?** This repo ships with [36 regression test prompts](test-prompts.json) (covering 20 behavioral-contract patterns) and a [STATE.md validation script](scripts/validate_state.py), all running in CI. Maturity levels: 🟢 battle-tested (long-term production verified) · 🟡 beta (being validated) · 🔵 experimental (reference/experimental).
+> **How to verify credibility?** This repo ships with [36 regression test prompts](test-prompts.json) (schema-checked in CI; **behavioral verification is manual** — see `conventions/skill-evolution.md`) and a [STATE.md validation script](scripts/validate_state.py) that CI runs against every shipped STATE.md. Maturity levels: 🟢 battle-tested (long-term production verified) · 🟡 beta (being validated) · 🔵 experimental (reference/experimental).
 
 ---
 
@@ -94,7 +94,7 @@ ModuleNotFoundError: No module named "requests"
   Recoverable: YES
 ```
 
-> One pattern, one problem solved. All 20 conventions are in the `conventions/` directory.
+> One pattern, one problem solved. All 21 conventions are in the `conventions/` directory.
 
 ## Why This Project
 
@@ -172,7 +172,7 @@ hermes-production-patterns/
 │   ├── hpp.py                   — init / add / validate / audit / doctor
 │   └── README.md
 │
-├── conventions/                 ← Engineering conventions (core output, 20 patterns)
+├── conventions/                 ← Engineering conventions (core output, 21 patterns)
 │   ├── maker-checker.md         — Generate / verify dual-role separation
 │   ├── state-file-pattern.md    — STATE.md cross-run state management
 │   ├── control-flow-separation.md — Deterministic vs LLM control flow
@@ -219,7 +219,7 @@ hermes-production-patterns/
 │
 ├── scripts/                     ← Utility scripts
 │   ├── validate_state.py        — STATE.md Schema validation
-│   ├── run_regression.py        — Regression test runner (generates TEST_REPORT.md)
+│   ├── check_test_suite.py      — Test-suite schema check (writes TEST_REPORT.md, no model calls)
 │   ├── lint.js                  — 🆕 Pattern Linter (SKILL.md/STATE.md checks)
 │   ├── doctor.py                — 🆕 Pattern recommendation engine (interactive Q&A)
 │   └── ...
@@ -379,7 +379,7 @@ Maturity levels: 🟢 battle-tested (long-term production verified) · 🟡 beta
 | Cron Job Design | `conventions/cron-job-pattern.md` | Idempotent + silent-failure prevention + native Monitor mode (only burn tokens on change) | 🟢 |
 | Checkpoint Recovery | `conventions/checkpoint-pattern.md` | Long-running tasks can resume from checkpoints | 🟡 |
 | Secret Management | `conventions/secret-management.md` | Secrets stay out of Git, context, and logs | 🔵 |
-| 💡 Anti-patterns | `conventions/anti-patterns.md` | 8 common error practices and their corrections | 🔵 |
+| 💡 Anti-patterns | `conventions/anti-patterns.md` | 13 common error practices and their corrections | 🔵 |
 | 🧩 Pattern Composition | `conventions/pattern-composition.md` | Scenario→pattern decision tree + maturity mapping | 🔵 |
 | 📐 State Schema | `conventions/state-schema.json` | STATE.md JSON Schema for programmatic validation | — |
 | Loop Engineering | `patterns/loop-engineering-14-steps.md` | Check if it's worth building, then design it right | — |

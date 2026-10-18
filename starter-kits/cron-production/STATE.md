@@ -6,10 +6,7 @@
 - **Current batch**: {batch_id}
 
 ## Idempotency Keys
-
-| Key | Date | Status |
-|:---|:---|:---|
-| {job}-{date}-001 | {date} | done |
+<!-- 格式：YYYY-MM-DD: step: key。每完成一步追加一行，重跑时先查这里防止重复 -->
 
 ## Progress
 
@@ -23,3 +20,6 @@
 - **Last failure**: {compact error summary}
 - **Retry count**: 0
 - **Next action**: —
+
+## Lessons Learned
+<!-- 每次跑完写一条：踩了什么坑、下次怎么避免。新任务可以为空 -->
