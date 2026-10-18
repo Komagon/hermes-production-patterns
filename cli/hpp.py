@@ -106,44 +106,65 @@ def bar(score: float) -> str:
 # Security helpers
 # ---------------------------------------------------------------------------
 
-def _is_real_secret(text: str) -> tuple[bool, str]:
-    """
-    Detect real API secrets with high confidence.
-    
-    Returns (is_real, secret_type) or (False, "") if not detected.
-    
-    This replaces the overly-broad original regex. Real secrets have:
-    - Correct prefix + length
-    - Known checksum patterns where applicable
-    
-    🔴 FIX #2: Precise API key detection (not just regex length matching)
-    """
-    # OpenAI & OpenRouter: sk- prefix with 48 hex chars minimum
-    # (sk-proj- is project keys, sk-ant- is Anthropic)
-    if re.match(r"^sk-[A-Za-z0-9]{48,}$", text.strip()):
-        return True, "openai/openrouter"
-    
-    # GitHub Personal Access Token: ghp_ + 36 chars
-    if re.match(r"^ghp_[A-Za-z0-9]{36}$", text.strip()):
-        return True, "github_pat"
-    
-    # GitHub OAuth Token: ghu_ + 36 chars
-    if re.match(r"^ghu_[A-Za-z0-9]{36}$", text.strip()):
-        return True, "github_oauth"
-    
-    # AWS Access Key ID: AKIA + 16 uppercase alphanumeric (with checksum validation)
-    if re.match(r"^AKIA[0-9A-Z]{16}$", text.strip()):
-        return True, "aws_access_key"
-    
-    # Anthropic: sk-ant- + minimum length
-    if re.match(r"^sk-ant-[A-Za-z0-9]{40,}$", text.strip()):
-        return True, "anthropic"
-    
-    # DeepSeek: sk- or similar patterns (less strict due to fewer public docs)
-    if re.match(r"^sk-[A-Za-z0-9]{60,}$", text.strip()):
-        return True, "deepseek"
-    
-    return False, ""
+# Inline patterns. The previous implementation anchored every pattern to the
+# whole line (^...$), which missed every realistic case: a key assigned to a
+# variable (`API_KEY = "sk-..."`) never occupies a line by itself.
+SECRET_PATTERNS = [
+    (re.compile(r"\bsk-(?:ant-|proj-)?[A-Za-z0-9_\-]{32,}\b"), "openai/anthropic api key"),
+    (re.compile(r"\bgh[pousr]_[A-Za-z0-9]{36,}\b"), "github token"),
+    (re.compile(r"\bAKIA[0-9A-Z]{16}\b"), "aws access key id"),
+    (re.compile(r"\bBearer\s+[A-Za-z0-9\-._~+/]{20,}=*"), "bearer token"),
+    (re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"), "private key block"),
+    (re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{10,}"), "slack token"),
+]
+
+# A match is not a leak if the value itself is obviously a placeholder.
+PLACEHOLDER_MARKERS = (
+    "your_", "your-", "yourkey", "example", "placeholder", "dummy",
+    "xxxx", "****", "redacted", "<", "{", "...", "todo", "changeme", "sample",
+)
+
+# Lines that read a value from the environment hold no literal secret.
+ENV_READ_MARKERS = ("os.environ", "os.getenv", "process.env", "getenv(", "${")
+
+SCAN_SUFFIXES = {
+    ".py", ".md", ".json", ".yaml", ".yml", ".sh", ".bash",
+    ".toml", ".ini", ".cfg", ".txt", ".js", ".ts", ".env",
+}
+
+
+def _mask(s: str) -> str:
+    """Show enough to identify the key, not enough to use it."""
+    if len(s) <= 10:
+        return s[0] + "*" * (len(s) - 1)
+    return f"{s[:6]}…{s[-4:]}"
+
+
+def _is_placeholder(snippet: str, line: str) -> bool:
+    low = snippet.lower()
+    if any(m in low for m in PLACEHOLDER_MARKERS):
+        return True
+    low_line = line.lower()
+    return any(m in low_line for m in ENV_READ_MARKERS)
+
+
+def scan_secrets(text: str) -> list[tuple[str, int, str]]:
+    """Scan text for inline secrets. Returns [(kind, line_no, masked)]."""
+    hits = []
+    for lineno, line in enumerate(text.splitlines(), 1):
+        stripped = line.strip()
+        if stripped.startswith(("#", "//", "<!--")):
+            continue
+        for rx, kind in SECRET_PATTERNS:
+            m = rx.search(line)
+            if not m:
+                continue
+            snippet = m.group(0)
+            if _is_placeholder(snippet, line):
+                continue
+            hits.append((kind, lineno, _mask(snippet)))
+            break
+    return hits
 
 
 def _validate_yaml_safe(yaml_text: str, max_size: int = 1_000_000) -> tuple[bool, str]:
@@ -271,11 +292,10 @@ def cmd_add(args) -> int:
 
 def cmd_validate(args) -> int:
     """
-    Validate project structure.
-    
-    🔴 FIX #2: Use precise secret detection
-    🟠 FIX #3: Don't leak secret details to stdout
-    🟠 FIX #4: Validate YAML with size limits
+    Validate project structure: frontmatter, JSON/YAML syntax, inline secrets.
+
+    Secret findings are reported with file + line + masked value, so the
+    output is actionable without leaking the key itself.
     """
     root = Path(args.project).resolve()
     if not root.exists():
@@ -301,31 +321,24 @@ def cmd_validate(args) -> int:
     if not state.exists():
         warns.append("no STATE.md (state pattern not adopted)")
 
-    # 🔴 🟠 FIX #2 & #3: Improved secret detection
-    # Only scan code files (.py/.md), not .txt or .example files
-    secret_count = 0
-    for f in root.rglob("*"):
-        if f.is_file() and f.suffix in (".py", ".md", ".json", ".yaml", ".yml"):
-            try:
-                text = f.read_text(encoding="utf-8")
-            except (UnicodeDecodeError, OSError):
-                continue
-            
-            # Check each line for real secrets (avoid false positives)
-            for line in text.split("\n"):
-                # Skip comments and examples
-                if line.strip().startswith("#") or "YOUR_" in line or "example" in line.lower():
-                    continue
-                
-                # Use precise detection
-                is_secret, secret_type = _is_real_secret(line)
-                if is_secret:
-                    secret_count += 1
-                    # 🟠 Don't print the line content, just count
-                    if secret_count == 1:
-                        problems.append(f"⚠️  Detected secret(s) in: {f.relative_to(root)}")
-                        # Log to internal logger, not stdout
-                        _logger.warning(f"Secret type {secret_type} found in {f}")
+    # Inline secret scan (content-based, not line-anchored).
+    secret_hits = 0
+    for f in sorted(root.rglob("*")):
+        if not f.is_file() or f.suffix.lower() not in SCAN_SUFFIXES:
+            continue
+        if any(part in (".git", "node_modules", "__pycache__", ".venv") for part in f.parts):
+            continue
+        try:
+            text = f.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            continue
+        for kind, lineno, masked in scan_secrets(text):
+            secret_hits += 1
+            rel = f.relative_to(root).as_posix()
+            problems.append(f"secret detected: {rel}:{lineno} ({kind}: {masked})")
+            _logger.warning("secret %s at %s:%d", kind, rel, lineno)
+    if secret_hits:
+        warns.append(f"{secret_hits} secret(s) found — rotate them and move to env vars")
 
     # 🟠 FIX #4: Validate YAML safely
     yaml_loader = None
@@ -361,96 +374,135 @@ def cmd_validate(args) -> int:
     return 1
 
 
+MIN_EVIDENCE_BYTES = 40
+
+
 def cmd_audit(args) -> int:
     """
     Audit production readiness.
-    
-    🟡 FIX #5: Improve performance with caching and selective scanning
+
+    Evidence must be *content*, not just a file name: a 0-byte file called
+    `monitor.md` is not a monitor. Each check reports where its evidence came
+    from so the score can be re-derived by hand.
     """
     root = Path(args.project).resolve()
     if not root.exists():
         print(f"project dir not found: {root}")
         return 1
 
-    # pre-index all file *names* and file *contents* once
-    names = []
+    # Index file contents once (skip VCS / dependency noise).
     blobs = []
     for f in sorted(root.rglob("*")):
-        if f.is_file():
-            rel = str(f.relative_to(root))
-            names.append(rel)
-            try:
-                blobs.append((rel, f.read_text(encoding="utf-8")))
-            except (UnicodeDecodeError, OSError):
-                blobs.append((rel, ""))
+        if not f.is_file():
+            continue
+        if any(part in (".git", "node_modules", "__pycache__", ".venv", "site") for part in f.parts):
+            continue
+        rel = f.relative_to(root).as_posix()
+        try:
+            blobs.append((rel, f.read_text(encoding="utf-8", errors="replace")))
+        except OSError:
+            blobs.append((rel, ""))
 
-    # 🟡 FIX #5: Cache evidence checks to avoid O(n²) scanning
     evidence_cache = {}
-    
-    def evidence(kws) -> bool:
-        """Check if evidence markers exist (with caching)."""
-        cache_key = tuple(sorted(kws))
+
+    def evidence(kws) -> tuple[bool, str]:
+        """Return (found, where). Filename hits need content; content hits scan text."""
+        cache_key = tuple(kws)
         if cache_key in evidence_cache:
             return evidence_cache[cache_key]
-        
-        result = False
-        for kw in kws:
-            # Fast path: filename check
-            if any(kw.lower() in n.lower() for n in names):
-                result = True
-                break
-            
-            # Selective content check (only for specific, high-value keywords)
-            # This avoids scanning all content for every keyword
-            if kw in ("red-flags", "checker", "idempotency"):
-                for _, t in blobs:
-                    if kw.lower() in t.lower():
-                        result = True
-                        break
-            
-            if result:
-                break
-        
-        evidence_cache[cache_key] = result
-        return result
 
-    print("╔══════════════════════════╗")
-    print("║ Production Readiness     ║")
-    print("╚══════════════════════════╝")
+        found, where = False, ""
+        for kw in kws:
+            k = kw.lower()
+            for rel, text in blobs:
+                if k in rel.lower() and len(text.strip()) >= MIN_EVIDENCE_BYTES:
+                    found, where = True, f"file:{rel}"
+                    break
+            if found:
+                break
+            for rel, text in blobs:
+                if k in text.lower():
+                    found, where = True, f"content:{rel}"
+                    break
+            if found:
+                break
+
+        evidence_cache[cache_key] = (found, where)
+        return found, where
+
+    results = []
     total = 0
-    missing = []  # (check_id, group_name, weight_hint)
+    missing = []  # (check_id, group_name, desc)
     for code, gname, weight, checks in CHECK_GROUPS:
         got, full = 0, 0
         for cid, pts, kws, desc in checks:
             full += pts
-            if evidence(kws):
+            ok, where = evidence(kws)
+            if ok:
                 got += pts
             else:
                 missing.append((cid, gname, desc))
+            results.append({
+                "id": cid, "group": gname, "points": pts,
+                "hit": ok, "evidence": where, "desc": desc,
+            })
         dim = round(got / full * weight) if full else 0
         total += dim
-        print(f"{gname:<16} {bar(dim / weight * 100)} {dim}")
-    print(f"\nScore: {total}/100")
+
     grade = ("Production Ready" if total >= 85
              else "Needs Hardening" if total >= 60 else "Prototype")
-    print(f"Grade: {grade}")
-    if missing:
-        print("\nMissing evidence:")
-        for cid, gname, desc in missing:
-            print(f"  {cid} [{gname}] {desc}")
-        print("\nRecommended:")
-        recs = set()
-        for cid, _, _ in missing:
-            if cid in ("D1", "D2", "D3"):
-                recs.add("hpp add maker-checker")
-            if cid in ("A3", "B1", "B2", "A1", "A2"):
-                recs.add("hpp add cron-production")
-            if cid in ("C1", "C2"):
-                recs.add("hpp add checkpoint")
-            if cid in ("E1", "E2", "E3"):
-                recs.add("hpp add regression-suite")
-        for r in sorted(recs):
-            print(f"  {r}")
+
+    if getattr(args, "json", False):
+        print(json.dumps({
+            "project": str(root),
+            "score": total,
+            "grade": grade,
+            "checks": results,
+            "missing": [c for c, _, _ in missing],
+        }, ensure_ascii=False, indent=2))
+    else:
+        print("╔══════════════════════════╗")
+        print("║ Production Readiness     ║")
+        print("╚══════════════════════════╝")
+        for code, gname, weight, checks in CHECK_GROUPS:
+            dim = round(
+                sum(r["points"] for r in results if r["group"] == gname and r["hit"])
+                / sum(r["points"] for r in results if r["group"] == gname)
+                * weight
+            )
+            print(f"{gname:<16} {bar(dim / weight * 100)} {dim}")
+        print(f"\nScore: {total}/100")
+        print(f"Grade: {grade}")
+
+        if getattr(args, "verbose", False):
+            print("\nEvidence:")
+            for r in results:
+                mark = "✓" if r["hit"] else "✗"
+                src = r["evidence"] or "—"
+                print(f"  {mark} {r['id']:<3} {r['desc']}  [{src}]")
+
+        if missing:
+            print("\nMissing evidence:")
+            for cid, gname, desc in missing:
+                print(f"  {cid} [{gname}] {desc}")
+            print("\nRecommended:")
+            recs = set()
+            for cid, _, _ in missing:
+                if cid in ("D1", "D2", "D3"):
+                    recs.add("hpp add maker-checker")
+                if cid in ("A3", "B1", "B2", "A1", "A2"):
+                    recs.add("hpp add cron-production")
+                if cid in ("C1", "C2"):
+                    recs.add("hpp add checkpoint")
+                if cid in ("E1", "E2", "E3"):
+                    recs.add("hpp add regression-suite")
+            for r in sorted(recs):
+                print(f"  {r}")
+
+    threshold = getattr(args, "fail_under", 0) or 0
+    if total < threshold:
+        print(f"\naudit FAIL: {total} < --fail-under {threshold}")
+        return 1
     return 0
 
 
@@ -511,6 +563,11 @@ def main(argv=None) -> int:
 
     p = sub.add_parser("audit", help="Production Readiness Score")
     p.add_argument("project", nargs="?", default=".", help="project dir (default .)")
+    p.add_argument("--json", action="store_true", help="machine-readable output")
+    p.add_argument("-v", "--verbose", action="store_true",
+                   help="show the evidence source for every check")
+    p.add_argument("--fail-under", type=int, default=0, metavar="N",
+                   help="exit 1 if the score is below N (default: never fail)")
     p.set_defaults(fn=cmd_audit)
 
     p = sub.add_parser("doctor", help="environment diagnostics")

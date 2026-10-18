@@ -240,9 +240,15 @@ hermes-production-patterns/
 ├── scripts/                     ← 工具脚本
 │   ├── validate_state.py        — STATE.md Schema 校验
 │   ├── check_test_suite.py      — 测试套件 schema 校验（生成 TEST_REPORT.md，不跑模型）
+│   ├── check_docs_consistency.py — 核对文档声称的数字/版本与仓库实际是否一致
+│   ├── check_maturity.py        — L1→L2/L2→L3 成熟度门禁（每项默认不通过，需举证）
 │   ├── lint.js                  — 🆕 Pattern Linter（SKILL.md/STATE.md 检查）
 │   ├── doctor.py                — 🆕 Pattern 推荐引擎（交互式问答）
 │   └── ...
+│
+├── tests/                       ← 工具链自身的测试（pytest，CI 在 Ubuntu+Windows 双跑）
+│   ├── conftest.py              — 子进程驱动真实 CLI 的 fixture
+│   └── test_*.py                — 66 个用例，覆盖 hpp 5 个子命令 + 8 个脚本
 │
 ├── TEST_REPORT.md               ← 测试套件报告（schema 校验，CI 自动生成）
 ├── DOCTOR_REPORT.md             — 🆕 doctor 推荐报告（运行时生成）

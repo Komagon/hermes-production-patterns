@@ -94,6 +94,7 @@ def generate_report(data: list[dict], valid: list[dict], errors: list[str], outp
         f"| Total entries | {total} |",
         f"| Schema-valid | {valid_count} |",
         f"| Invalid | {invalid_count} |",
+        f"| Schema errors (incl. duplicate ids) | {len(errors)} |",
         "| Behavioral run | not executed (manual step) |",
         "",
     ]
@@ -161,7 +162,10 @@ def main():
     print(f"  Report:       {output_path}")
     print(f"{'='*56}")
 
-    sys.exit(1 if invalid_count > 0 else 0)
+    # Exit non-zero on *any* schema error. Duplicate ids are recorded in
+    # `errors` without invalidating an individual entry, so keying the exit
+    # code off `invalid_count` alone silently passed a suite with duplicate ids.
+    sys.exit(1 if errors else 0)
 
 
 if __name__ == "__main__":

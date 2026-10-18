@@ -1,6 +1,6 @@
 # Test Suite Report
 
-**Generated**: 2026-10-18 05:59 UTC
+**Generated**: 2026-10-18 06:32 UTC
 **Source**: `test-prompts.json` (36 entries)
 
 > **Scope: schema validation only.** No model was called and no prompt was
@@ -15,6 +15,7 @@
 | Total entries | 36 |
 | Schema-valid | 36 |
 | Invalid | 0 |
+| Schema errors (incl. duplicate ids) | 0 |
 | Behavioral run | not executed (manual step) |
 
 ## Entries

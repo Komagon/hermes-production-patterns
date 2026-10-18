@@ -1,0 +1,11 @@
+[run]
+source = cli,scripts
+# The tests drive the tooling as real subprocesses (that is the contract the CI
+# and the docs depend on), so coverage has to follow into the children.
+patch = subprocess
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    raise SystemExit

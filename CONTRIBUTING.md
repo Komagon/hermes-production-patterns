@@ -62,6 +62,21 @@
 
 运行 `python scripts/check_test_suite.py` 验证格式正确（**只校验 schema，不跑模型**；行为验证需手动跑）。
 
+## 本地校验（提交前跑一遍）
+
+工具链本身有测试，改 `cli/hpp.py` 或 `scripts/` 下任何脚本都要先让它们保持全绿：
+
+```bash
+pip install -r tests/requirements-dev.txt
+python -m pytest --cov --cov-report=term-missing   # 期望：全绿，覆盖率 ≥ 80%
+node scripts/lint.js                                # 期望：No issues found
+python scripts/check_docs_consistency.py            # 期望：PASS
+```
+
+`pytest` 以子进程驱动真实 CLI，因此 `.coveragerc` 里开了 `patch = subprocess`——否则子进程里的代码不会被计入覆盖率，覆盖率会永远是 0%。
+
+CI 在 Ubuntu 和 Windows 上各跑一遍 `pytest`。Windows 矩阵是必需的：路径分隔符、`fcntl`/`msvcrt` 分支、CRLF 这几类问题只在 Windows 上暴露，而历史上「只在 Windows 上坏」的 bug 已经出现过多次。
+
 ## 行为准则
 
 - 尊重他人，建设性反馈

@@ -32,8 +32,40 @@ const RECOMMENDED_FRONTMATTER_FIELDS = ['maturity', 'hpp_category', 'hpp_en'];
 
 // --- Frontmatter Parser ---
 
+function normalizeEol(s) {
+  return s.replace(/\r\n/g, '\n');
+}
+
+function detectEol(s) {
+  return s.includes('\r\n') ? '\r\n' : '\n';
+}
+
+// Display width: CJK characters occupy two terminal columns. Without this the
+// findings table misaligns on every Chinese file name or issue text.
+function dispWidth(s) {
+  let w = 0;
+  for (const ch of s) {
+    const cp = ch.codePointAt(0);
+    const wide =
+      (cp >= 0x1100 && cp <= 0x115f) ||
+      (cp >= 0x2e80 && cp <= 0xa4cf) ||
+      (cp >= 0xac00 && cp <= 0xd7a3) ||
+      (cp >= 0xf900 && cp <= 0xfaff) ||
+      (cp >= 0xfe30 && cp <= 0xfe6f) ||
+      (cp >= 0xff00 && cp <= 0xff60) ||
+      (cp >= 0xffe0 && cp <= 0xffe6);
+    w += wide ? 2 : 1;
+  }
+  return w;
+}
+
+function pad(s, n) {
+  return s + ' '.repeat(Math.max(0, n - dispWidth(s)));
+}
+
 function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  const src = normalizeEol(content);
+  const match = src.match(/^---\n([\s\S]*?)\n---/);
   if (!match) return null;
   const yaml = match[1];
   const result = {};
@@ -54,6 +86,11 @@ function parseFrontmatter(content) {
 
 // --- File Discovery ---
 
+// Generated / vendored trees. `docs/` and `site/` are build output (gitignored),
+// so linting them reports findings that no contributor can act on — and makes
+// a local `build_docs.py` run turn the lint red.
+const SKIP_DIRS = new Set(['node_modules', 'docs', 'site', '__pycache__', 'venv']);
+
 function walkDir(dir, filelist = []) {
   try {
     const files = fs.readdirSync(dir);
@@ -62,7 +99,7 @@ function walkDir(dir, filelist = []) {
       try {
         const stat = fs.statSync(filepath);
         if (stat.isDirectory()) {
-          if (!file.startsWith('.') && file !== 'node_modules') {
+          if (!file.startsWith('.') && !SKIP_DIRS.has(file)) {
             walkDir(filepath, filelist);
           }
         } else {
@@ -82,10 +119,16 @@ function walkDir(dir, filelist = []) {
 
 function checkVersionField(filepath, content, frontmatter, findings) {
   if (!frontmatter) {
+    // If the file clearly starts with a frontmatter fence but we could not
+    // parse it, prepending another block would corrupt the file (this is how
+    // the old --fix turned CRLF files into double-frontmatter files).
+    const looksFenced = /^---\r?\n/.test(content);
     findings.push({
       file: filepath,
-      issue: 'No YAML frontmatter found',
-      fixable: true,
+      issue: looksFenced
+        ? 'Frontmatter present but unparsable — refusing to auto-fix'
+        : 'No YAML frontmatter found',
+      fixable: !looksFenced,
       pattern: 'skill-evolution',
     });
     return;
@@ -166,25 +209,23 @@ function checkSensitiveData(filepath, content, findings) {
 function applyFix(filepath, content, finding) {
   if (!finding.fixable) return content;
 
+  const eol = detectEol(content);
+  const src = normalizeEol(content);
+  let out = src;
+
   if (finding.issue.includes('No YAML frontmatter')) {
     const name = path.basename(path.dirname(filepath)) || path.basename(filepath, '.md');
-    const template = `---\nname: ${name}\ndescription: "TODO: Add description"\nversion: 0.1.0\nauthor: TODO\nlicense: MIT\nplatforms: [linux, macos, windows]\nmaturity: experimental\n---\n\n`;
-    return template + content;
-  }
-
-  if (finding.issue.includes('Missing version field')) {
-    return content.replace(/^(---\n)/, '$1version: 0.1.0\n');
-  }
-
-  if (finding.issue.includes('Missing maturity field')) {
-    // Insert after opening --- line
-    if (content.startsWith('---\n')) {
-      return content.replace(/^---\n/, '---\nmaturity: experimental\n');
+    out = `---\nname: ${name}\ndescription: "TODO: Add description"\nversion: 0.1.0\nauthor: TODO\nlicense: MIT\nplatforms: [linux, macos, windows]\nmaturity: experimental\n---\n\n` + src;
+  } else if (finding.issue.includes('Missing version field')) {
+    out = src.replace(/^(---\n)/, '$1version: 0.1.0\n');
+  } else if (finding.issue.includes('Missing maturity field')) {
+    if (src.startsWith('---\n')) {
+      out = src.replace(/^---\n/, '---\nmaturity: experimental\n');
     }
-    return content;
   }
 
-  return content;
+  if (out === src) return content;
+  return eol === '\n' ? out : out.replace(/\n/g, '\r\n');
 }
 
 // --- Main ---
@@ -249,21 +290,30 @@ function main() {
     checkSensitiveData(filepath, content, findings);
   }
 
-  // Apply fixes if requested
+  // Apply fixes if requested. Every touched file is copied to a timestamped
+  // backup directory first, so --fix is always reversible.
   if (fixMode) {
-    let fixCount = 0;
-    for (const finding of findings) {
-      if (!finding.fixable) continue;
-      const content = fs.readFileSync(finding.file, 'utf-8');
-      const fixed = applyFix(finding.file, content, finding);
-      if (fixed !== content) {
+    const fixable = findings.filter(f => f.fixable);
+    if (fixable.length > 0) {
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const backupDir = path.join(targetDir, '.hpp-backup', stamp);
+      let fixCount = 0;
+      for (const finding of fixable) {
+        const content = fs.readFileSync(finding.file, 'utf-8');
+        const fixed = applyFix(finding.file, content, finding);
+        if (fixed === content) continue;
+        const rel = path.relative(targetDir, finding.file);
+        const backupPath = path.join(backupDir, rel);
+        fs.mkdirSync(path.dirname(backupPath), { recursive: true });
+        fs.copyFileSync(finding.file, backupPath);
         fs.writeFileSync(finding.file, fixed, 'utf-8');
         fixCount++;
         finding.fixed = true;
       }
-    }
-    if (fixCount > 0) {
-      console.log(`🔧 Auto-fixed ${fixCount} file(s)\n`);
+      if (fixCount > 0) {
+        console.log(`🔧 Auto-fixed ${fixCount} file(s)`);
+        console.log(`   Backups: ${backupDir}\n`);
+      }
     }
   }
 
@@ -274,16 +324,16 @@ function main() {
   }
 
   // Table output
-  const maxFile = Math.max(6, ...findings.map(f => f.file.length));
-  const maxIssue = Math.max(7, ...findings.map(f => f.issue.length));
+  const maxFile = Math.max(6, ...findings.map(f => dispWidth(f.file)));
+  const maxIssue = Math.max(7, ...findings.map(f => dispWidth(f.issue)));
 
-  console.log('│ ' + 'File'.padEnd(maxFile) + ' │ ' + 'Issue'.padEnd(maxIssue) + ' │ Pattern Reference          │ Status │');
+  console.log('│ ' + pad('File', maxFile) + ' │ ' + pad('Issue', maxIssue) + ' │ ' + pad('Pattern Reference', 26) + ' │ Status │');
   console.log('│' + '─'.repeat(maxFile + 2) + '│' + '─'.repeat(maxIssue + 2) + '│' + '─'.repeat(28) + '│' + '─'.repeat(8) + '│');
 
   for (const f of findings) {
     const status = f.fixed ? '🔧 FIXED' : f.fixable ? '⚠️  WARN ' : '❌ ERROR';
     const patternLink = `conventions/${f.pattern}.md`;
-    console.log(`│ ${f.file.padEnd(maxFile)} │ ${f.issue.padEnd(maxIssue)} │ ${patternLink.padEnd(26)} │ ${status} │`);
+    console.log(`│ ${pad(f.file, maxFile)} │ ${pad(f.issue, maxIssue)} │ ${pad(patternLink, 26)} │ ${status} │`);
   }
 
   console.log(`\n📊 Summary: ${findings.length} finding(s) across ${skillFiles.length} skills + ${conventionFiles.length} conventions`);
@@ -296,7 +346,9 @@ function main() {
   }
   console.log('');
 
-  process.exit(findings.length > 0 ? 1 : 0);
+  // Exit non-zero only for findings that still need attention.
+  const remaining = findings.filter(f => !f.fixed);
+  process.exit(remaining.length > 0 ? 1 : 0);
 }
 
 main();

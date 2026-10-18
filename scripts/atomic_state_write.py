@@ -15,8 +15,13 @@ STATE_FILE = os.environ.get("STATE_FILE", "reports/STATE.md")
 def acquire_lock(path: str, timeout: float = 5.0):
     """Acquire exclusive file lock. Raises on timeout."""
     lock_path = path + ".lock"
+    # The lock file is created before the state file, so its directory has to
+    # exist first — otherwise `os.open` raises FileNotFoundError on every retry
+    # and the caller sees a bogus "could not acquire lock" after the timeout.
+    os.makedirs(os.path.dirname(lock_path) or ".", exist_ok=True)
     deadline = time.time() + timeout
     while time.time() < deadline:
+        fd = None
         try:
             if sys.platform == "win32":
                 import msvcrt
@@ -29,6 +34,10 @@ def acquire_lock(path: str, timeout: float = 5.0):
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
                 return fd
         except (BlockingIOError, IOError):
+            # Close the descriptor we just opened: a retry loop that leaks one
+            # fd per attempt exhausts the process limit on a long contention.
+            if fd is not None:
+                os.close(fd)
             time.sleep(0.1)
     raise RuntimeError(f"Could not acquire lock on {lock_path} within {timeout}s")
 
@@ -59,32 +68,46 @@ def atomic_write(path: str, content: str):
 
 
 def read_state(path: str) -> dict:
-    """Read and parse STATE.md into a dict. Returns empty dict if file missing."""
+    """Read and parse STATE.md into a dict. Returns empty dict if file missing.
+
+    A section becomes a dict when it holds at least one `- **key**: value`
+    line, otherwise a list of its bullets. The previous implementation seeded
+    every section as a list and then assigned into it with a string key, so
+    `read_state` crashed on exactly the files `format_state` produces.
+    """
     if not os.path.exists(path):
         return {}
     with open(path, "r", encoding="utf-8") as f:
         text = f.read()
-    # Basic parsing: extract key fields via section headers
-    state = {}
-    current_section = None
+
+    sections = {}
+    current = None
     for line in text.split("\n"):
         if line.startswith("## "):
-            current_section = line.strip("# ").strip()
-            state[current_section] = []
-        elif current_section and line.strip().startswith("- **"):
-            parts = line.strip().split("**:")
-            if len(parts) == 2:
-                key = parts[0].strip("- **")
-                value = parts[1].strip()
-                if current_section not in state:
-                    state[current_section] = {}
-                state[current_section][key] = value
+            current = line.strip("# ").strip()
+            sections.setdefault(current, [])
+        elif current is not None:
+            sections[current].append(line)
+
+    state = {}
+    for name, lines in sections.items():
+        pairs, items = {}, []
+        for line in lines:
+            s = line.strip()
+            if s.startswith("- **"):
+                key, sep, value = s[len("- **"):].partition("**:")
+                if sep:
+                    pairs[key.strip()] = value.strip()
+                    continue
+            if s.startswith(("- ", "* ")):
+                items.append(s[2:].strip())
+        state[name] = pairs if pairs else items
     return state
 
 
-def format_state(state: dict) -> str:
+def format_state(state: dict, title: str = "STATE") -> str:
     """Format a dict back into STATE.md format."""
-    lines = ["# STATE: daily-news-digest", ""]
+    lines = [f"# STATE: {title}", ""]
     for section, data in state.items():
         lines.append(f"## {section}")
         lines.append("")
@@ -96,6 +119,18 @@ def format_state(state: dict) -> str:
                 lines.append(f"  - {item}")
         lines.append("")
     return "\n".join(lines)
+
+
+def existing_title(path: str) -> str:
+    """Reuse the project name already in the file instead of a canned one."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            first = f.readline().strip()
+    except OSError:
+        return "STATE"
+    if first.startswith("# STATE:"):
+        return first[len("# STATE:"):].strip() or "STATE"
+    return "STATE"
 
 
 if __name__ == "__main__":
@@ -111,7 +146,7 @@ if __name__ == "__main__":
         new_state = json.loads(sys.argv[2])
         fd = acquire_lock(path)
         try:
-            content = format_state(new_state)
+            content = format_state(new_state, existing_title(path))
             atomic_write(path, content)
             print(f"Written: {path}")
         finally:

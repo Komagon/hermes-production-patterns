@@ -1,5 +1,23 @@
 # Changelog
 
+## v2.4.2 (2026-10-18)
+
+### 🛡️ 第二阶段：把「靠自觉」的检查改成「跑不动就红」的检查
+
+v2.4.1 修的是「说的和做的不一致」，这一版修的是「检查和被检查者其实是同一个人写的」——每个门禁都能被自己刷过，等于没有门禁。
+
+- **`hpp audit` 改为按内容取证，不再是文件名匹配**：13 个 0 字节的 `monitor.md`/`STATE.md`/`checker.md` 曾经能刷到 86 分「Production Ready」。现在每项证据必须来自 ≥40 字符的真实正文（`file:` 命中要看文件有没有内容，`content:` 命中要扫正文），并且每条命中都记录证据出处，分数可以手工复算。新增 `--json`、`-v/--verbose`、`--fail-under N`：低于阈值退出码为 1。空壳工程现在得 0 分。
+- **密钥扫描重写**：旧实现每条正则都用 `^...$` 整行锚定，而真实密钥从不独占一行（`API_KEY = "sk-..."` 永远匹配不到），所以扫描器 100% 漏报。现在改成非锚定模式（OpenAI/Anthropic、GitHub、AWS、Bearer、私钥块、Slack），带占位符与环境变量读取过滤，输出时脱敏（`sk-A1b…W3x4`）。`validate` 命中即退出 1。
+- **`lint.js` 跨平台安全**：CRLF 文件在 Windows 上会被判成「无 frontmatter」，旧 `--fix` 于是再插一个 frontmatter 块，把文件写坏并把 `version: 1.0.0` 降级成 `0.1.0`。现在统一换行后再解析、保留原换行写回、解析失败拒绝自动修复、修改前备份到 `.hpp-backup/<时间戳>/`。同时跳过 `docs/`、`site/` 等生成目录（此前本地跑过 `build_docs.py` 就会把 lint 弄红）。
+- **`check_maturity.py` 不再自证通过**：6 条判定项原本 `default=True`，所以不带任何参数也报 6/8 通过。现在全部默认 `False`，新增 `--project DIR` 从项目里推导客观事实（STATE.md、幂等键、checker/、预算、`monitor/runs.log` 的运行日期），L3 明确返回「需人工评审」而不是静默 PASS。
+- **新增 `scripts/check_docs_consistency.py`**：核对文档里声称的公约数、anti-pattern 数、starter kit 数、提示词数、版本号（package.json ↔ CHANGELOG ↔ git tag）与 21 篇公约的 frontmatter 完整性。上线第一次运行就抓到「v2.4.1 从未打 tag」。
+- **新增 `tests/`（pytest，66 个用例，覆盖率 84%）**：覆盖 `hpp` 的 5 个子命令与 8 个脚本的边界，含空壳工程、伪造证据、CRLF、重复幂等键、锁超时等回归点。测试直接以子进程驱动真实 CLI，所以 `.coveragerc` 用 `patch = subprocess` 让覆盖率跟进子进程。
+- **CI 新增 `unit-tests`（Ubuntu + Windows 双矩阵）、`repo-lint`、`docs-consistency`**：Windows 矩阵不是摆设——本阶段修的 5 个 bug 里有 4 个只在 Windows 复现（路径分隔符、`fcntl`/`msvcrt` 分支、`docs\a.md` 与 `docs/a.md` 不相等）。
+- **顺带修掉三个真实缺陷**（都由新测试暴露，不是理论问题）：
+  - `atomic_state_write.py` 的 `read_state` 解析不了 `format_state` 自己写出的格式（章节被初始化成 list 又用字符串下标赋值，`TypeError`）——读写不闭环。
+  - 同一脚本在父目录不存在时，锁文件创建失败被当成「锁竞争」，重试到超时后报 `Could not acquire lock`，与真实原因无关。
+  - `build_docs.py --check-nav` 在 Windows 上把 `docs\a.md` 和 nav 里的 `docs/a.md` 相比，导致「全部页面既缺失又未知」；`check_test_suite.py` 遇到重复 id 时退出码仍是 0。
+
 ## v2.4.1 (2026-10-18)
 
 ### 🔧 对齐修复：让「承诺」与「实现」一致（无新增模式）

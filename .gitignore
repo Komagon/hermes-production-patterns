@@ -31,5 +31,14 @@ hermes/config.yaml
 site/
 docs/
 
+# Test / coverage artifacts
+.coverage
+.coverage.*
+.pytest_cache/
+htmlcov/
+
+# lint.js --fix backups
+.hpp-backup/
+
 # Demo runtime output
 examples/minimal-demo/reports/

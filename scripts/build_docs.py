@@ -159,7 +159,7 @@ def collect_meta(sub: str) -> dict:
 
 def title_of(stem: str, meta: dict) -> str:
     desc = meta.get("description") or stem
-    return (re.split(r"\s*—\s*", desc, 1)[0].strip() or stem)
+    return (re.split(r"\s*—\s*", desc, maxsplit=1)[0].strip() or stem)
 
 
 def signal_of(meta: dict, stem: str) -> str:
@@ -1094,7 +1094,10 @@ def check_nav() -> int:
     # nav lines look like `- path.md` or `- 标题: path.md`; a .md path always
     # ends the line, so anchoring at EOL cleanly avoids matching titles.
     pages = set(re.findall(r"([A-Za-z0-9_\-./]+\.md)\s*$", nav_part, re.M))
-    docs_pages = {str(p.relative_to(DOCS)) for p in DOCS.rglob("*.md")}
+    # as_posix(): on Windows `str(relative_to)` yields backslashes, which never
+    # matches the forward-slash paths in mkdocs.yml — --check-nav then reported
+    # every single page as both missing and unknown.
+    docs_pages = {p.relative_to(DOCS).as_posix() for p in DOCS.rglob("*.md")}
     missing = sorted(docs_pages - pages)
     unknown = sorted(pages - docs_pages)
     if missing:

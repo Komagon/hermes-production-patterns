@@ -149,3 +149,61 @@ jobs:
 
       - name: Check README section count sync
         run: bash scripts/check-bilingual.sh
+
+  unit-tests:
+    name: Unit Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: pip install -r tests/requirements-dev.txt
+
+      - name: Set up Node.js (lint.js contract tests)
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Run pytest with coverage
+        run: python -m pytest --cov --cov-report=term-missing
+
+  repo-lint:
+    name: Convention Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Lint skills and conventions
+        run: node scripts/lint.js
+
+  docs-consistency:
+    name: Docs Consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The version check compares package.json against git tags, which a
+          # depth-1 clone does not have.
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Check claimed counts, version and frontmatter
+        run: python scripts/check_docs_consistency.py

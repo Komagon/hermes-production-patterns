@@ -306,12 +306,21 @@ def main():
     # Output to stdout
     print("\n" + report)
 
-    # Also save to file
+    # Also save to file. `--output` keeps tests and ad-hoc runs from rewriting
+    # the committed report at the repo root.
     output_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "DOCTOR_REPORT.md")
+    if "--output" in sys.argv:
+        idx = sys.argv.index("--output")
+        if idx + 1 < len(sys.argv):
+            output_path = sys.argv[idx + 1]
+        else:
+            print("--output needs a path", file=sys.stderr)
+            return 2
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(report)
     print(f"📄 Report saved to: {output_path}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
