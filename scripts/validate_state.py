@@ -18,6 +18,16 @@ import os
 import re
 import sys
 
+# Windows pipes and redirects default to the locale code page (cp1252 on an
+# en-US machine), so any non-ASCII output raises UnicodeEncodeError. Real
+# consoles already go through WriteConsoleW, so forcing UTF-8 here only
+# normalises pipes, redirects and CI logs.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 REQUIRED_SECTIONS = ["Current Run", "Progress", "Lessons Learned", "Idempotency Keys"]
 REQUIRED_FIELDS = {
     "Current Run": ["Last run", "Status", "Current batch"],

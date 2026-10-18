@@ -248,7 +248,7 @@ hermes-production-patterns/
 │
 ├── tests/                       ← 工具链自身的测试（pytest，CI 在 Ubuntu+Windows 双跑）
 │   ├── conftest.py              — 子进程驱动真实 CLI 的 fixture
-│   └── test_*.py                — 66 个用例，覆盖 hpp 5 个子命令 + 8 个脚本
+│   └── test_*.py                — 72 个用例，覆盖 hpp 5 个子命令 + 8 个脚本
 │
 ├── TEST_REPORT.md               ← 测试套件报告（schema 校验，CI 自动生成）
 ├── DOCTOR_REPORT.md             — 🆕 doctor 推荐报告（运行时生成）

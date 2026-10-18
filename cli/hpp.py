@@ -27,6 +27,16 @@ import sys
 import os
 from pathlib import Path
 
+# Windows pipes and redirects default to the locale code page (cp1252 on an
+# en-US machine), so any non-ASCII output raises UnicodeEncodeError. Real
+# consoles already go through WriteConsoleW, so forcing UTF-8 here only
+# normalises pipes, redirects and CI logs.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, ValueError):
+        pass
+
 HPP_ROOT = Path(__file__).resolve().parents[1]
 
 # Configure logging for sensitive information (not printed to stdout)
