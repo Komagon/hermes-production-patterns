@@ -1,6 +1,6 @@
 {
   "name": "hermes-production-patterns",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Production engineering patterns for Hermes Agent — linter, validator, and pattern library",
   "private": true,
   "bin": {

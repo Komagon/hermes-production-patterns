@@ -173,7 +173,18 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Run pytest with coverage
+      - name: Run pytest with coverage (POSIX console)
+        if: runner.os != 'Windows'
+        run: python -m pytest --cov --cov-report=term-missing
+
+      # The Windows console code page is not UTF-8, and that is the environment
+      # users actually run in. Pinning it here keeps the suite honest: a child
+      # process that prints Chinese through the console encoding fails loudly
+      # instead of passing on a machine that happens to have a CJK code page.
+      - name: Run pytest with coverage (non-UTF-8 console)
+        if: runner.os == 'Windows'
+        env:
+          PYTHONIOENCODING: cp1252
         run: python -m pytest --cov --cov-report=term-missing
 
   repo-lint:

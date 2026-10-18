@@ -107,6 +107,28 @@ def _write_suite(tmp_path, entries):
     return p
 
 
+def _py(code: str) -> str:
+    """A `--command` value that runs `code` under this interpreter, in UTF-8.
+
+    The executable is quoted on purpose: an unquoted `C:\\Program Files\\...`
+    only reaches the right binary by accident, because Windows CreateProcess
+    walks the command line looking for a prefix that happens to exist.
+    """
+    return f'"{sys.executable}" -X utf8 -c "{code}"'
+
+
+def _say(text: str) -> str:
+    """A backend that emits `text` as UTF-8 bytes, whatever the console says.
+
+    Writing through `sys.stdout.buffer` instead of `print` is the point: the
+    runner decodes backend stdout as UTF-8, so a backend that lets the console
+    code page pick the encoding dies with UnicodeEncodeError on a cp1252 runner
+    and turns a passing assertion into a fail-closed FAIL. `-X utf8` alone is
+    not enough — PYTHONIOENCODING overrides it.
+    """
+    return _py(f"import sys;sys.stdout.buffer.write({text!r}.encode('utf-8'))")
+
+
 def _run(root, *args):
     import subprocess
     proc = subprocess.run(
@@ -196,7 +218,7 @@ def test_command_backend_uses_argv_not_a_shell(root, tmp_path):
     entry = dict(ENTRY, id="nasty", prompt=nasty, assertions=["a; rm -rf /"], forbidden=[])
     suite = _write_suite(tmp_path, [entry])
     code, out = _run(root, "--suite", suite, "--backend", "command",
-                     "--command", f'{sys.executable} -c "import sys;print(sys.argv[1])" "{{prompt}}"',
+                     "--command", _py("import sys;print(sys.argv[1])") + ' "{prompt}"',
                      "--report", tmp_path / "R.md")
     assert code == 0, out
     assert "PASS" in out
@@ -206,9 +228,21 @@ def test_command_backend_reads_prompt_from_stdin_without_placeholder(root, tmp_p
     entry = dict(ENTRY, id="stdin", assertions=["独立检查"])
     suite = _write_suite(tmp_path, [entry])
     code, out = _run(root, "--suite", suite, "--backend", "command",
-                     "--command", f'{sys.executable} -c "import sys;print(\'独立检查\')"',
+                     "--command", _say("独立检查"),
                      "--report", tmp_path / "R.md")
     assert code == 0, out
+
+
+def test_undecodable_backend_output_is_a_miss_not_a_crash(root, tmp_path):
+    """Bytes that are not UTF-8 must degrade to U+FFFD, not blow up the runner."""
+    entry = dict(ENTRY, id="mojibake", assertions=["独立检查"], forbidden=[])
+    suite = _write_suite(tmp_path, [entry])
+    code, out = _run(root, "--suite", suite, "--backend", "command",
+                     "--command", _py("import sys;sys.stdout.buffer.write(b'\\xff\\xfe')"),
+                     "--report", tmp_path / "R.md")
+    assert code == 1, out
+    assert "Traceback" not in out
+    assert "backend error" not in out  # the backend succeeded; the answer was wrong
 
 
 def test_dry_run_lists_entries_without_calling_anything(root, tmp_path):
@@ -252,7 +286,7 @@ def test_record_then_replay_roundtrip(root, tmp_path):
     rec = tmp_path / "rec"
 
     code, out = _run(root, "--suite", suite, "--backend", "command",
-                     "--command", f'{sys.executable} -c "print(\'独立检查 阈值\')"',
+                     "--command", _say("独立检查 阈值"),
                      "--record", rec, "--report", tmp_path / "R1.md")
     assert code == 0, out
     assert (rec / "round.txt").is_file()

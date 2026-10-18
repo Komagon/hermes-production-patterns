@@ -42,7 +42,7 @@ A complete set of engineering patterns, conventions, and templates to turn Herme
 > - 🥊 [Two agents overwrote each other's STATE.md](examples/failures/concurrent-state-conflict.md) — read-then-write on a shared file is guaranteed to lose writes
 > - 🔓 [Web injection ran an unauthorised command](examples/failures/prompt-injection-escalation.md) — web content is always data, never instructions
 >
-> **Recent changes**: v2.5.0 adds a real behavioral regression runner (`scripts/run_regression.py`, pluggable agent CLI) plus a Readiness-gate GitHub Action and `SECURITY.md`; v2.4.2 made every gate fail-closed. Full history in [CHANGELOG.md](CHANGELOG.md).
+> **Recent changes**: v2.5.1 fixes a false red on non-UTF-8 Windows consoles — the backend's UTF-8 stdout contract is now documented and pinned in CI. v2.5.0 adds a real behavioral regression runner (`scripts/run_regression.py`, pluggable agent CLI) plus a Readiness-gate GitHub Action and `SECURITY.md`; v2.4.2 made every gate fail-closed. Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -79,6 +79,8 @@ python scripts/run_regression.py --backend replay --recordings tests/recordings
 ```
 
 The report lands in `BEHAVIOR_REPORT.md` with PASS / FAIL / N/A columns; failures list the missing assertions and an excerpt. Exit code is 1 if anything failed.
+
+> **Backend stdout is decoded as UTF-8.** An agent CLI that `print`s non-ASCII text on a Windows console whose code page is not UTF-8 dies with `UnicodeEncodeError` and is then judged `FAIL` — that is the backend, not the judge. Emit UTF-8 explicitly (`sys.stdout.buffer.write(text.encode("utf-8"))` in Python, or set `PYTHONIOENCODING=utf-8` for the child). CI runs the Windows leg with `PYTHONIOENCODING=cp1252` precisely so this path cannot silently regress.
 
 ### Gate your own repository on Readiness
 

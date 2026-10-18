@@ -395,7 +395,15 @@ def main() -> int:
     p.add_argument("--suite", default=str(SUITE))
     p.add_argument("--backend", choices=["command", "openai", "anthropic", "replay"],
                    default="replay")
-    p.add_argument("--command", help="agent CLI; {prompt} is substituted")
+    p.add_argument(
+        "--command",
+        help=(
+            "agent CLI; {prompt} is substituted. Its stdout is decoded as UTF-8 "
+            "(undecodable bytes become U+FFFD, which the judge scores as a miss — "
+            "never as a pass), so a backend that emits text in the console code "
+            "page has to be launched with an explicit UTF-8 mode"
+        ),
+    )
     p.add_argument("--model", default="")
     p.add_argument("--base-url", default="")
     p.add_argument("--system-file", default="", help="file whose text becomes the system prompt")

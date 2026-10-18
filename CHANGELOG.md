@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.5.1 (2026-10-18)
+
+### 🩹 修 v2.5.0 在 Windows CI 上的红：判定的 UTF-8 契约没写下来
+
+v2.5.0 推上去之后 `Unit Tests (windows-latest)` 红了，Ubuntu 绿。原因不在被测代码，在**测试自己没说清契约**：`run_regression.py` 一直按 UTF-8 解码后端 stdout，而测试里的假后端是 `python -c "print('独立检查')"`——在 ANSI 代码页 1252 的 Windows 运行器上，`print` 写中文直接 `UnicodeEncodeError`，子进程退出 1，判定按 fail-closed 记 `FAIL`，测试却断言它该 `PASS`。本机（代码页 936）能过，所以一直没暴露。
+
+- **假后端改为显式输出 UTF-8 字节**：测试里新增 `_say()`，走 `sys.stdout.buffer.write(text.encode("utf-8"))`。`-X utf8` 不够——`PYTHONIOENCODING` 会覆盖它，这一点是本地用 `PYTHONIOENCODING=cp1252` 复现时才看清的。
+- **顺手修掉一个「碰巧能跑」**：测试里的 `--command` 一直没给解释器路径加引号，`G:\workbuddy 1\...\python.exe` 能被正确执行纯属 Windows CreateProcess 会沿命令行找「存在的最长前缀」。路径换成 `C:\Program Files\...` 就会碎。现在统一加引号。
+- **新增 1 条用例（共 108）**：后端吐出非 UTF-8 字节时，必须是「判定为未命中」，而不是让运行器抛 `Traceback`——`errors="replace"` 是契约的一部分，值得钉住。
+- **CI 把这条路径钉死**：`unit-tests` 的 Windows 腿现在显式带 `PYTHONIOENCODING=cp1252` 跑（Linux 腿不变）。既然用户就在非 UTF-8 控制台里跑，测试就该在那个环境里跑，而不是在碰巧是 CJK 代码页的机器上绿。
+- **契约写进文档**：`--command` 的帮助文本、`README.md` / `README.en.md` 都补了一句「后端 stdout 按 UTF-8 解码，非 ASCII 输出要显式 UTF-8」。
+
 ## v2.5.0 (2026-10-18)
 
 ### 🎯 第三阶段：从「模式集」到「可执行的验收标准」

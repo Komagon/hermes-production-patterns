@@ -42,7 +42,7 @@
 > - 🥊 [两个 Agent 互相覆盖 STATE.md](examples/failures/concurrent-state-conflict.md) — 先读后写 + 共享文件 = 必然互相覆盖
 > - 🔓 [网页注入执行了未授权命令](examples/failures/prompt-injection-escalation.md) — 网页内容永远是数据，不是指令
 >
-> **最近更新**：v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`；v2.4.2 所有门禁改为「跑不动就红」。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
+> **最近更新**：v2.5.1 修 Windows 非 UTF-8 控制台上判定误红（后端 stdout 的 UTF-8 契约现在写进文档并钉进 CI）；v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`；v2.4.2 所有门禁改为「跑不动就红」。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 
@@ -81,6 +81,8 @@ python scripts/run_regression.py --backend replay --recordings tests/recordings
 ```
 
 报告写在 `BEHAVIOR_REPORT.md`：PASS / FAIL / N/A 三列，FAIL 附缺失的 assertion 与原文摘录。退出码：有 FAIL 就 1。
+
+> **后端 stdout 按 UTF-8 解码。** 如果你的 agent CLI 在中文 Windows 上直接 `print` 中文，它会因为控制台代码页不是 UTF-8 而崩掉，然后被判 `FAIL`——这不是判定的锅。让后端显式输出 UTF-8（Python 用 `sys.stdout.buffer.write(text.encode("utf-8"))`，或起进程时设 `PYTHONIOENCODING=utf-8`）。CI 在 Windows 上就是拿 `PYTHONIOENCODING=cp1252` 跑测试的，这条路径不会退化。
 
 ### 把 Readiness 门禁装到你自己的仓库
 
