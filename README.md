@@ -42,7 +42,7 @@
 > - 🥊 [两个 Agent 互相覆盖 STATE.md](examples/failures/concurrent-state-conflict.md) — 先读后写 + 共享文件 = 必然互相覆盖
 > - 🔓 [网页注入执行了未授权命令](examples/failures/prompt-injection-escalation.md) — 网页内容永远是数据，不是指令
 >
-> **最近更新**：v2.5.2 修「`open()` 不写编码」在英文版 Windows（cp1252）上读 UTF-8 必崩的 bug，并加 AST 门禁；v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`；v2.4.2 所有门禁改为「跑不动就红」。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
+> **最近更新**：v2.5.3 可复用 readiness-gate workflow 钉住自身版本（新门禁保证不漂）+ README 新增[「这个仓库怎么验证自己」](#这个仓库怎么验证自己)；v2.5.2 修「`open()` 不写编码」在英文版 Windows（cp1252）上读 UTF-8 必崩的 bug；v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`；v2.4.2 所有门禁改为「跑不动就红」。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 
@@ -83,6 +83,8 @@ python scripts/run_regression.py --backend replay --recordings tests/recordings
 报告写在 `BEHAVIOR_REPORT.md`：PASS / FAIL / N/A 三列，FAIL 附缺失的 assertion 与原文摘录。退出码：有 FAIL 就 1。
 
 > **后端 stdout 按 UTF-8 解码。** 如果你的 agent CLI 在中文 Windows 上直接 `print` 中文，它会因为控制台代码页不是 UTF-8 而崩掉，然后被判 `FAIL`——这不是判定的锅。让后端显式输出 UTF-8（Python 用 `sys.stdout.buffer.write(text.encode("utf-8"))`，或起进程时设 `PYTHONIOENCODING=utf-8`）。CI 在 Windows 上就是拿 `PYTHONIOENCODING=cp1252` 跑测试的，这条路径不会退化。
+>
+> 同一个坑本项目自己也踩过：v2.5.2 之前，readiness-gate action 用内联 `python -c` 读报告，`open()` 没写 `encoding`，在英文版 Windows（cp1252）上读 UTF-8 直接 `UnicodeDecodeError`。现在这类代码有 AST 门禁，见下方[「这个仓库怎么验证自己」](#这个仓库怎么验证自己)。
 
 ### 把 Readiness 门禁装到你自己的仓库
 
@@ -92,7 +94,7 @@ python scripts/run_regression.py --backend replay --recordings tests/recordings
 # .github/workflows/readiness.yml
 jobs:
   readiness:
-    uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.0
+    uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.3
     with:
       path: "."
       fail-under: 85
@@ -101,13 +103,13 @@ jobs:
 也可以只用单步 action，接在你已有的 job 里（需先 `actions/setup-python`）：
 
 ```yaml
-- uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.0
+- uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.3
   with:
     path: "."
     fail-under: 85
 ```
 
-输出 `score` / `grade`，并把五维明细写进 job summary；低于阈值时步骤失败。
+输出 `score` / `grade`，并把五维明细写进 job summary；低于阈值时步骤失败。报告解析走 `scripts/audit_field.py`（显式 UTF-8），所以英文版 Windows 运行器（cp1252）上也能正常取分。
 
 ### English
 
@@ -298,12 +300,36 @@ hermes-production-patterns/
 │
 ├── tests/                       ← 工具链自身的测试（pytest，CI 在 Ubuntu+Windows 双跑）
 │   ├── conftest.py              — 子进程驱动真实 CLI 的 fixture
-│   └── test_*.py                — 107 个用例，覆盖 hpp 5 个子命令 + 11 个脚本
+│   ├── test_file_encoding.py    — 🆕 AST 门禁：文本读写必须写 encoding，禁止内联 python -c
+│   └── test_*.py                — 122 个用例 / 18 个文件，覆盖 hpp 5 个子命令 + 10 个 Python 脚本
 │
 ├── TEST_REPORT.md               ← 测试套件报告（schema 校验，CI 自动生成）
 ├── DOCTOR_REPORT.md             — 🆕 doctor 推荐报告（运行时生成）
 │
 ```
+
+---
+
+## 这个仓库怎么验证自己
+
+「每条模式都在生产验证过」这句话本身不值钱，除非别人能跑一遍。下面每一条都在 CI 里跑，本地也能一条命令复现（先 `pip install -r tests/requirements-dev.txt`、`npm install`）：
+
+| 门禁 | 命令 | 抓什么 |
+|:---|:---|:---|
+| 单测（122 例） | `python -m pytest --cov` | CLI 与 10 个脚本的行为契约。Ubuntu 与 Windows 双跑，Windows 腿强制 `PYTHONIOENCODING=cp1252` |
+| 编码门禁 | `python -m pytest tests/test_file_encoding.py` | 文本模式 `open()` / `read_text()` 漏写 `encoding=`；workflow 与 action 里出现内联 `python -c` |
+| 约定 lint | `node scripts/lint.js` | SKILL.md / STATE.md 的 frontmatter 与结构 |
+| Markdown | `npx markdownlint-cli2 '**/*.md' '#node_modules' '#docs'` | 文档格式（`docs/` 是生成物，不 lint） |
+| 站点导航 | `python scripts/build_docs.py --check-nav` | 每个页面是否都在 mkdocs `nav` 里 |
+| 文档一致性 | `python scripts/check_docs_consistency.py` | README 声称的数量/版本是否等于仓库实际；8 个必需文件是否存在；版本是否有对应 tag |
+| 套件 schema | `python scripts/check_test_suite.py` | `test-prompts.json` 的字段合法性（不跑模型） |
+| STATE.md | `python scripts/validate_state.py` | 每个随仓库发布的 STATE.md 是否符合 schema |
+| 行为回归 | `python scripts/run_regression.py` | 真跑 36 条 prompt——**手动触发、会花钱**，不在默认 CI 里 |
+
+两条原则：
+
+- **「跑不动」也是红。** 拿不到 git tag、缺依赖、后端不可达，门禁要么明确报 SKIP 并说明原因，要么判 FAIL——不会静默通过。
+- **只写在文档里的约束等于默认违规**（反模式 #13）。所以「文本读写必须写 encoding」这类规则落在 `tests/test_file_encoding.py` 里，而不是写在 CONTRIBUTING 里。
 
 ---
 

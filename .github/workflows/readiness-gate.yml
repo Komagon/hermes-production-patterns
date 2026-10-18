@@ -5,14 +5,16 @@ name: readiness-gate
 #
 #   jobs:
 #     readiness:
-#       uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.0
+#       uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.3
 #       with:
 #         path: "."
 #         fail-under: 85
 #
 # The action reference below is pinned to the same tag as the workflow on
-# purpose: a caller who pins @v2.5.0 gets v2.5.0 behaviour end to end, even if
-# the default branch has moved on.
+# purpose: a caller who pins @v2.5.3 gets v2.5.3 behaviour end to end, even if
+# the default branch has moved on. `tests/test_workflows.py` fails if that pin
+# is not the version in package.json, because a stale pin hands callers an old
+# (once broken) action.
 
 on:
   workflow_call:
@@ -61,7 +63,7 @@ jobs:
 
       - name: Run the readiness gate
         id: readiness
-        uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.0
+        uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.3
         with:
           path: ${{ inputs.path }}
           fail-under: ${{ inputs.fail-under }}

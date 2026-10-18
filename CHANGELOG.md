@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.5.3 (2026-10-18)
+
+### 📌 可复用 workflow 钉住的 action 版本会漂，现在有门禁
+
+`readiness-gate.yml` 里刻意把 action 引用写死成同一个 tag：这样 `@vX.Y.Z` 的行为端到端冻结，调用方不会因为默认分支前进而被动升级。但「同一个 tag」是手工维护的——v2.5.2 修了 action 的编码 bug，workflow 里还钉着 `@v2.5.0`，**调用方拿到的仍是坏的那一版**。
+
+- **钉版本对齐到 `@v2.5.3`**（注释、示例、`uses:` 三处）。
+- **新门禁 `test_reusable_workflow_pins_the_current_release`**：`readiness-gate.yml` 里对 action 的 `uses:` 必须以 `@v{package.json 的 version}` 结尾，否则红。发版忘了改，CI 会拦住，而不是等调用方踩坑。
+- **README 同步**：两份 README 都新增「这个仓库怎么验证自己 / How this repository verifies itself」——把 9 条门禁、对应命令、各抓什么列成表，并写明两条原则（「跑不动」也是红；只写在文档里的约束等于默认违规）。脚本清单补 `run_regression.py` / `gate_summary.py` / `audit_field.py`，用例数 107 → 122，action 引用版本从 `@v2.5.0` 更新到 `@v2.5.3`。
+
 ## v2.5.2 (2026-10-18)
 
 ### 🐛 真正的红：`open()` 没写 `encoding`，在英文版 Windows 上读 UTF-8 会炸

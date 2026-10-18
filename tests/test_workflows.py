@@ -5,6 +5,8 @@ nothing on the default branch says so. That is how a repo can be "CI green"
 while a workflow has not executed for weeks.
 """
 
+import json
+
 import pytest
 
 yaml = pytest.importorskip("yaml")
@@ -78,3 +80,28 @@ def test_security_policy_exists(root):
     text = (root / "SECURITY.md").read_text(encoding="utf-8")
     assert "Report a vulnerability" in text or "报告漏洞" in text
     assert "security/advisories/new" in text
+
+
+def test_reusable_workflow_pins_the_current_release(root):
+    """A caller who pins the reusable workflow must get the matching action.
+
+    readiness-gate.yml hardcodes the action tag so that `@vX.Y.Z` behaviour is
+    frozen end to end. That promise only holds if the tag moves with the
+    version — which is exactly the kind of thing that rots silently. v2.5.2
+    fixed the action's file encoding and the workflow still pointed at v2.5.0,
+    so callers would have received the broken one.
+    """
+    version = json.loads((root / "package.json").read_text(encoding="utf-8"))["version"]
+    data = _load(root / WORKFLOW_DIR / "readiness-gate.yml")
+
+    pins = [
+        step["uses"]
+        for step in data["jobs"]["gate"]["steps"]
+        if isinstance(step.get("uses"), str) and "readiness-gate" in step["uses"]
+    ]
+    assert pins, "readiness-gate.yml no longer calls the readiness-gate action"
+    stale = [pin for pin in pins if not pin.endswith(f"@v{version}")]
+    assert not stale, (
+        f"package.json is {version} but readiness-gate.yml pins {stale}; "
+        f"callers would get the old action"
+    )
