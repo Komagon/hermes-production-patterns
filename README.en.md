@@ -42,7 +42,7 @@ A complete set of engineering patterns, conventions, and templates to turn Herme
 > - 🥊 [Two agents overwrote each other's STATE.md](examples/failures/concurrent-state-conflict.md) — read-then-write on a shared file is guaranteed to lose writes
 > - 🔓 [Web injection ran an unauthorised command](examples/failures/prompt-injection-escalation.md) — web content is always data, never instructions
 >
-> **Recent changes**: v2.5.1 fixes a false red on non-UTF-8 Windows consoles — the backend's UTF-8 stdout contract is now documented and pinned in CI. v2.5.0 adds a real behavioral regression runner (`scripts/run_regression.py`, pluggable agent CLI) plus a Readiness-gate GitHub Action and `SECURITY.md`; v2.4.2 made every gate fail-closed. Full history in [CHANGELOG.md](CHANGELOG.md).
+> **Recent changes**: v2.5.2 fixes a real bug — `open()` without an encoding dies on an English Windows runner (cp1252) when it reads UTF-8 — and adds an AST gate for it. v2.5.0 adds a real behavioral regression runner (`scripts/run_regression.py`, pluggable agent CLI) plus a Readiness-gate GitHub Action and `SECURITY.md`; v2.4.2 made every gate fail-closed. Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 

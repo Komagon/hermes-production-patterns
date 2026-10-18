@@ -68,8 +68,8 @@ runs:
         status=$?
         set -e
 
-        score="$("$PY" -c 'import json,sys;print(json.load(open(sys.argv[1]))["score"])' "$report")"
-        grade="$("$PY" -c 'import json,sys;print(json.load(open(sys.argv[1]))["grade"])' "$report")"
+        score="$("$PY" "$repo/scripts/audit_field.py" "$report" score)"
+        grade="$("$PY" "$repo/scripts/audit_field.py" "$report" grade)"
 
         echo "score=$score" >> "$GITHUB_OUTPUT"
         echo "grade=$grade" >> "$GITHUB_OUTPUT"

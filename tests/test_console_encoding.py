@@ -75,3 +75,13 @@ def test_validate_state_survives_cp1252(root, c1252):
                      [root / "templates" / "STATE.md.template"], c1252)
     assert CRASH not in out, out
     assert code == 0, out
+
+
+def test_audit_field_survives_cp1252(root, tmp_path, c1252):
+    """The grade is Chinese in a zh-CN report, and the action captures it."""
+    report = tmp_path / "report.json"
+    report.write_text('{"score": 60, "grade": "需要加固"}', encoding="utf-8")
+    code, out = _run(root / "scripts" / "audit_field.py", [report, "grade"], c1252)
+    assert CRASH not in out, out
+    assert "需要加固" in out
+    assert code == 0, out

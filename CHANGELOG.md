@@ -1,8 +1,32 @@
 # Changelog
 
+## v2.5.2 (2026-10-18)
+
+### 🐛 真正的红：`open()` 没写 `encoding`，在英文版 Windows 上读 UTF-8 会炸
+
+v2.5.1 修的是「测试假装自己是 UTF-8」，修完 CI 还是红。拿到真实堆栈后才看清：
+
+```
+UnicodeDecodeError: 'charmap' codec can't decode byte 0x8d in position 579
+```
+
+`readiness-gate` action 里用内联 `python -c 'json.load(open(sys.argv[1]))["score"]'` 读报告。`open()` 不写 `encoding` 就用**系统 ANSI 代码页**：GitHub 的 Windows 运行器是英文版，代码页 1252，而 `hpp audit --json` 输出的是 UTF-8，`0x8d` 在 cp1252 里是未定义字节——直接抛异常。于是 action 一个分数都没报出来，测试断言 `'score=0' in ''` 才失败。
+
+这个 bug 在我本机永远复现不了：cp936（GBK）几乎能解任何字节序列，中文 Windows 上「UTF-8 文件用默认编码读」看起来一直是对的。**这是本仓库最想防的那类问题——不是逻辑错，是环境假设错。**
+
+- **`scripts/audit_field.py`（新）**：把「从报告里取字段」从 YAML 里的内联 Python 挪成可导入、可测试的脚本，显式 `encoding="utf-8"`。action 改为调用它。
+- **两处同族隐患一并修掉**：`cli/hpp.py` 的 `open(os.devnull, 'w')`、`check_docs_consistency.py` 里 `git tag` 的 `subprocess.run(text=True)` 都补上 `encoding`。
+- **加机械门禁 `tests/test_file_encoding.py`（7 例）**：
+  - AST 扫描 `cli/` 与 `scripts/` 下所有随仓库运行的 Python，**任何文本模式 `open()` / `read_text()` / `write_text()` 缺 `encoding=` 就红**；
+  - 扫描 `.github/workflows/*.yml` 与 `.github/actions/**/action.yml` 的 `run:` 块，**禁止内联 `python -c`**——这类代码测不到，正是本次踩坑的地方。
+  - 这条门禁本身就是本仓库的公约：只写在文档里的约束等于默认违规（反模式 #13）。
+- **`scripts/audit_field.py` 的测试（6 例）**：字段顺序、含中文的报告、缺字段返回空串但退出 0、报告缺失/损坏时退出 2 且不打 `Traceback`。
+
 ## v2.5.1 (2026-10-18)
 
 ### 🩹 修 v2.5.0 在 Windows CI 上的红：判定的 UTF-8 契约没写下来
+
+> 这一版是必要的，但不充分——CI 仍红，真因见 v2.5.2。
 
 v2.5.0 推上去之后 `Unit Tests (windows-latest)` 红了，Ubuntu 绿。原因不在被测代码，在**测试自己没说清契约**：`run_regression.py` 一直按 UTF-8 解码后端 stdout，而测试里的假后端是 `python -c "print('独立检查')"`——在 ANSI 代码页 1252 的 Windows 运行器上，`print` 写中文直接 `UnicodeEncodeError`，子进程退出 1，判定按 fail-closed 记 `FAIL`，测试却断言它该 `PASS`。本机（代码页 936）能过，所以一直没暴露。
 

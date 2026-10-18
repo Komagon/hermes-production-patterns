@@ -114,7 +114,8 @@ else:
 
     try:
         tags = subprocess.run(["git", "tag", "--list"], cwd=ROOT,
-                              capture_output=True, text=True, timeout=10).stdout.split()
+                              capture_output=True, text=True, encoding="utf-8",
+                              errors="replace", timeout=10).stdout.split()
     except (OSError, subprocess.SubprocessError):
         tags = []
     if not tags:

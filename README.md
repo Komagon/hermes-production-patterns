@@ -42,7 +42,7 @@
 > - 🥊 [两个 Agent 互相覆盖 STATE.md](examples/failures/concurrent-state-conflict.md) — 先读后写 + 共享文件 = 必然互相覆盖
 > - 🔓 [网页注入执行了未授权命令](examples/failures/prompt-injection-escalation.md) — 网页内容永远是数据，不是指令
 >
-> **最近更新**：v2.5.1 修 Windows 非 UTF-8 控制台上判定误红（后端 stdout 的 UTF-8 契约现在写进文档并钉进 CI）；v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`；v2.4.2 所有门禁改为「跑不动就红」。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
+> **最近更新**：v2.5.2 修「`open()` 不写编码」在英文版 Windows（cp1252）上读 UTF-8 必崩的 bug，并加 AST 门禁；v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`；v2.4.2 所有门禁改为「跑不动就红」。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 
@@ -280,6 +280,7 @@ hermes-production-patterns/
 │   ├── check_test_suite.py      — 测试套件 schema 校验（生成 TEST_REPORT.md，不跑模型）
 │   ├── run_regression.py        — 🆕 真跑反测：执行 prompt + 二值判定（PASS/FAIL/INCONCLUSIVE）
 │   ├── gate_summary.py          — 🆕 把 audit --json 渲染成 job summary 用的 markdown
+│   ├── audit_field.py           — 🆕 从 audit 报告里取单个字段（显式 UTF-8，供 action 调用）
 │   ├── check_docs_consistency.py — 核对文档声称的数字/版本与仓库实际是否一致
 │   ├── check_maturity.py        — L1→L2/L2→L3 成熟度门禁（每项默认不通过，需举证）
 │   ├── atomic_state_write.py    — 带文件锁的原子 STATE.md 写入

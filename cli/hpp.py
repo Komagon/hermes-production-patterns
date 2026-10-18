@@ -40,7 +40,7 @@ for _stream in (sys.stdout, sys.stderr):
 HPP_ROOT = Path(__file__).resolve().parents[1]
 
 # Configure logging for sensitive information (not printed to stdout)
-_log_handler = logging.StreamHandler(stream=open(os.devnull, 'w'))
+_log_handler = logging.StreamHandler(stream=open(os.devnull, 'w', encoding="utf-8"))
 _logger = logging.getLogger("hpp_security")
 _logger.addHandler(_log_handler)
 _logger.setLevel(logging.WARNING)
