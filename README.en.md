@@ -42,7 +42,7 @@ A complete set of engineering patterns, conventions, and templates to turn Herme
 > - 🥊 [Two agents overwrote each other's STATE.md](examples/failures/concurrent-state-conflict.md) — read-then-write on a shared file is guaranteed to lose writes
 > - 🔓 [Web injection ran an unauthorised command](examples/failures/prompt-injection-escalation.md) — web content is always data, never instructions
 >
-> **Recent changes**: v2.5.3 pins the reusable readiness-gate workflow to its own release (a new gate keeps the pin from rotting) and adds [How this repository verifies itself](#how-this-repository-verifies-itself). v2.5.2 fixes a real bug — `open()` without an encoding dies on an English Windows runner (cp1252) when it reads UTF-8. v2.5.0 adds a real behavioral regression runner (`scripts/run_regression.py`, pluggable agent CLI) plus a Readiness-gate GitHub Action and `SECURITY.md`; v2.4.2 made every gate fail-closed. Full history in [CHANGELOG.md](CHANGELOG.md).
+> **Recent changes**: v2.5.4 automates releases — pushing a tag publishes a GitHub Release whose notes come straight from the CHANGELOG — and backfills the six versions that never got one. v2.5.3 pins the reusable readiness-gate workflow to its own release (a new gate keeps the pin from rotting). v2.5.2 fixes a real bug: `open()` without an encoding dies on an English Windows runner (cp1252) when it reads UTF-8. v2.5.0 adds a real behavioral regression runner (`scripts/run_regression.py`, pluggable agent CLI) plus a Readiness-gate GitHub Action and `SECURITY.md`. Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -92,7 +92,7 @@ The report lands in `BEHAVIOR_REPORT.md` with PASS / FAIL / N/A columns; failure
 # .github/workflows/readiness.yml
 jobs:
   readiness:
-    uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.3
+    uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.4
     with:
       path: "."
       fail-under: 85
@@ -101,7 +101,7 @@ jobs:
 Or the single-step action, inside an existing job (run `actions/setup-python` first):
 
 ```yaml
-- uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.3
+- uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.4
   with:
     path: "."
     fail-under: 85
@@ -263,6 +263,7 @@ hermes-production-patterns/
 │   ├── run_regression.py        — 🆕 Behavioral regression: executes prompts, judges PASS/FAIL/INCONCLUSIVE
 │   ├── gate_summary.py          — 🆕 Renders `audit --json` into a job-summary table
 │   ├── audit_field.py           — 🆕 Reads one field out of an audit report (explicit UTF-8, used by the action)
+│   ├── publish_release.py       — 🆕 Turns a CHANGELOG section into a GitHub Release (runs on tag push)
 │   ├── lint.js                  — 🆕 Pattern Linter (SKILL.md/STATE.md checks)
 │   ├── doctor.py                — 🆕 Pattern recommendation engine (interactive Q&A)
 │   └── ...
@@ -294,6 +295,7 @@ hermes-production-patterns/
 | Suite schema | `python scripts/check_test_suite.py` | `test-prompts.json` field validity (no model calls) |
 | STATE.md | `python scripts/validate_state.py` | Every shipped STATE.md conforms to the schema |
 | Behavioural regression | `python scripts/run_regression.py` | Actually runs the 36 prompts — **manual and paid**, not part of default CI |
+| Release sync | `python scripts/publish_release.py --all-missing --dry-run` | Every tag with a changelog section has a release, and the release notes are that section (CI publishes on tag push and backfills on main) |
 
 Two rules:
 

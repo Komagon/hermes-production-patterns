@@ -1,6 +1,6 @@
 # Test Suite Report
 
-**Generated**: 2026-10-18 07:30 UTC
+**Generated**: 2026-10-18 09:03 UTC
 **Source**: `test-prompts.json` (36 entries)
 
 > **Scope: schema validation only.** No model was called and no prompt was

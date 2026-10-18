@@ -1,0 +1,64 @@
+name: release
+
+# Publishing a release is the one step that used to happen by hand, and it
+# stopped happening: tags v2.4.1 … v2.5.3 were pushed while the Releases page
+# stayed at v2.4.0. The release notes already exist as `## vX.Y.Z` sections of
+# CHANGELOG.md, so the only thing missing was something to copy them across.
+#
+#   tag push        → publish that tag
+#   push to main    → publish every tagged version that has no release yet
+#                     (only when the release machinery or the changelog changed)
+#
+# `paths` is not evaluated for tag pushes, which is what makes the single
+# `push` block below do both jobs.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths:
+      - CHANGELOG.md
+      - scripts/publish_release.py
+      - .github/workflows/release.yml
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (leave empty to publish every missing one)"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out with tags
+        uses: actions/checkout@v7
+        with:
+          # publish_release.py lists tags and checks that they exist.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -eu
+          if [ -n "${INPUT_TAG}" ]; then
+            python scripts/publish_release.py --tag "${INPUT_TAG}"
+          elif [ "${REF_TYPE}" = "tag" ]; then
+            python scripts/publish_release.py --tag "${REF_NAME}"
+          else
+            python scripts/publish_release.py --all-missing
+          fi

@@ -1,5 +1,19 @@
 # Changelog
 
+## v2.5.4 (2026-10-18)
+
+### 🏷️ 发布一直是手工的，于是它停了
+
+`git tag` 一路推到 v2.5.3，Releases 页面却停在 v2.4.0——**有 6 个 tag 没有对应的 release**（v2.4.1、v2.4.2、v2.5.0、v2.5.1、v2.5.2、v2.5.3）。发版说明其实早就写在 `CHANGELOG.md` 里，缺的只是「把它复制到 GitHub 上」这一步；而手工步骤的典型失败方式就是**静默不做**。
+
+- **`scripts/publish_release.py`（新）**：从 `CHANGELOG.md` 的 `## vX.Y.Z` 段取发布说明，交给 `gh release create`。`--tag` 发单个，`--all-missing` 补齐所有「有 tag、有 changelog 段、还没 release」的版本（按版本号升序发布，保证 latest 落在最新版），`--dry-run` 只打印。
+  - 标题取该段第一个 `###` 副标题，拼成 `v2.5.4 — 🏷️ ...`。
+  - 没有 changelog 段的 tag 跳过（历史上有 `v2.0.00` 这种没写说明的）；非 semver tag（如 `v1.0.0.11`）忽略。
+  - **dry-run 不说谎**：没有 `gh` 时明确打印「无法确认是否已发布」，而不是假装每个都要发。
+- **`.github/workflows/release.yml`（新）**：`push: tags: [v*]` 发布该 tag；`push: main`（仅当 CHANGELOG / 本脚本 / 本 workflow 变动）执行 `--all-missing` 补历史；另留 `workflow_dispatch` 手动补。`permissions: contents: write`。
+- **补齐 6 个漏发的 release**：v2.4.1 / v2.4.2 / v2.5.0 / v2.5.1 / v2.5.2 / v2.5.3 现在都有页面，正文就是各自的 changelog 段。v2.5.1 那段里「这一版是必要的，但不充分——CI 仍红」照原样保留：历史不该被润色。
+- **测试 11 例**：changelog 分段（边界、副标题缺失）、版本号按数值而非字典序排序、非 semver 拒绝、dry-run 不调 `gh`、缺段落退出 2。
+
 ## v2.5.3 (2026-10-18)
 
 ### 📌 可复用 workflow 钉住的 action 版本会漂，现在有门禁

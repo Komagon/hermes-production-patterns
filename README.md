@@ -42,7 +42,7 @@
 > - 🥊 [两个 Agent 互相覆盖 STATE.md](examples/failures/concurrent-state-conflict.md) — 先读后写 + 共享文件 = 必然互相覆盖
 > - 🔓 [网页注入执行了未授权命令](examples/failures/prompt-injection-escalation.md) — 网页内容永远是数据，不是指令
 >
-> **最近更新**：v2.5.3 可复用 readiness-gate workflow 钉住自身版本（新门禁保证不漂）+ README 新增[「这个仓库怎么验证自己」](#这个仓库怎么验证自己)；v2.5.2 修「`open()` 不写编码」在英文版 Windows（cp1252）上读 UTF-8 必崩的 bug；v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`；v2.4.2 所有门禁改为「跑不动就红」。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
+> **最近更新**：v2.5.4 发布自动化——tag 推上去就发 GitHub Release，说明直接取 CHANGELOG，并补齐 6 个漏发的版本；v2.5.3 可复用 readiness-gate workflow 钉住自身版本（新门禁保证不漂）；v2.5.2 修「`open()` 不写编码」在英文版 Windows（cp1252）上读 UTF-8 必崩的 bug；v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 
@@ -94,7 +94,7 @@ python scripts/run_regression.py --backend replay --recordings tests/recordings
 # .github/workflows/readiness.yml
 jobs:
   readiness:
-    uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.3
+    uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.4
     with:
       path: "."
       fail-under: 85
@@ -103,7 +103,7 @@ jobs:
 也可以只用单步 action，接在你已有的 job 里（需先 `actions/setup-python`）：
 
 ```yaml
-- uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.3
+- uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.4
   with:
     path: "."
     fail-under: 85
@@ -283,6 +283,7 @@ hermes-production-patterns/
 │   ├── run_regression.py        — 🆕 真跑反测：执行 prompt + 二值判定（PASS/FAIL/INCONCLUSIVE）
 │   ├── gate_summary.py          — 🆕 把 audit --json 渲染成 job summary 用的 markdown
 │   ├── audit_field.py           — 🆕 从 audit 报告里取单个字段（显式 UTF-8，供 action 调用）
+│   ├── publish_release.py       — 🆕 从 CHANGELOG 段生成 GitHub Release（tag 推上去就发）
 │   ├── check_docs_consistency.py — 核对文档声称的数字/版本与仓库实际是否一致
 │   ├── check_maturity.py        — L1→L2/L2→L3 成熟度门禁（每项默认不通过，需举证）
 │   ├── atomic_state_write.py    — 带文件锁的原子 STATE.md 写入
@@ -325,6 +326,7 @@ hermes-production-patterns/
 | 套件 schema | `python scripts/check_test_suite.py` | `test-prompts.json` 的字段合法性（不跑模型） |
 | STATE.md | `python scripts/validate_state.py` | 每个随仓库发布的 STATE.md 是否符合 schema |
 | 行为回归 | `python scripts/run_regression.py` | 真跑 36 条 prompt——**手动触发、会花钱**，不在默认 CI 里 |
+| 发布同步 | `python scripts/publish_release.py --all-missing --dry-run` | 每个有 changelog 段的 tag 是否都有对应 release；发布说明是否就是 CHANGELOG 那一段（CI 在 tag 推送时自动发，main 变动时补历史） |
 
 两条原则：
 
