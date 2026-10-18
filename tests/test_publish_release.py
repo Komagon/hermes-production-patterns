@@ -96,13 +96,15 @@ def test_non_semver_tag_exits_2(mod, capsys):
 
 
 def test_all_missing_dry_run_covers_tagged_versions(mod, capsys, monkeypatch):
-    # Force every tag to look unreleased so the test does not depend on the
-    # current state of the GitHub Releases page (which may already be up-to-date).
+    # The test must not depend on the current state of the GitHub Releases page
+    # *or* on the CI git fetch depth (shallow clones have no tags).
+    monkeypatch.setattr(mod, "tagged_versions", lambda: ["v2.5.3", "v2.5.2"])
     monkeypatch.setattr(mod, "release_exists", lambda tag: False)
     code = mod.main(["publish_release.py", "--all-missing", "--dry-run"])
     assert code == 0
     out = capsys.readouterr().out
     assert "would create release v2.5.3" in out
+    assert "would create release v2.5.2" in out
     assert "0 failed" in out
 
 
