@@ -1,7 +1,7 @@
 ---
 name: skill-evolution
 description: "技能进化管理 — 如何从 v1 升级到 v2，不破坏现有工作流"
-version: 1.3.3
+version: 1.3.4
 author: Komagon / Hermes Production Patterns
 license: MIT
 platforms: [linux, macos, windows]
@@ -10,7 +10,7 @@ metadata:
     tags: [production, pattern, convention, skill, evolution, lifecycle]
     category: conventions
     related_skills: [maker-checker, state-file-pattern, evolution-gate]
-migration: "v1.2.0 → v1.3.0:新增「回归反测集」章节(借鉴 dao-skill test-prompts.json);v1.3.0 → v1.3.1:澄清反测覆盖范围(14 个行为契约技能,capability-map 豁免)与运行范围(升级跑映射条目/发版跑全量/失败处置);v1.3.1 → v1.3.2:反测集补硬门禁判定纪律(N/A 与验证失败分离/横切技能强制门禁/分数封顶,借鉴 iFixAi);v1.3.2 → v1.3.3:新增变更后自动验证强制 hook(改 skill 必跑 ①routing_check+capability_probe ②反向引用 grep ③反测,缺项不结项)"
+migration: "v1.2.0 → v1.3.0:新增「回归反测集」章节(借鉴 dao-skill test-prompts.json);v1.3.0 → v1.3.1:澄清反测覆盖范围(14 个行为契约技能,capability-map 豁免)与运行范围(升级跑映射条目/发版跑全量/失败处置);v1.3.1 → v1.3.2:反测集补硬门禁判定纪律(N/A 与验证失败分离/横切技能强制门禁/分数封顶,借鉴 iFixAi);v1.3.2 → v1.3.3:新增变更后自动验证强制 hook(改 skill 必跑 ①routing_check+capability_probe ②反向引用 grep ③反测,缺项不结项);v1.3.3 → v1.3.4:反测新增机械跑法 scripts/run_regression.py(判定 fail-closed,INCONCLUSIVE 只认运行前写好的 sentinel)"
 hpp_category: evolution
 hpp_en: "Evolve skills v1 to v2 without breaking current users."
 hpp_maturity: L2
@@ -98,6 +98,7 @@ version: 1.2.0
   - 用户反馈「不对 / 不好用 / 还是老样子」→ 先跑对应反测定位是技能缺陷还是 Agent 未遵守
   - evolution-gate G5 回归对比 → 反测条目即回归测试资产
 - **怎么跑**:把条目的 `prompt` 喂给 Agent(或复盘历史会话),检查行为是否命中所有 `assertions`、未触任何 `forbidden`。结构检查(SKILL.md 格式/语法)不等于行为反测——dry-run 不能当已验证。
+  - **机械跑法**:`python scripts/run_regression.py --backend command --command "<你的 agent> --prompt {prompt}" --system-file AGENTS.md`。判定 fail-closed(后端无响应/空输出/无断言一律 FAIL),`INCONCLUSIVE` 只认条目里运行前写好的 `"na"` sentinel——这样它才和下面「硬门禁判定纪律」是同一条规矩,而不是两套。
 - **新增条目规则**:每修复一个「真实发生的失败模式」,就补一条能暴露旧失败的反测条目;同根同触发合并进现有条目,不无脑堆条目(防膨胀,呼应瘦身原则)。
 - **铁律**:改完技能不跑反测 = 改完技能不验证 = 禁止宣称完成。
 - **范围说明**:任何技能 major/minor 升级后只跑该技能映射的 1-2 条(按下方速查表 1:1 查表);全量 36 条只在发版 tag 前跑,或当被改技能是横切技能(`evolution-gate` / `pattern-composition`,它们影响其他技能的验证方式)时跑。条目失败时:先重跑一次排除偶发,再犯则按 Deploy-or-Rollback 回滚,修复该条目后才允许合并——这是 G5 数据闸的落地形态。

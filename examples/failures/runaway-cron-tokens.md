@@ -1,5 +1,7 @@
 # 失败案例: Cron Job 一夜烧光 Token
 
+> **如果你只记一句话**：没有 `max_iterations` 和 token 预算的 cron，等于把信用卡交给一个不会累的员工——他不会恶意消费，但也不会停下来。
+
 ## 场景描述
 
 团队配置了一个每小时执行的 cron job，用于监控 GitHub Issues 并自动分类标签。

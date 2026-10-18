@@ -1,0 +1,45 @@
+version: 2
+
+updates:
+  # Runtime is stdlib-only on purpose; these are the test/dev tools, which live
+  # in tests/requirements-dev.txt.
+  - package-ecosystem: "pip"
+    directory: "/tests"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(deps)"
+    labels: ["dependencies"]
+    groups:
+      dev-dependencies:
+        patterns: ["*"]
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    commit-message:
+      prefix: "chore(deps)"
+    labels: ["dependencies"]
+    groups:
+      dev-dependencies:
+        patterns: ["*"]
+
+  # Pinned actions are the one place a supply-chain compromise would run with
+  # this repo's token, so they get their own weekly check.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(ci)"
+    labels: ["dependencies", "ci"]
+    groups:
+      actions:
+        patterns: ["*"]

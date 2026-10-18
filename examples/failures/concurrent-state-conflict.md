@@ -1,5 +1,7 @@
 # 失败案例: 并发写入 STATE.md — 两个 Agent 互相覆盖
 
+> **如果你只记一句话**：先读后写 + 共享一个文件 = 必然互相覆盖；要么加锁（`atomic_state_write.py`），要么一人一个 STATE。
+
 ## 场景描述
 
 团队部署了两个并行的 Hermes Agent：

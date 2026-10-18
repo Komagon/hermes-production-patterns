@@ -511,7 +511,10 @@ def cmd_audit(args) -> int:
 
     threshold = getattr(args, "fail_under", 0) or 0
     if total < threshold:
-        print(f"\naudit FAIL: {total} < --fail-under {threshold}")
+        # In --json mode stdout must stay parseable: a consumer piping it into
+        # jq must not have to strip a human-readable failure line first.
+        stream = sys.stderr if getattr(args, "json", False) else sys.stdout
+        print(f"audit FAIL: {total} < --fail-under {threshold}", file=stream)
         return 1
     return 0
 

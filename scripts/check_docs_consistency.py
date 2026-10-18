@@ -60,7 +60,7 @@ def check_count(label, expected, patterns):
         text = read(doc)
         found = claims(pattern, text)
         if not found:
-            skip(f"{label}: no claim found in {doc}")
+            skip(f"{label}: no match for /{pattern}/ in {doc}")
             continue
         seen |= found
         for n in sorted(found):
@@ -74,6 +74,9 @@ print("=== docs consistency ===")
 
 conv = sorted(p for p in (ROOT / "conventions").glob("*.md"))
 check_count("conventions", len(conv), [
+    # Both the prose ("全部 21 个公约") and the repo tree use this phrasing now;
+    # the tree used to say "20 个 pattern" and drifted for months because no
+    # pattern looked at it.
     ("README.md", r"(\d+)\s*个公约"),
     ("README.en.md", r"(?<![\d.])(\d+)\s+conventions"),
     ("README.en.md", r"(?<![\d.])(\d+)\s+patterns\b"),
@@ -137,6 +140,26 @@ if missing:
         fail(f"frontmatter: {m_}")
 else:
     ok(f"frontmatter complete for {len(conv)} conventions")
+
+# Files the project promises to ship. A missing one is a broken promise, not a
+# missing file: SECURITY.md is referenced from the repo's own threat model, and
+# dependabot.yml silently does nothing when absent.
+REQUIRED_FILES = [
+    "SECURITY.md",
+    ".github/dependabot.yml",
+    ".gitattributes",
+    "pytest.ini",
+    "tests/requirements-dev.txt",
+    "scripts/run_regression.py",
+    "scripts/gate_summary.py",
+    ".github/actions/readiness-gate/action.yml",
+]
+absent = [f for f in REQUIRED_FILES if not (ROOT / f).exists()]
+if absent:
+    for f in absent:
+        fail(f"required file missing: {f}")
+else:
+    ok(f"all {len(REQUIRED_FILES)} required files present")
 
 print()
 if failures:

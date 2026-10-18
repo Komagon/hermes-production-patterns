@@ -1,0 +1,86 @@
+name: "hpp Readiness Gate"
+description: >-
+  Score a repository against the Hermes production-readiness checks and fail the
+  build when it drops below a threshold. Evidence is read from file *contents*,
+  so naming a file monitor.md does not count as having a monitor.
+author: "Komagon"
+branding:
+  icon: "shield"
+  color: "purple"
+
+inputs:
+  path:
+    description: "Directory to score, relative to the workspace."
+    required: false
+    default: "."
+  fail-under:
+    description: "Minimum score (0-100). The step fails below this value."
+    required: false
+    default: "85"
+  python:
+    description: "Python interpreter. Run actions/setup-python first."
+    required: false
+    default: "python3"
+  summary:
+    description: "Write a markdown table to the job summary (true/false)."
+    required: false
+    default: "true"
+
+outputs:
+  score:
+    description: "Production Readiness score, 0-100."
+    value: ${{ steps.audit.outputs.score }}
+  grade:
+    description: "Production Ready / Needs Hardening / Prototype."
+    value: ${{ steps.audit.outputs.grade }}
+  report:
+    description: "Path to the JSON report that was produced."
+    value: ${{ steps.audit.outputs.report }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: audit
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_FAIL_UNDER: ${{ inputs.fail-under }}
+        INPUT_SUMMARY: ${{ inputs.summary }}
+        PY: ${{ inputs.python }}
+      run: |
+        set -eu
+
+        # github.action_path points at <repo>/.github/actions/readiness-gate
+        repo="$(cd "${{ github.action_path }}/../../.." && pwd)"
+        cli="$repo/cli/hpp.py"
+        if [ ! -f "$cli" ]; then
+          echo "::error::hpp CLI not found at $cli"
+          exit 2
+        fi
+        if ! command -v "$PY" >/dev/null 2>&1; then
+          echo "::error::$PY not found — add actions/setup-python before this action"
+          exit 2
+        fi
+
+        report="${RUNNER_TEMP:-/tmp}/hpp-audit.json"
+        set +e
+        "$PY" "$cli" audit "$INPUT_PATH" --json --fail-under "$INPUT_FAIL_UNDER" > "$report"
+        status=$?
+        set -e
+
+        score="$("$PY" -c 'import json,sys;print(json.load(open(sys.argv[1]))["score"])' "$report")"
+        grade="$("$PY" -c 'import json,sys;print(json.load(open(sys.argv[1]))["grade"])' "$report")"
+
+        echo "score=$score" >> "$GITHUB_OUTPUT"
+        echo "grade=$grade" >> "$GITHUB_OUTPUT"
+        echo "report=$report" >> "$GITHUB_OUTPUT"
+        echo "::notice::Production Readiness $score/100 ($grade)"
+
+        if [ "$INPUT_SUMMARY" = "true" ] && [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+          "$PY" "$repo/scripts/gate_summary.py" --json "$report" >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+        if [ "$status" -ne 0 ]; then
+          echo "::error::Production Readiness $score/100 is below the required $INPUT_FAIL_UNDER"
+        fi
+        exit "$status"

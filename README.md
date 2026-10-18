@@ -35,20 +35,14 @@
 
 把 Hermes Agent 从「聊天玩具」变成「7x24 小时自主工作的生产系统」所需的全部工程模式、公约和模板。
 
-> 🚀 **v2.0.0（2026-08-31）Productization Phase**：从 Pattern Library 升级为 Production Engineering System——新增 **6 个 Starter Kits**（`starter-kits/`，cp -r 开跑）、**5 个官方 Production Stacks**（`stacks/`，Opinionated Defaults）、**10-Minute Quick Start**（`quickstart.md`）、**7 个 Production Recipes**（`recipes/`，九节齐全的完整工程方案）、**Production Audit 规范 + Readiness Score**（`audit/`）、**兼容性矩阵**（`compatibility/`）、**hpp CLI**（`cli/`，init/add/validate/audit/doctor）；Router 2.0 升级为 Problem→Diagnosis 问题式入口；网站导航重组为 START HERE / BUILD / UNDERSTAND / VALIDATE。核心不再是 More Patterns，而是 **MAKE PATTERNS USABLE.** 详见 CHANGELOG v2.0.0。
-> 🆕 **2026-09 已同步 Hermes 最新能力**：浏览器自动化（browser_navigate/snapshot/click/vision/console）、消息网关（QQ 官方 Bot platforms.qqbot）、多模态产出（image_generate 配图 + text_to_speech）、检索强化（zg/hybrid_retrieve 三层+RRF）。全部能力在真实环境跑出验证案例 `examples/capability-verification-2026-09.md`，能力表升级至 v1.4.0。详见 CHANGELOG v2.2.0。
+> **先看失败，再看模式。** 四篇从真实事故抽象出来的复盘，每篇开篇一句「如果你只记一句话」：
 >
-> ⚖️ **v2.4.0（2026-09-30）判断层落地**：新增公约 `decision-contract`（**决策契约**：判断/授权/执行三分离；类型 choice/score/noul；后端链 rule→cache→local→jev→llm→human；三段门按 type 分阈值；收据含完整降级轨迹；Record & Replay 逐字复现；离线评测标定）。配套：`data-driven-optimization` v1.1.0 新增「标定闭环」（分离度检验/弃权单列/有序档位用档位距离），`human-escalation` v1.1.0 新增「弃权语义」（拒答 ≠ 答错），`hermes-capability-map` v1.5.0 首次覆盖**判断层**并新增「外部工具目录（MCP 延迟加载）」「多代理任务编排（kanban 工具族）」两族。反测集 30→36 条（覆盖 20 个行为契约模式）。8 个决策的实测基线见 `examples/decision-os-baseline-2026-09.md`。详见 CHANGELOG v2.4.0。
+> - 💸 [一夜烧掉 $47 token](examples/failures/runaway-cron-tokens.md) — 没有 `max_iterations` 和预算的 cron，等于把信用卡交给一个不会累的员工
+> - 🕳️ [连续 3 天产出错误报告](examples/failures/silent-data-corruption.md) — 上游 schema 变了不会报错，只会安静地错
+> - 🥊 [两个 Agent 互相覆盖 STATE.md](examples/failures/concurrent-state-conflict.md) — 先读后写 + 共享文件 = 必然互相覆盖
+> - 🔓 [网页注入执行了未授权命令](examples/failures/prompt-injection-escalation.md) — 网页内容永远是数据，不是指令
 >
-> 🧪 **v2.3.2（2026-09-07）**：Trace Engineering 吸收——`control-flow-separation` v1.2.0 新增「工具侧效标注」：工具静态分类 `READ_ONLY`（纯查询，可安全重放）/ `MUTATING`（写操作，重放走沙箱 + approval）；`capability-registry.json` 机器可读化（13 能力全部标注 `side_effect`，6 RO / 7 MU），`capability_probe.py` 刷新时保留。是 anti-patterns #13「规则写两遍」在工具层的机械层落地。
->
-> 🧪 **v2.3.1（2026-09-07）**：`anti-patterns` v1.2.0 —— 反模式目录补齐 10-12（事后加载技能/过度确认/死马当活马医）+ 新增 #13「纯提示词约束」：硬规则只靠提示词 = 默认违规，纠正 = 规则写两遍（指引层让 agent 理解 + 机械层让 agent 绕不过：pre_tool_call 拦截/approval/enabled_toolsets/密钥扫描）。
->
-> 🧪 **v2.3.0（2026-09-07）**：三篇 X/GitHub 项目吸收——① `skill-evolution` v1.3.3：「硬门禁判定纪律」（N/A 与验证失败分离/横切技能强制门禁/分数封顶）+「变更后自动验证 hook」（改技能必跑 ①routing_check+capability_probe ②反向引用 grep ③反测)；② `cron-job-pattern` v1.1.1：「频率×可逆性任务遴选」（频率/可验证/可逆三条门槛）；③ `state-file-pattern` v1.1.1：「变更收据」（state+evidence+unresolved risk 三件套）。详见 CHANGELOG v2.3.0。
->
-> 🧠 **v1.03.00（2026-08-20）**：新增 3 个实战模式——自更新安全流程（`self-update-pattern`，autostash 坑 + 测试失败基线）、Memory OS（`memory-os-pattern`，五层记忆 + 向量/图谱/RRF + 写侧纪律）、进化闸门（`evolution-gate`，G1-G5 + 五维评估 + 回归闭环）。详见 CHANGELOG v1.03.00。
->
-> 🧪 **v1.04.00（2026-08-27）**：新增回归反测集 `test-prompts.json`（30 条回归提示词，覆盖 19 个行为契约模式——`hermes-capability-map` 为参考映射表不设反测；每条含 assertions/forbidden）；`skill-evolution` 升级 v1.3.0 并内置反测用法（何时跑、怎么跑、新增条目规则）。技能升级验收标准 = 旧失败不再出现 + 旧成功仍然成立。详见 CHANGELOG v1.04.00。
+> **最近更新**：v2.5.0 真跑反测（`scripts/run_regression.py`，可接任意 agent CLI）+ Readiness 门禁 GitHub Action + `SECURITY.md`；v2.4.2 所有门禁改为「跑不动就红」。完整历史见 [CHANGELOG.md](CHANGELOG.md)。
 
 ---
 
@@ -70,6 +64,48 @@
 它不是什么「最佳实践」大合集。每一条模式都来自真实的 7x24 运行环境——在运行数十天、数百次触发的公众号流水线、新闻摘要 Cron、自动更新等场景中反复验证，踩过坑，打过补丁，最终沉淀为可复用的工程公约。
 
 > **如何验证可信度？** 本项目附带 [36 条回归反测提示词](test-prompts.json)（**schema 由 CI 校验；行为验证需手动跑**，见 `conventions/skill-evolution.md`）和 [STATE.md 校验脚本](scripts/validate_state.py)（CI 对每个随仓库发布的 STATE.md 逐一校验）。成熟度分级：🟢 battle-tested（长期生产验证）· 🟡 beta（验证中）· 🔵 experimental（参考性）。
+>
+> **想真的跑一遍？** `scripts/run_regression.py` 会**真的执行**这些 prompt 并做二值判定（`assertions` 必须出现、`forbidden` 必须不出现）。判定是 **fail-closed** 的：后端报错、返回空、条目没有 assertions 一律判 `FAIL`——「没法确认」不等于「通过」。只有条目自带显式 N/A sentinel（`"na": "deprecated: ..."`）才记 `INCONCLUSIVE`，且不计入已验证数。它不绑定模型：
+
+```bash
+# 接你自己的 agent CLI（不经过 shell，prompt 不会被当成命令）
+python scripts/run_regression.py --backend command \
+    --command "hermes run --prompt {prompt}" --system-file AGENTS.md
+
+# 或者接一个托管模型
+ANTHROPIC_API_KEY=... python scripts/run_regression.py \
+    --backend anthropic --model claude-sonnet-4-5 --system-file AGENTS.md
+
+# 再或者，把上次录下来的答案重新判定一遍（离线、不花钱）
+python scripts/run_regression.py --backend replay --recordings tests/recordings
+```
+
+报告写在 `BEHAVIOR_REPORT.md`：PASS / FAIL / N/A 三列，FAIL 附缺失的 assertion 与原文摘录。退出码：有 FAIL 就 1。
+
+### 把 Readiness 门禁装到你自己的仓库
+
+`hpp audit` 打分依据是文件**内容**（一个 0 字节的 `monitor.md` 不算监控），所以可以直接当门禁用：
+
+```yaml
+# .github/workflows/readiness.yml
+jobs:
+  readiness:
+    uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.0
+    with:
+      path: "."
+      fail-under: 85
+```
+
+也可以只用单步 action，接在你已有的 job 里（需先 `actions/setup-python`）：
+
+```yaml
+- uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.0
+  with:
+    path: "."
+    fail-under: 85
+```
+
+输出 `score` / `grade`，并把五维明细写进 job summary；低于阈值时步骤失败。
 
 ### English
 
@@ -155,7 +191,7 @@ hermes-production-patterns/
 ├── LICENSE                      ← MIT
 ├── config.yaml.example          ← Hermes 配置模板
 │
-├── starter-kits/                ← 🚀 v2.0 起步套件（cp -r 开跑）
+├── starter-kits/                ← 6 个 Starter Kits（cp -r 开跑）
 │   ├── basic-agent/             — 最小可运行 Agent（★）
 │   ├── cron-production/         — 定时生产级 Agent（★★）
 │   ├── maker-checker/           — 双角色验证流水线（★★）
@@ -192,7 +228,7 @@ hermes-production-patterns/
 │   ├── hpp.py                   — init / add / validate / audit / doctor
 │   └── README.md
 │
-├── conventions/                 ← 工程公约（核心产出，20 个 pattern）
+├── conventions/                 ← 工程公约（核心产出，21 个公约）
 │   ├── maker-checker.md         — 生成/验证双角色分离
 │   ├── state-file-pattern.md    — STATE.md 跨运行状态管理
 │   ├── control-flow-separation.md — 确定性 vs LLM 控制流
@@ -240,15 +276,26 @@ hermes-production-patterns/
 ├── scripts/                     ← 工具脚本
 │   ├── validate_state.py        — STATE.md Schema 校验
 │   ├── check_test_suite.py      — 测试套件 schema 校验（生成 TEST_REPORT.md，不跑模型）
+│   ├── run_regression.py        — 🆕 真跑反测：执行 prompt + 二值判定（PASS/FAIL/INCONCLUSIVE）
+│   ├── gate_summary.py          — 🆕 把 audit --json 渲染成 job summary 用的 markdown
 │   ├── check_docs_consistency.py — 核对文档声称的数字/版本与仓库实际是否一致
 │   ├── check_maturity.py        — L1→L2/L2→L3 成熟度门禁（每项默认不通过，需举证）
+│   ├── atomic_state_write.py    — 带文件锁的原子 STATE.md 写入
 │   ├── lint.js                  — 🆕 Pattern Linter（SKILL.md/STATE.md 检查）
 │   ├── doctor.py                — 🆕 Pattern 推荐引擎（交互式问答）
 │   └── ...
 │
+├── .github/
+│   ├── workflows/               — CI、站点部署、真跑反测、可复用 readiness-gate
+│   ├── actions/readiness-gate/  — 🆕 composite action：给别的仓库用的 Readiness 门禁
+│   └── dependabot.yml           — 每周检查 actions / pip / npm
+│
+├── SECURITY.md                  — 威胁模型、漏洞上报路径、凭证处理方式
+│
+│
 ├── tests/                       ← 工具链自身的测试（pytest，CI 在 Ubuntu+Windows 双跑）
 │   ├── conftest.py              — 子进程驱动真实 CLI 的 fixture
-│   └── test_*.py                — 72 个用例，覆盖 hpp 5 个子命令 + 8 个脚本
+│   └── test_*.py                — 107 个用例，覆盖 hpp 5 个子命令 + 11 个脚本
 │
 ├── TEST_REPORT.md               ← 测试套件报告（schema 校验，CI 自动生成）
 ├── DOCTOR_REPORT.md             — 🆕 doctor 推荐报告（运行时生成）

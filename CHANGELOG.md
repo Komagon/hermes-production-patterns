@@ -1,5 +1,27 @@
 # Changelog
 
+## v2.5.0 (2026-10-18)
+
+### 🎯 第三阶段：从「模式集」到「可执行的验收标准」
+
+前两阶段把门禁修到「跑不动就红」。这一阶段解决最后一件没说清的事：**谁都可以说自己的模式有效，只有跑过的人不算说。**
+
+- **真跑反测 `scripts/run_regression.py`（新）**：不再只校验 JSON 字段，而是把 36 条 prompt **真的执行**并做二值判定——`assertions` 必须出现、`forbidden` 必须不出现。判定刻意做得很笨（大小写折叠 + NFKC + 空白归一后的子串包含），因为「你没法手工复算的判定不算证据」。
+  - **fail-closed，而不是三态模糊**：后端报错、返回空、条目没有 assertions **一律判 `FAIL`**——这是 `conventions/skill-evolution.md`「硬门禁判定纪律」里早写下的规矩（「没法确认命中」不能拿「不好说」当通过）。初版把它判成 `INCONCLUSIVE` 并默认退出 0，等于自己又违反了一次自己的公约，已改回。`INCONCLUSIVE` 只留给条目**运行前**就写好的 N/A sentinel（`"na": "deprecated: ..."`），且不计入已验证数；全表都是 N/A 时会显式警告「什么都没验证」。
+  - **不绑定模型**：`--backend command` 接任意 agent CLI（prompt 走 argv 单参数或 stdin，**不经过 shell**，prompt 里的 `;`、`$(...)`、反引号都不会被解释）；`--backend openai|anthropic` 直连 HTTP（纯标准库）；`--backend replay` 离线重判上次录下的答案。
+  - `--record` 存答案、`--only`/`--limit` 选子集、`--system-file` 注入公约、`--json` 出机器可读结果，报告写 `BEHAVIOR_REPORT.md`（FAIL 附缺失 assertion 与原文摘录）。
+- **`.github/workflows/behavioral-regression.yml`（新）**：只在 `workflow_dispatch` 与每周一跑——这是唯一花钱的 workflow。没配 secret 时 job **跳过并写明原因**，不伪装成通过。
+- **Readiness 门禁可以装到别人的仓库里**：
+  - `.github/actions/readiness-gate/action.yml`（composite action）：输入 `path` / `fail-under`，输出 `score` / `grade` / `report`，把五维明细写进 job summary，低于阈值让步骤失败。
+  - `.github/workflows/readiness-gate.yml`（可复用 workflow）：`uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.0`。
+  - 新增 `scripts/gate_summary.py` 把 `audit --json` 渲染成 markdown，避免在 YAML 里重写打分逻辑。
+  - `hpp audit --json --fail-under N` 现在把失败信息写到 **stderr**，stdout 保持纯 JSON（`| jq` 不用先剥一行人话）。
+- **失败复盘提到首屏**：`README.md` / `README.en.md` 顶部原来堆着 6 段 changelog，现在换成 4 条真实事故的一句话摘要 + 链接。四篇复盘各加开篇「如果你只记一句话」，`examples/failures/README.md` 索引表新增该列。
+- **`SECURITY.md`（新）**：写清威胁模型（工具会读什么、写什么、密钥检测的能力边界）、支持版本、48 小时确认 / 7 天初步判断的响应时限、凭证如何存放。一个讲密钥管理的项目，这是底线。
+- **`.github/dependabot.yml`（新）**：github-actions / pip / npm 三生态每周聚合更新，按周一分组。
+- **新增 4 个测试文件（共 107 用例）**：`run_regression.py` 的判定与诚实性（后端不可达、缺录制、shell 注入）、`gate_summary.py`、workflow/action/dependabot 的 YAML 合法性、**以及在 bash 里真跑一遍 composite action 的脚本**（action 是最容易「上线才发现坏了」的一块）。
+- **文档一致性检查扩容**：新增「必需文件是否存在」与 `README.md` 里 `N 个 pattern` 的声明核对——这条声明此前写的是 20（实际 21），因为检查器压根没看它，漂了好几个月。
+
 ## v2.4.2 (2026-10-18)
 
 ### 🛡️ 第二阶段：把「靠自觉」的检查改成「跑不动就红」的检查

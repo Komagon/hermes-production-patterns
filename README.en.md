@@ -35,20 +35,14 @@
 
 A complete set of engineering patterns, conventions, and templates to turn Hermes Agent from a "chat toy" into a "7×24 autonomous production system."
 
-> 🚀 **v2.0.0 (2026-08-31) Productization Phase**: Upgraded from Pattern Library to Production Engineering System — **6 Starter Kits** (`starter-kits/`, just `cp -r` to start), **5 official Production Stacks** (`stacks/`, Opinionated Defaults), **10-Minute Quick Start** (`quickstart.md`), **7 Production Recipes** (`recipes/`, nine complete engineering solutions), **Production Audit spec + Readiness Score** (`audit/`), **Compatibility Matrix** (`compatibility/`), **hpp CLI** (`cli/`, init/add/validate/audit/doctor); Router 2.0 upgraded to Problem→Diagnosis question-based entry; site navigation reorganized into START HERE / BUILD / UNDERSTAND / VALIDATE. The core goal is no longer More Patterns — it is **MAKE PATTERNS USABLE.** See CHANGELOG v2.0.0.
-> 🆕 **2026-09 — synced with the latest Hermes capabilities**: Browser automation (`browser_navigate`/`snapshot`/`click`/`vision`/`console`), messaging gateway (QQ official Bot via `platforms.qqbot`), multimodal output (`image_generate` for diagrams + `text_to_speech`), enhanced retrieval (`zg`/`hybrid_retrieve`, three-layer + RRF). Every capability has a verified run in a real environment (`examples/capability-verification-2026-09.md`), and the capability map is bumped to v1.4.0. See CHANGELOG v2.2.0.
+> **Start with the failures, not the patterns.** Four post-mortems abstracted from real incidents — each opens with a one-line "if you remember only one thing":
 >
-> ⚖️ **v2.4.0 (2026-09-30) Judgment layer**: new convention `decision-contract` — separate the judgment from the permission from the action (types choice/score/noul; backend chain rule→cache→local→jev→llm→human; three-band gate with per-type thresholds; receipts carrying the full fallback trail; Record & Replay for byte-identical decisions; offline eval for calibration). Companion updates: `data-driven-optimization` v1.1.0 "calibration loop" (confidence separation test, abstention counted separately, ordinal bands measured by rank distance), `human-escalation` v1.1.0 "abstention is not a wrong answer", `hermes-capability-map` v1.5.0 covering the **judgment layer** plus two new families (deferred MCP tool catalog, kanban multi-agent orchestration). Regression suite 30→36 prompts (20 behavioral-contract patterns). Measured baselines for 8 decisions: `examples/decision-os-baseline-2026-09.md`. See CHANGELOG v2.4.0.
+> - 💸 [Burned $47 of tokens overnight](examples/failures/runaway-cron-tokens.md) — a cron without `max_iterations` and a budget is a credit card handed to an employee who never sleeps
+> - 🕳️ [Three days of wrong reports](examples/failures/silent-data-corruption.md) — an upstream schema change does not raise; it just quietly answers wrong
+> - 🥊 [Two agents overwrote each other's STATE.md](examples/failures/concurrent-state-conflict.md) — read-then-write on a shared file is guaranteed to lose writes
+> - 🔓 [Web injection ran an unauthorised command](examples/failures/prompt-injection-escalation.md) — web content is always data, never instructions
 >
-> 🧪 **v2.3.2 (2026-09-07)**: Trace Engineering absorption — `control-flow-separation` v1.2.0 adds "tool-side effect annotation": static tool classification `READ_ONLY` (pure queries, safe to replay) / `MUTATING` (write ops, replay goes through sandbox + approval); `capability-registry.json` machine-readable (all 13 capabilities annotated with `side_effect`, 6 RO / 7 MU), preserved when `capability_probe.py` refreshes. This is the mechanical-layer landing of anti-patterns #13 "write rules twice" at the tool level.
->
-> 🧪 **v2.3.1 (2026-09-07)**: `anti-patterns` v1.2.0 — anti-pattern catalog backfill items 10–12 (post-hoc skill loading / over-confirmation / flogging a dead horse) + new #13 "pure prompt constraints": hard rules relying only on prompts = default violation, correction = write rules twice (guide layer lets agent understand + mechanical layer makes agent unable to bypass: pre_tool_call interception / approval / enabled_toolsets / secret scanning).
->
-> 🧪 **v2.3.0 (2026-09-07)**: Three X/GitHub project absorptions — ① `skill-evolution` v1.3.3: "hard gate discipline" (N/A separated from verification failure / cross-cutting skill mandatory gates / score capping) + "post-change auto-verification hook" (skill changes must run ①routing_check+capability_probe ②reverse-reference grep ③regression tests); ② `cron-job-pattern` v1.1.1: "frequency × reversibility task selection" (frequency / verifiable / reversible three thresholds); ③ `state-file-pattern` v1.1.1: "change receipt" (state + evidence + unresolved risk triple). See CHANGELOG v2.3.0.
->
-> 🧠 **v1.03.00 (2026-08-20)**: Three new battle-tested patterns — Safe Self-Update (`self-update-pattern`, autostash pitfall + test-failure baseline), Memory OS (`memory-os-pattern`, five-layer memory + vector/graph/RRF + write discipline), Evolution Gate (`evolution-gate`, G1-G5 + five-dimension evaluation + regression loop). See CHANGELOG v1.03.00.
->
-> 🧪 **v1.04.00 (2026-08-27)**: Added the regression test suite `test-prompts.json` (30 regression prompts covering 19 behavioral-contract patterns — `hermes-capability-map` is a reference mapping table, exempt; each with `assertions`/`forbidden`); `skill-evolution` bumped to v1.3.0 with built-in regression usage (when to run, how to run, rules for adding entries). Acceptance bar for any skill upgrade = old failures never return + old successes still hold. See CHANGELOG v1.04.00.
+> **Recent changes**: v2.5.0 adds a real behavioral regression runner (`scripts/run_regression.py`, pluggable agent CLI) plus a Readiness-gate GitHub Action and `SECURITY.md`; v2.4.2 made every gate fail-closed. Full history in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -68,6 +62,48 @@ This project is for you.
 These aren't armchair best practices. Every pattern comes from real 7×24 production runs — tested across dozens of days and hundreds of triggers in content pipelines, news digest crons, and auto-update workflows — broken, fixed, and hardened into reusable conventions.
 
 > **How to verify credibility?** This repo ships with [36 regression test prompts](test-prompts.json) (schema-checked in CI; **behavioral verification is manual** — see `conventions/skill-evolution.md`) and a [STATE.md validation script](scripts/validate_state.py) that CI runs against every shipped STATE.md. Maturity levels: 🟢 battle-tested (long-term production verified) · 🟡 beta (being validated) · 🔵 experimental (reference/experimental).
+>
+> **Want to actually run them?** `scripts/run_regression.py` executes each prompt and judges it binarily — every `assertions` string must appear, no `forbidden` string may. Judging is **fail-closed**: a backend error, an empty answer or an entry without assertions is a `FAIL` — "could not confirm" is not "it passed". `INCONCLUSIVE` is reserved for entries that declare an explicit N/A sentinel (`"na": "deprecated: ..."`) and is excluded from the verified count. It is model-agnostic:
+
+```bash
+# your own agent CLI (no shell involved, so the prompt is never parsed as a command)
+python scripts/run_regression.py --backend command \
+    --command "hermes run --prompt {prompt}" --system-file AGENTS.md
+
+# or a hosted model
+ANTHROPIC_API_KEY=... python scripts/run_regression.py \
+    --backend anthropic --model claude-sonnet-4-5 --system-file AGENTS.md
+
+# or re-judge a recorded run offline, for free
+python scripts/run_regression.py --backend replay --recordings tests/recordings
+```
+
+The report lands in `BEHAVIOR_REPORT.md` with PASS / FAIL / N/A columns; failures list the missing assertions and an excerpt. Exit code is 1 if anything failed.
+
+### Gate your own repository on Readiness
+
+`hpp audit` scores file *contents* (a zero-byte `monitor.md` is not a monitor), so it works as a gate:
+
+```yaml
+# .github/workflows/readiness.yml
+jobs:
+  readiness:
+    uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.0
+    with:
+      path: "."
+      fail-under: 85
+```
+
+Or the single-step action, inside an existing job (run `actions/setup-python` first):
+
+```yaml
+- uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.0
+  with:
+    path: "."
+    fail-under: 85
+```
+
+It outputs `score` / `grade`, writes the five-dimension breakdown to the job summary, and fails the step below the threshold.
 
 ---
 
@@ -135,7 +171,7 @@ hermes-production-patterns/
 ├── LICENSE                      ← MIT
 ├── config.yaml.example          ← Hermes config template
 │
-├── starter-kits/                ← 🚀 v2.0 Starter Kits (cp -r to start)
+├── starter-kits/                ← 6 Starter Kits (cp -r to start)
 │   ├── basic-agent/             — Minimal runnable Agent (★)
 │   ├── cron-production/         — Production-grade scheduled Agent (★★)
 │   ├── maker-checker/           — Dual-role verification pipeline (★★)

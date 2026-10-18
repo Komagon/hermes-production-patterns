@@ -40,5 +40,9 @@ htmlcov/
 # lint.js --fix backups
 .hpp-backup/
 
+# behavioral regression output (regenerate with scripts/run_regression.py)
+BEHAVIOR_REPORT.md
+BEHAVIOR_REPORT.json
+
 # Demo runtime output
 examples/minimal-demo/reports/

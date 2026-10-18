@@ -62,6 +62,15 @@
 
 运行 `python scripts/check_test_suite.py` 验证格式正确（**只校验 schema，不跑模型**；行为验证需手动跑）。
 
+**真的跑一遍**（改完公约后推荐，尤其是改了 `assertions` 判定口径时）：
+
+```bash
+python scripts/run_regression.py --backend command \
+    --command "你的 agent CLI --prompt {prompt}" --system-file AGENTS.md
+```
+
+判定是 **fail-closed** 的：后端没返回、返回空、或条目没有 assertions 都判 `FAIL`，**不会算成通过**——这一点比通过率本身更重要。只有运行前就在条目里写好 `"na": "<sentinel>"` 的才记 `INCONCLUSIVE`，且不计入已验证数。报告写在 `BEHAVIOR_REPORT.md`（已在 `.gitignore` 里，不要提交）。
+
 ## 本地校验（提交前跑一遍）
 
 工具链本身有测试，改 `cli/hpp.py` 或 `scripts/` 下任何脚本都要先让它们保持全绿：
@@ -75,7 +84,9 @@ python scripts/check_docs_consistency.py            # 期望：PASS
 
 `pytest` 以子进程驱动真实 CLI，因此 `.coveragerc` 里开了 `patch = subprocess`——否则子进程里的代码不会被计入覆盖率，覆盖率会永远是 0%。
 
-CI 在 Ubuntu 和 Windows 上各跑一遍 `pytest`。Windows 矩阵是必需的：路径分隔符、`fcntl`/`msvcrt` 分支、CRLF 这几类问题只在 Windows 上暴露，而历史上「只在 Windows 上坏」的 bug 已经出现过多次。
+CI 在 Ubuntu 和 Windows 上各跑一遍 `pytest`。Windows 矩阵是必需的：路径分隔符、`fcntl`/`msvcrt` 分支、CRLF、以及**非 UTF-8 代码页下打印中文**这几类问题只在 Windows 上暴露，而历史上「只在 Windows 上坏」的 bug 已经出现过多次。
+
+改 `.github/workflows/` 或 `.github/actions/` 时，`tests/test_workflows.py` 会校验 YAML 合法性，`tests/test_readiness_gate_action.py` 会**在 bash 里真跑一遍 composite action 的脚本**——action 是最容易「合并后才发现坏了」的一块。
 
 ## 行为准则
 

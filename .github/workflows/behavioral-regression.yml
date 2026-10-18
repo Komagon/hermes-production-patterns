@@ -1,0 +1,152 @@
+name: behavioral-regression
+
+# This is the only workflow that spends money and calls a model, so it never
+# runs on push: it is opt-in (workflow_dispatch) and weekly. When no API key is
+# configured the run job is *skipped*, not silently green — a gate that passes
+# without doing anything is the exact failure mode this repo exists to prevent.
+
+on:
+  workflow_dispatch:
+    inputs:
+      backend:
+        description: "Backend to execute against"
+        type: choice
+        options: [openai, anthropic, replay]
+        default: openai
+      model:
+        description: "Model id (empty = backend default)"
+        type: string
+        default: ""
+      limit:
+        description: "Only run the first N prompts (0 = all)"
+        type: string
+        default: "0"
+  schedule:
+    - cron: "0 3 * * 1"  # Mondays 03:00 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Check for a model credential
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.check.outputs.enabled }}
+      backend: ${{ steps.check.outputs.backend }}
+    steps:
+      - id: check
+        env:
+          OPENAI_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REQUESTED: ${{ inputs.backend }}
+        run: |
+          set -eu
+          backend="${REQUESTED:-openai}"
+          if [ "$backend" = "replay" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "backend=replay" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$backend" = "anthropic" ] && [ -n "$ANTHROPIC_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "backend=anthropic" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$backend" = "openai" ] && [ -n "$OPENAI_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "backend=openai" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "enabled=false" >> "$GITHUB_OUTPUT"
+          echo "backend=$backend" >> "$GITHUB_OUTPUT"
+          {
+            echo "### ⚠️ Behavioral regression skipped"
+            echo ""
+            echo "Requested backend: \`$backend\`. No matching credential is configured,"
+            echo "so **no prompt was executed and nothing was verified**."
+            echo ""
+            echo "To enable it, add a repository secret named \`OPENAI_API_KEY\` or"
+            echo "\`ANTHROPIC_API_KEY\`, then re-run this workflow. See SECURITY.md for"
+            echo "how credentials are handled."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  run:
+    name: Execute and judge the regression prompts
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Resolve model id
+        id: model
+        env:
+          REQUESTED: ${{ inputs.model }}
+          BACKEND: ${{ needs.gate.outputs.backend }}
+        run: |
+          set -eu
+          model="${REQUESTED:-}"
+          if [ -z "$model" ]; then
+            case "$BACKEND" in
+              anthropic) model="claude-sonnet-4-5" ;;
+              openai) model="gpt-4o-mini" ;;
+              *) model="" ;;
+            esac
+          fi
+          echo "id=$model" >> "$GITHUB_OUTPUT"
+
+      - name: Run regression suite
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BACKEND: ${{ needs.gate.outputs.backend }}
+          MODEL: ${{ steps.model.outputs.id }}
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          set -eu
+          args="--backend $BACKEND --system-file AGENTS.md \
+            --report BEHAVIOR_REPORT.md --json BEHAVIOR_REPORT.json"
+          if [ -n "$MODEL" ]; then args="$args --model $MODEL"; fi
+          if [ -n "${LIMIT:-}" ] && [ "$LIMIT" != "0" ]; then args="$args --limit $LIMIT"; fi
+          python scripts/run_regression.py $args
+
+      - name: Publish summary
+        if: always()
+        run: |
+          if [ -f BEHAVIOR_REPORT.json ]; then
+            python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          d = json.load(open("BEHAVIOR_REPORT.json", encoding="utf-8"))
+          c = d["counts"]
+          print(f"### Behavioral regression — {d['backend']} / {d['model'] or 'n/a'}")
+          print()
+          print("| Verdict | Count |")
+          print("|:---|---:|")
+          print(f"| PASS | {c['PASS']} |")
+          print(f"| FAIL | {c['FAIL']} |")
+          print(f"| INCONCLUSIVE | {c['INCONCLUSIVE']} |")
+          print(f"| Total | {d['total']} |")
+          print()
+          bad = [r for r in d["results"] if r["verdict"] == "FAIL"]
+          if bad:
+              print("Failing entries: " + ", ".join(f"`{r['id']}`" for r in bad))
+          PY
+          else
+            echo "No behavior report was produced." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: behavior-report
+          path: |
+            BEHAVIOR_REPORT.md
+            BEHAVIOR_REPORT.json
+          if-no-files-found: warn

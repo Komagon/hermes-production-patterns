@@ -1,0 +1,76 @@
+name: readiness-gate
+
+# Reusable workflow: drop this into any repository to gate PRs on the Hermes
+# Production Readiness score.
+#
+#   jobs:
+#     readiness:
+#       uses: Komagon/hermes-production-patterns/.github/workflows/readiness-gate.yml@v2.5.0
+#       with:
+#         path: "."
+#         fail-under: 85
+#
+# The action reference below is pinned to the same tag as the workflow on
+# purpose: a caller who pins @v2.5.0 gets v2.5.0 behaviour end to end, even if
+# the default branch has moved on.
+
+on:
+  workflow_call:
+    inputs:
+      path:
+        description: "Directory in the caller's repository to score."
+        type: string
+        required: false
+        default: "."
+      fail-under:
+        description: "Minimum score (0-100); the job fails below this value."
+        type: number
+        required: false
+        default: 85
+      python-version:
+        description: "Python version used to run the gate."
+        type: string
+        required: false
+        default: "3.11"
+    outputs:
+      score:
+        description: "Production Readiness score, 0-100."
+        value: ${{ jobs.gate.outputs.score }}
+      grade:
+        description: "Production Ready / Needs Hardening / Prototype."
+        value: ${{ jobs.gate.outputs.grade }}
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Production Readiness
+    runs-on: ubuntu-latest
+    outputs:
+      score: ${{ steps.readiness.outputs.score }}
+      grade: ${{ steps.readiness.outputs.grade }}
+    steps:
+      - name: Check out the caller's repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Run the readiness gate
+        id: readiness
+        uses: Komagon/hermes-production-patterns/.github/actions/readiness-gate@v2.5.0
+        with:
+          path: ${{ inputs.path }}
+          fail-under: ${{ inputs.fail-under }}
+          python: python3
+
+      - name: Upload the audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: readiness-report
+          path: ${{ steps.readiness.outputs.report }}
+          if-no-files-found: warn
