@@ -95,7 +95,10 @@ def test_non_semver_tag_exits_2(mod, capsys):
     assert "not a semver tag" in capsys.readouterr().err
 
 
-def test_all_missing_dry_run_covers_tagged_versions(mod, capsys):
+def test_all_missing_dry_run_covers_tagged_versions(mod, capsys, monkeypatch):
+    # Force every tag to look unreleased so the test does not depend on the
+    # current state of the GitHub Releases page (which may already be up-to-date).
+    monkeypatch.setattr(mod, "release_exists", lambda tag: False)
     code = mod.main(["publish_release.py", "--all-missing", "--dry-run"])
     assert code == 0
     out = capsys.readouterr().out
