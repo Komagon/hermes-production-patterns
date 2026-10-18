@@ -179,18 +179,22 @@ jobs:
       # instead of passing on a machine that happens to have a CJK code page.
       #
       # Failures are re-emitted as annotations because a job log needs
-      # authentication to read and an annotation does not.
+      # authentication to read and an annotation does not. Each annotation is a
+      # single line, so the failure detail is spread over several of them.
       - name: Run pytest with coverage
         shell: bash
         env:
           PYTHONIOENCODING: ${{ runner.os == 'Windows' && 'cp1252' || 'utf-8' }}
         run: |
           set +e
-          python -m pytest --cov --cov-report=term-missing -q --tb=line 2>&1 | tee pytest.log
+          python -m pytest --cov --cov-report=term-missing -q --tb=short 2>&1 | tee pytest.log
           code=${PIPESTATUS[0]}
           if [ "$code" -ne 0 ]; then
-            grep -E "^(FAILED|ERROR)" pytest.log | head -8 | while IFS= read -r line; do
+            grep -E "^(FAILED|ERROR)" pytest.log | head -3 | while IFS= read -r line; do
               echo "::error::$line"
+            done
+            grep -E "^E " pytest.log | tail -6 | cut -c1-300 | while IFS= read -r line; do
+              echo "::error::${line#E }"
             done
             echo "--- tail of pytest.log ---"
             tail -n 30 pytest.log
