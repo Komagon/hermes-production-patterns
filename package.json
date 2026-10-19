@@ -18,7 +18,7 @@
     "gate": "python cli/hpp.py audit . --fail-under 85"
   },
   "devDependencies": {
-    "markdownlint-cli2": "^0.17.0"
+    "markdownlint-cli2": "^0.23.3"
   },
   "keywords": ["hermes", "agent", "production", "patterns", "linter"],
   "repository": {
