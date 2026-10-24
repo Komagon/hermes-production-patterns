@@ -1,27 +1,3 @@
-#!/usr/bin/env python3
-"""Publish GitHub releases from the CHANGELOG.
-
-Every release note in this repository already exists as a `## vX.Y.Z` section of
-CHANGELOG.md. Retyping it into the GitHub UI is how the two drift apart: tags
-v2.4.1 … v2.5.3 were pushed but never released, so the Releases page stopped at
-v2.4.0 while the changelog kept going.
-
-This script makes the changelog the only source of release notes, and `gh` the
-only thing that talks to GitHub.
-
-Usage:
-    publish_release.py --tag v2.5.3      # publish one tag
-    publish_release.py --all-missing     # publish every tagged version that has
-                                         # no release yet and has a changelog
-                                         # section (oldest first, so "latest"
-                                         # ends up on the newest version)
-
-Add --dry-run to print what would happen without touching GitHub.
-
-Exit codes: 0 published (or nothing to do), 1 at least one publish failed,
-2 a precondition failed (no gh, no changelog section, bad tag).
-"""
-
 import argparse
 import re
 import shutil
@@ -84,10 +60,18 @@ def _gh(args: list[str], *, capture: bool = False) -> subprocess.CompletedProces
 
 
 def release_exists(tag: str) -> bool | None:
-    """True/False, or None when the answer cannot be known (no gh, dry run)."""
+    """True/False, or None when the answer cannot be known."""
     if shutil.which("gh") is None:
         return None
-    return _gh(["release", "view", tag], capture=True).returncode == 0
+
+    proc = _gh(["release", "view", tag], capture=True)
+    if proc.returncode == 0:
+        return True
+
+    text = f"{proc.stdout}\n{proc.stderr}".lower()
+    if "release not found" in text or ("not found" in text and "release" in text):
+        return False
+    return None
 
 
 def publish(tag: str, body: str, subtitle: str, *, dry_run: bool) -> bool:
