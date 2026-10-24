@@ -76,7 +76,8 @@ def test_non_semver_tag_is_rejected(mod):
         mod.version_key("v1.0.0.11")
 
 
-def test_dry_run_reports_without_calling_gh(mod, capsys):
+def test_dry_run_reports_without_calling_gh(mod, capsys, monkeypatch):
+    monkeypatch.setattr(mod, "release_exists", lambda tag: False)
     code = mod.main(["publish_release.py", "--tag", "v2.5.3", "--dry-run"])
     assert code == 0
     out = capsys.readouterr().out
